@@ -80,7 +80,7 @@ def audit_search_integrity(text: str) -> Dict[str, Any]:
             return {
                 "fired": True,
                 "rule": "R11",
-                "reason": f"R11: 搜探真实性门禁拦截：断言 SOTA 或外部技术现状缺少关键物理凭据：【{' + '.join(missing)}】。严禁仅凭内置模型短摘要下断言！"
+                "reason": f"R11: 搜探真实性门禁拦截：断言 SOTA 或外部技术现状缺少关键物理凭据：「{' + '.join(missing)}」。严禁仅凭内置模型短摘要下断言！"
             }
 
     return {"fired": False, "rule": "R11", "reason": ""}

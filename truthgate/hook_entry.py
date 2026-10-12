@@ -213,7 +213,56 @@ def handle_stop(payload: Dict[str, Any]) -> int:
         print(json.dumps(resp, ensure_ascii=False))
         return 0
 
-    # 4. 构建全真物理上下文并执行 Jev System One / 启发式语言对齐审判
+    # 5. 拒绝窄道假单测与全生命周期真机质检门禁 (anti-toy-test-gate / 严禁本地 mock 自嗨单测)
+    try:
+        from anti_toy_test_gate import check_anti_toy_test_violation
+    except ImportError:
+        try:
+            from truthgate.anti_toy_test_gate import check_anti_toy_test_violation
+        except ImportError:
+            check_anti_toy_test_violation = None
+    if check_anti_toy_test_violation:
+        raw_blob = json.dumps(transcript_msgs, ensure_ascii=False)
+        toy_err = check_anti_toy_test_violation(last_text, tool_history, raw_blob, user_prompt=user_prompt)
+        if toy_err:
+            resp = {
+                "decision": "block",
+                "reason": f"{toy_err}\n\n💡 自愈指引: 这是本地代码可逆事务，严禁向用户提问或推诿请示（R5违规），请立即调用外部只读 Harness (如 `py -3 ~/.truthgate/harness/browser_qa.py --url ...`) 执行真机无头测试，获取真实落盘凭据并解决报错！"
+            }
+            print(json.dumps(resp, ensure_ascii=False))
+            return 0
+
+    # 6. 反过时权重妄断与多源检索门禁 (anti-stale-assertion-gate / 严禁凭老旧知识妄断无现成)
+    try:
+        from anti_stale_assertion_gate import check_anti_stale_assertion_violation
+    except ImportError:
+        try:
+            from truthgate.anti_stale_assertion_gate import check_anti_stale_assertion_violation
+        except ImportError:
+            check_anti_stale_assertion_violation = None
+    if check_anti_stale_assertion_violation:
+        stale_err = check_anti_stale_assertion_violation(last_text, tool_history=tool_history, user_prompt=user_prompt)
+        if stale_err:
+            resp = {"decision": "block", "reason": stale_err}
+            print(json.dumps(resp, ensure_ascii=False))
+            return 0
+
+    # 7. 搜探真实性门禁 (search-integrity-gate / 严禁假装查了六宇宙)
+    try:
+        from search_integrity_gate import audit_search_integrity
+    except ImportError:
+        try:
+            from truthgate.search_integrity_gate import audit_search_integrity
+        except ImportError:
+            audit_search_integrity = None
+    if audit_search_integrity:
+        s_res = audit_search_integrity(last_text)
+        if s_res.get("fired"):
+            resp = {"decision": "block", "reason": s_res.get("reason")}
+            print(json.dumps(resp, ensure_ascii=False))
+            return 0
+
+    # 8. 构建全真物理上下文并执行本地启发式语言审判
     tool_names = [t.get("name") for t in tool_history if isinstance(t, dict) and t.get("name")]
     exec_context = {
         "project": cwd_path.name,
@@ -244,7 +293,8 @@ def handle_stop(payload: Dict[str, Any]) -> int:
         if "offline" in mode_str or "local" in mode_str:
             reasons.append("  💡 [引擎状态: Tier 0 本地启发式(残血保底) | 配置 GEMINI_API_KEY/DEEPSEEK_API_KEY 或运行 `tg setup` 可升级为满血深审]")
 
-        reasons.append(f"  ⇒ 请依照【{profile.get('name')}】准则修正后直接交付！")
+        reasons.append(f"  ⇒ 请依照「{profile.get('name')}」准则修正后直接交付！")
+        reasons.append("  💡 自愈铁律: 本次拦截属于本地技术与规范事务，严禁向用户提问『要不要我做』或推诿请示（R5违规），请立即自主定位并完成修复再交付！")
 
         resp = {
             "decision": "block",
@@ -252,6 +302,35 @@ def handle_stop(payload: Dict[str, Any]) -> int:
         }
         print(json.dumps(resp, ensure_ascii=False))
         return 0
+
+    # 9. 物理外审引擎终审 (Tier 3 / external_critic_engine: Agnes 3.0-flash + OpenCode Go 双活异构，带 26 类真错形状与办法清单)
+    try:
+        try:
+            from hooks.external_critic_engine import review_turn
+        except ImportError:
+            try:
+                from external_critic_engine import review_turn
+            except ImportError:
+                review_turn = None
+        if review_turn and last_text:
+            ext_actions = [t.get("name") for t in tool_history if isinstance(t, dict) and t.get("name")]
+            ext_res = review_turn(user_prompt, last_text, actions=ext_actions)
+            if ext_res and ext_res.get("verdict") == "block":
+                critic_said = ext_res.get("reason") or ""
+                reasons = [
+                    f"⛔ TruthGate 外部多模型独立外审打回 [外审模型: {ext_res.get('backend', 'unknown')}]:",
+                    f"  • {critic_said}",
+                    f"  • 要求下一步动作: {ext_res.get('next', '实测闭环')}",
+                    "  💡 改进指引: 这是本地技术与规范事务，严禁向用户提问或推诿请示（Vibe Coder契约），请完成全套端到端修复后再交付！"
+                ]
+                resp = {
+                    "decision": "block",
+                    "reason": "\n".join(reasons)
+                }
+                print(json.dumps(resp, ensure_ascii=False))
+                return 0
+    except Exception:
+        pass
 
     return 0
 

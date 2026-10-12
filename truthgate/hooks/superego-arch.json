@@ -1,0 +1,274 @@
+{
+  "already-known-guard.py": {
+    "phase": "PreToolUse",
+    "trigger": "⛔ 2026-08-13 实录(本闸的起因):; 「dissatisfaction-postmortem 当天开火 30 次喊先做复盘,我 4 次全跳过 —— 因为它只能往上下文塞文字、拦不住任何东西。"
+  },
+  "answer-relevancy-gate.py": {
+    "phase": "Stop",
+    "trigger": "⛔ 绝不把自己卡死(这道闸拦的是我自己,坏了代价很大):; LLM 超时/不可用/返回不可解析 ⇒ **一律放行**;连拦上限 2 次;只在他那句【确实是个问题】时才跑。"
+  },
+  "anti-playwright-guard.cjs": {
+    "phase": "PreToolUse",
+    "trigger": "// PreToolUse 守卫：拦截\"对登录墙站的裸 launch\"(Playwright/Puppeteer/Selenium 新指纹)。; // ⚠️ 只拦\"launch + 命中登录墙域名\"。本地测试(localhost)/截图/启动自己项目的 launch 一律放行,不误拦。"
+  },
+  "archive-recall-gate.py": {
+    "phase": "Stop",
+    "trigger": "\"\"\"archive-recall-gate — 拦【对\"他以前做过的事\"说找不到/记不得,却没查 chat-archive】。; ⛔ 来历(2026-08-18,Frank:「如果你失忆你不会去查看 chat archiver 吗」):"
+  },
+  "ask-coverage-gate.py": {
+    "phase": "Stop",
+    "trigger": "⛔ 2026-08-14 起因(Frank 第 N 次抓到):; 污染 / 拦了不做的根因 / PROGRESS 结构冲突 / 资源前提醒 / 资源后回看 …)。"
+  },
+  "backslash-eater-gate.py": {
+    "phase": "PreToolUse",
+    "trigger": "\"\"\"backslash-eater-gate — Bash 工具会吃掉一层反斜杠，用它写代码/写文件必崩时拦下。; 来历（2026-08-20，Frank：「heredoc 完整深入审查彻底修复，找出根因不是头痛医头」）"
+  },
+  "blame-check.py": {
+    "phase": "Stop",
+    "trigger": "\"\"\"Stop hook: 拦截\"外部甩锅\"结论。; 触发条件(全部满足才拦):本轮把某症状(慢/失败/超时/降级…)以**结论口吻**归因到"
+  },
+  "churn-guard.py": {
+    "phase": "Stop",
+    "trigger": "\"\"\"churn-guard —— 拦【在同一个文件/同一段上原地打转】。; ⛔ 起因(2026-08-25, Frank 原话:「那么为何 superego 没有任何作用,没制止你一直绕了 6 小时?」):"
+  },
+  "codegraph-guard.mjs": {
+    "phase": "PreToolUse",
+    "trigger": "// 当前项目含 .codegraph/ 索引时，拦截内置 Grep 工具并提示模型改用 codegraph_explore。; // 没有索引 → 静默放行。需要字面量/非代码搜索时，模型改走 Bash 的 rg（不匹配 Grep，故不被本 hook 拦）。"
+  },
+  "coherence-guard.py": {
+    "phase": "PostToolUse",
+    "trigger": "典型的【局部零件都对、拼起来是错的】。当天所有其它闸没有一道拦得住它 —— 因为它们; 它只把三个问题摆到我眼前 —— 这正是它要治的病:我不是懒,是**没停下来想**。"
+  },
+  "concise-answer-gate.py": {
+    "phase": "Stop",
+    "trigger": "而 08-21 那条 lessons 里【写了】\"回答长度÷问题长度>10 触发\",**代码里从没实现**。; 后者本来就该长答。误拦成本高于漏拦,故留 MAX_BLOCKS 上限自动放行。"
+  },
+  "critic-gate.py": {
+    "phase": "Stop",
+    "trigger": "治的病:我不自发结构化自审;Frank 现在当那个\"局外探测器\"。CRITIC/Reflexion 已证:内省式自评失效,; 触发(全满足才拦,收窄防污染):"
+  },
+  "cross-scope-guard.py": {
+    "phase": "PreToolUse",
+    "trigger": "\"\"\"PreToolUse 闸:拦【写/改一个\"不在本轮工作目录、用户又从没打字提过\"的项目/资产】。; 先查现成(2026-08-07):WebSearch+核实,现成只有 check-worktree-paths 那类【硬编码路径字符串就拦】,"
+  },
+  "dissatisfaction-postmortem.py": {
+    "phase": "UserPromptSubmit",
+    "trigger": ""
+  },
+  "doctor.py": {
+    "phase": "Stop",
+    "trigger": ""
+  },
+  "dropped-output-guard.py": {
+    "phase": "Stop",
+    "trigger": "\"\"\"Stop hook: 拦截「用我自己的实现缺口当理由，丢掉用户已经产生的成果」(形状 V)。; 触发条件(三信号同现在同一句里才拦):"
+  },
+  "evidence-gate.py": {
+    "phase": "Stop",
+    "trigger": "= 我在说一个不存在的产物 → 拦,让我要么真做出来,要么改口。; ⛔ 刻意不管的:①相对路径/裸文件名(歧义太大,宁可漏拦不误伤)"
+  },
+  "excuse-gate.py": {
+    "phase": "Stop",
+    "trigger": "\"\"\"excuse-gate — 取证之后,用一句没验过的借口把【与结论冲突的观察】抹平 → 拦停。; 眼见为实闸拦住我,逼我去截 CDP 9226 的画面。**闸完全生效**:我真截了图、真 Read 了,"
+  },
+  "false-done-gate.py": {
+    "phase": "Stop",
+    "trigger": "\"\"\"Stop hook: 拦截「虚报生效/装好/跑通」—— 声称交付物工作,但本轮没跑任何核实工具。; Frank「白干了吗」。CLAUDE.md 已 4 处规定「说完成前必须有实测证据」仍犯 → 软规则拦不住,上机器闸。"
+  },
+  "fault-injection-gate.py": {
+    "phase": "Stop",
+    "trigger": "那一刻拦住我** —— 那是 Superego 特有的位置,所以这道闸自建,并在提示里指回那些工具。; 判据(全中才拦;只看客观事实、零文本猜测 ⇒ 零假阳性,思路照 evidence-gate):"
+  },
+  "feature-regress-guard.py": {
+    "phase": "PreToolUse",
+    "trigger": "\"\"\"feature-regress-guard — 拦【新写一个文件替代旧的,静默丢掉旧功能】。; ⛔ 来历(2026-08-14,Frank:「为何你把之前那么好用的筛选搞没了」):"
+  },
+  "giveup-guard.py": {
+    "phase": "Stop",
+    "trigger": "\"\"\"Stop hook: 拦截\"撞墙就提议放弃/推回给用户\"的收尾(形状K)。; \"授权即执行铁律\"早写在 CLAUDE.md 里,我照样违反 → 光写铁律拦不住,得结构性拦停。"
+  },
+  "gpu-turn-end-watchdog.cjs": {
+    "phase": "Stop",
+    "trigger": ""
+  },
+  "guard-destructive.py": {
+    "phase": "PreToolUse",
+    "trigger": "#   改完之后也【量不到】它的拦截率/误伤率,下一次\"病根治没治好\"仍然只能靠感觉。; #   `rm -rf` 不再被拦。这是本仓库最不能失效的一道闸(拦不住 = 真删掉 Frank 的数据)。"
+  },
+  "his-browser-guard.cjs": {
+    "phase": "PreToolUse",
+    "trigger": "// 拦两类动作(都是【写/生命周期】操作):; //   9555 = bananaflow(AI 生图 TG Bot)          → ⛔ 拦；跑 bananaflow skill 本身才算正当，加标记"
+  },
+  "host-machine-archive-first.py": {
+    "phase": "UserPromptSubmit",
+    "trigger": "\"给人手动搜的历史工具\",不是\"提交时自动拦截\"的触发器;gh search 两组关键词零命中。; 搜索层 Frank 已有 q.js + truth skill。缺的只是触发器 → 自建。"
+  },
+  "jargon-gate.py": {
+    "phase": "Stop",
+    "trigger": "\"\"\"交付时用了【只有我懂的词】却没当场翻译 → 拦。; **我一次都没主动触发过它。** 我查过 ~/.claude/hooks 下 60 个钩子,没有一个管这件事 ⇒"
+  },
+  "keep-going-gate.py": {
+    "phase": "Stop",
+    "trigger": "\"\"\"keep-going-gate —— 被拦之后只说话不干活就继续拦；真动手了立刻放行。; ⛔ 来历（2026-08-19，Frank：「我说 nagging 不做事，或者最后所有任务还没完整做完"
+  },
+  "launch-bound-guard.py": {
+    "phase": "PreToolUse",
+    "trigger": "\"\"\"PreToolUse(Bash) 闸:后台启动【无界的重活/GPU任务】= 启动前拦下(在它伤到机器之前)。; 拦的条件(全中才拦):①Bash run_in_background(无harness超时,能挂到天荒地老)②命令跑一个 .py"
+  },
+  "lint-fatal-guard.py": {
+    "phase": "PostToolUse",
+    "trigger": "**拦截 JSON 永远发不出去、日志照常打 allow(...)**,46 套测试全绿盖着它。"
+  },
+  "media-regression-gate.py": {
+    "phase": "Stop",
+    "trigger": "\"\"\"只读元数据,不解码帧。失败返回 None(宁可不拦,不可误拦)。\"\"\""
+  },
+  "money-verdict-gate.py": {
+    "phase": "Stop",
+    "trigger": "\"\"\"money-verdict-gate — 拦【用单一数据源，就对\"做什么能赚钱\"下判决】。; ⛔ 来历(2026-08-22, Frank:「凡是变现优先…所有宇宙加我雷达交叉,凡是涉及这个最重要的"
+  },
+  "not-mine-gate.py": {
+    "phase": "Stop",
+    "trigger": "\"\"\"not-mine-gate — 用「不是我的 / 与本项目无关」把一个【我没查过的问题】推回给用户 → 拦停。; 第 2 次(当天深夜,本闸的触发案例):我在交付里写"
+  },
+  "nudge-escalation-gate.py": {
+    "phase": "Stop",
+    "trigger": "r\"\"\"Stop 闸:【软提醒重复太多次还没解决 → 升级成硬拦】。; ⛔ 起因(2026-08-26,Frank 原话):"
+  },
+  "paper-tiger-watch.py": {
+    "phase": "Stop",
+    "trigger": ""
+  },
+  "pipe-truncation-guard.py": {
+    "phase": "PreToolUse",
+    "trigger": "\"\"\"PreToolUse(Bash) 闸:把【长跑进程的 stdout】接进 head/tail/无缓冲 grep = 启动前拦下。; 拦的条件(全中才拦,误判落安全侧=过拦):"
+  },
+  "pipeline-ends-gate.py": {
+    "phase": "Stop",
+    "trigger": "\"\"\"pipeline-ends-gate —— 我自称画了「端到端/全流程」，但两头没接上业务时拦下。; ⛔ 来历（2026-08-19，manju）："
+  },
+  "pipeline-first-gate.py": {
+    "phase": "PreToolUse",
+    "trigger": "\"\"\"pipeline-first-gate —— 还没画出全链路，就先去启动【长跑/花钱的生产动作】时拦下。; ⛔ 来历（2026-08-20，manju）："
+  },
+  "pkg-install-guard.py": {
+    "phase": "PreToolUse",
+    "trigger": "\"\"\"PreToolUse(Bash/PowerShell) 闸:装/升级【共享全局环境】的包却【没先评估影响面】= 装之前拦下。; 安全:fail-open(任何异常一律放行);只读;留日志;窄触发(评估动作、venv、卸载、check 都不拦)。"
+  },
+  "plan-before-act-gate.py": {
+    "phase": "PreToolUse",
+    "trigger": "\"\"\"计划优先闸 —— 要花钱 / 要长跑的动作，本轮没有 plan ⇒ 拦。; · 业界（cost guardrail 领域已有定论）：控制逻辑要**贴近执行**、在**不可逆动作之前**拦，"
+  },
+  "pm2-guard.cjs": {
+    "phase": "PreToolUse",
+    "trigger": "// PreToolUse 守卫：硬拦会触发 lm-worker 死循环的 pm2 持久化命令(save/startup/dump/resurrect)。; // ⚠️ 只拦危险的持久化子命令。安全的 pm2 restart/start/stop/delete/list/logs/jlist... 一律放行(不误拦)。"
+  },
+  "prior-art-gate.py": {
+    "phase": "PreToolUse",
+    "trigger": "「先查现成铁律」是 Frank 全套闸里**唯一一个只有文字注入、没有可执行拦截**的; launch-bound 全是会真 deny 的脚本)。**只提醒不拦 = 我每轮都读到、每轮都能绕过。**"
+  },
+  "promise-carryover-gate.py": {
+    "phase": "Stop",
+    "trigger": "⛔ 来历（2026-08-19，Frank：「每次给完结论后就停止了，为何 superego 没开火，坏了吗？」）：; no-nagging 拦 7 次、critic 拦 6 次、visual-proof 拦 5 次，我一整天都在被拦。"
+  },
+  "promise-gate.py": {
+    "phase": "Stop",
+    "trigger": "\"\"\"promise-gate — 拦【承诺了却没启动任何东西】的收尾。; ⛔ 缺口来历(2026-07-28,Frank:「不用我回话接着做?但是停手了?为何 superego 没逼你做完?」):"
+  },
+  "question-boomerang-gate.py": {
+    "phase": "Stop",
+    "trigger": "\"\"\"question-boomerang-gate —— 他直接问我判断，我把问题原样退回给他时拦下。; ⛔ 来历（2026-08-19，manju）："
+  },
+  "recursive-scan-gate.py": {
+    "phase": "PreToolUse",
+    "trigger": "\"\"\"递归扫描闸 —— 拦【对已知超大目录跑递归统计】。; 但**没有一个管递归扫描**；host-machine-archive-first 只注入定论、不拦动作。"
+  },
+  "reference-diff-guard.py": {
+    "phase": "Stop",
+    "trigger": "全局铁律「有参照物就 diff,没参照物才猜」早写着,照犯 → 判断类软规则拦不住,上一个抓【行为痕迹】的闸。; - 只拦一次:【我自己】拦过才不再拦(per-gate 标记,见 guard_common.self_blocked_this_turn);别的闸拦过不影响我,避免死循环。"
+  },
+  "regress-on-guard-edit.py": {
+    "phase": "PostToolUse",
+    "trigger": "Superego 最大的风险不是\"拦不住我\",是【我改它的时候会把它改坏,而且自测不出来】。; 第一版同步跑,实测端到端 **67~85 秒**,而 PostToolUse 拦不住已经写进文件的字 —— 同步毫无收益,"
+  },
+  "remote-poll-guard.py": {
+    "phase": "PreToolUse",
+    "trigger": "\"\"\"PreToolUse 守卫：拦【定频轮询远程服务】的等待循环。; 拦：循环 + sleep + 对【外部域名】发请求。"
+  },
+  "resource-echo-gate.py": {
+    "phase": "Stop",
+    "trigger": "r\"\"\"Stop 闸:每轮收尾【回头看】—— 我这一轮让机器多烧了多少?烧得凶就拦一次,逼我处理。; ⛔ 2026-08-14 起因(Frank 亲口点名这个洞):"
+  },
+  "rootcause-gate.py": {
+    "phase": "Stop",
+    "trigger": "r\"\"\"Stop 闸:【说\"修好了\"但没交代根因】→ 拦。治「头疼医头」。; ⛔ 起因(2026-08-26 Frank 原话):"
+  },
+  "rule-dup-guard.py": {
+    "phase": "PostToolUse",
+    "trigger": "【为什么在源头拦而不是季度大扫除】; 相似度 ≥0.80 才提示,只提示不拦(PostToolUse 本来也拦不住),让我自己决定合并还是新开。"
+  },
+  "scenario-fit-gate.py": {
+    "phase": "PreToolUse",
+    "trigger": "\"\"\"场景匹配闸 —— 拿一个具体 workflow/模型去跑生产前，本轮没比过同类 ⇒ 拦。; **运行时自动替你选**；本闸要的是**元层面拦住我、逼我先比** —— 不同问题。"
+  },
+  "scope-completeness-gate.py": {
+    "phase": "Stop",
+    "trigger": "\"\"\"范围完整性闸 —— 拦【他要的是一类，我只做了其中一个】。; ⛔ 起因（2026-08-26，Frank 原话）："
+  },
+  "scratchpad-secret-sweep.cjs": {
+    "phase": "Stop",
+    "trigger": ""
+  },
+  "search-breadth-gate.py": {
+    "phase": "Stop",
+    "trigger": "\"\"\"search-breadth-gate — 拦【只用一种检索通道,就下领域级断言】。; ⛔ 来历(2026-08-14,Frank:「上次让你找工具,你就只找到 30%,还漏了那么多」):"
+  },
+  "search-layer-gate.py": {
+    "phase": "PreToolUse",
+    "trigger": "\"\"\"search-layer-gate — PreToolUse:在我【搜索发出之前】拦,不是犯完错才提醒。; ⛔ 来历(2026-08-14,Frank:「所以这个教训没让你免疫和进化做事吗?」):"
+  },
+  "self-loop-gate.py": {
+    "phase": "Stop",
+    "trigger": "①本机：`test_per_gate_loopguard` 治的是「同一道闸自己反复拦」——**和本闸正交**; （我的循环是【不同的闸接力拦】，每道闸各拦一次都合规，合起来才是灾难）。"
+  },
+  "shell-writes-code-gate.py": {
+    "phase": "PreToolUse",
+    "trigger": "\"\"\"shell-writes-code-gate —— 拦「用 shell 的 heredoc / sed -i 去写或改【代码文件】」。; ⛔ 来历（2026-08-19，同一个坑一天之内发作 3 次，Frank："
+  },
+  "show-open-guard.py": {
+    "phase": "Stop",
+    "trigger": "\"\"\"Stop hook: 拦截「产物生成了、我自己看了,却没送到 Frank 眼前」(形状 C 新变种)。; 安全设计(照 dropped-output-guard):fail-open、只拦自己一次、只读 transcript。"
+  },
+  "spec-coverage-guard.py": {
+    "phase": "PostToolUse",
+    "trigger": "2026-07-28 建。起因:Frank 问「speckit 是大佬写的,你的 vibe-spec 能比吗?该不该深度融合」; · 三者都不是 hook 形态 —— 它们出报告,拦不住我。"
+  },
+  "spec-first-gate.py": {
+    "phase": "PreToolUse",
+    "trigger": "\"\"\"规格优先闸 —— 本机有对口指南，本轮却没打开就动手 ⇒ 拦。; ⛔ 为什么已有的 13 条铁律拦不住："
+  },
+  "superego-recall-inject.py": {
+    "phase": "UserPromptSubmit",
+    "trigger": ""
+  },
+  "ui-edit-guard.py": {
+    "phase": "PostToolUse",
+    "trigger": "# 2026-07-18 Frank:「之前写的 ui/ux Hook 根本没有自动触发你用 taste skill」+「密密麻麻像写小说」后钉死; # 2026-07-25 收窄触发面(audit 确认 over-fire):非设计型/生成物 HTML/CSS/JS 不再开火(coverage/dist/build/"
+  },
+  "unread-evidence-guard.py": {
+    "phase": "Stop",
+    "trigger": "r\"\"\"Stop hook: 拦截【本轮产生了截图/图片证据,却一次都没打开看,就下结论】。; 我只读了 `body.innerText` —— 它把二维页面压成一行字符串,丢掉了「那是浮层不是拦截页」"
+  },
+  "video-audio-gate.py": {
+    "phase": "Stop",
+    "trigger": "\"\"\"video-audio-gate — 拦【交付视频却没验音轨/没转录核字】。; ⛔ 来历(2026-08-18,Frank:「连个台词都没有?」「凡是视频不能直接出台词和字幕"
+  },
+  "visual-detail-gate.py": {
+    "phase": "Stop",
+    "trigger": "\"\"\"visual-detail-gate — 拦【看了缩略图/拼图就对画面内容下正面结论】。; ⛔ 来历(2026-08-18,Frank:「你居然没看生成出来的效果?为何 superego 又坏掉嘛?」):"
+  },
+  "visual-proof-gate.py": {
+    "phase": "Stop",
+    "trigger": "\"\"\"visual-proof-gate — 宣称【有画面的东西】正常,却没真的看过画面 → 拦停。; 没有任何一个做「宣称 UI 健康但本轮没取过画面就拦停」这件事(那是把内省自检结构化,不是测试工具)。"
+  }
+}

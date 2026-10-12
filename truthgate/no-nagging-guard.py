@@ -53,14 +53,13 @@ except Exception:
 # strip_doc 只剥代码/表格/`>`引用,不管中文内联引号 → 引用/自述某句请示会被误当真请示(C1/C2/C3)。
 # ⛔ 别物理剥「…」『…』(会把真请示里被引号包住的动作词一起吞掉→漏拦,如 要不要我「修好bug」/整句入引号)。
 #   改为【命中后定位】:仅当 NAG 命中【完全落在一个被引述/否定/举例/闸描述的引号内】才算"提到一句请示"而放行。
-_CJK_QUOTE = re.compile(r"「[^」]*」|『[^』]*』|“[^”]*”|(?<!\w)\"[^\"\n]+\"(?!\w)|`[^`\n]+`")
-# 引号被"提到"(而非真在请示)的信号,须紧贴在引号【前】:否定式问 / 闸在拦抓 / 引述 / 举例 / 规则元词 / 过滤 / 测试。
+_CJK_QUOTE = re.compile(r"「[^」]*」|『[^』]*』")
+# 引号被"提到"(而非真在请示)的信号,须紧贴在引号【前】:否定式问 / 闸在拦抓 / 引述 / 举例 / 规则元词。
 _MENTION_CUE = re.compile(
     r"(?:不再?问|没(?:有)?问|别问|无需问|不必问|不用问"
     r"|会?拦(?:掉|下|住|截)?|抓(?:的|到|的是|取)?|命中|匹配|触发"
     r"|引用|描述|说的?是?|讲|写(?:着|成|作)?|意思是?|表示"
     r"|比如|例如|举个?例子?|类似|所谓|诸如|这种|这类|这样的?|一句"
-    r"|包含|过滤|排查|测试|检测|校验|处理|防范"
     r"|闸|规则|防唠叨|no-?nagging|请示式|口吻)\s*[，、:：的]?\s*$",
     re.I,
 )
@@ -88,8 +87,7 @@ def _mentioned_nag(text, m):
 # 动作词:我被授权就该直接干的可逆活(不含"发布/上线/删库"等不可逆——那些本就该问)。
 # ⛔ 闭集枚举必漏(critic finding:截断/调整等漏拦)——已尽量补全,但根治要语义化(见 SKILL 说明,暂 regex stopgap)。
 ACTION = (r"(?:改|修|做|干|搞|弄|办|处理|建|加|删除?|去掉|继续|优化|扫|查|拉|跑|写|实现|接线?|接上|重建|清理?|补|换|"
-          r"统一|迁移|部署?|生成|下载?|抓|截断|调整|替换|移除|精简|压缩|重写|拆分|排查|定位|升级|重构|测试?|验证|动手|开工|去办|效劳|"
-          r"合并|提交|推送|拉取|发布|打包|构建|编译|运行|执行|接入|对接|集成|配置|适配|调试|整理|格式化|搭|搭建|装|安装|更新)")
+          r"统一|迁移|部署?|生成|下载?|抓|截断|调整|替换|移除|精简|压缩|重写|拆分|排查|定位|升级|重构|测试?|验证)")
 # 请示开头与动作词之间允许一小段(如"一并把 #1/#2/#3"),但不跨句(遇标点即断)
 GAP = r"[^，。？！?!\n]{0,18}?"
 # 请示【是否要【我】行动】的句式(=违规)。⛔「我」必填:只拦"要不要【我】做X",不拦"要不要加X"(=产品选择题,profile 允许问)。re.I 让英文大小写都命中。
@@ -115,37 +113,21 @@ NAG = re.compile(
     # "你说跑我就跑"——说与"我就"之间还夹着那个动作词,写死"一声了"接不住,给一小段 GAP
     + r"|(?:你|您)(?:说|点头|发话|确认|批准|同意)[^，。？！?!\n]{0,6}?我(?:就|再|马上|立刻)"
     + r"|(?:等|待)(?:你|您)[^，。？！?!\n]{0,8}?(?:再|才)" + GAP + ACTION
-    # ⛔ 2026-09-21 (Frank:「接口真多，废话naggingyougate」):
-    #   把请示伪装成条件状语从句推诿："如果你需要，我现在就可以..." / "如果你想，我也可以现在..." / "只要你说一声，我就..." / "随时听候吩咐"
-    + r"|(?:(?:如果|若|倘若|假如|要是|一旦|如)(?:你|您)?\s*(?:有需要|需要|想要?|要|希望|打算|愿意|觉得(?:需要|合适|行|可以|有必要)|认为(?:需要|有必要)|允许|同意|许可|吩咐|指示|交代|开口|点头|认可|批准|授权|发话|发指令|说|招呼|一声令下|一句话)(?:的话|一声|一句|一下|下来)?|"
-    r"只要(?:你|您)?\s*(?:有需要|需要|想要?|要|希望|打算|愿意|允许|同意|许可|吩咐|指示|交代|开口|点头|认可|批准|授权|发话|发指令|说|招呼|一声令下|一句话)(?:的话|一声|一句|一下|下来)?|"
-    r"(?:你|您)\s*(?:一声令下|一句话|吩咐一声|发话|点头|同意|批准|授权|认可)|"
-    r"(?:如有需要|若有需要|有需要的话|需要的话|想要的话|如果要的话|若要的话|若需|如有需|如需))"
-    r"[^。？！?!\n]{0,15}?"
-    r"(?:我(?!们)|小弟|助手|这边)?\s*(?:就|再|来|马上|立刻|立即|即刻|现在|随时|随时可以|随时能|也可以|这就|便)?\s*(?:可以|能|去|帮|为您?|为你?|随时|把|替|给|协助|接手)?\s*"
-    r"(?:[^。？！?!\n]{0,10}?)"
-    + ACTION
-    + r"|(?:我(?!们)|小弟|助手|这边)\s*(?:就|再|来|马上|立刻|立即|即刻|现在|随时|随时可以|随时能|也可以|这就|便|能|可以)?\s*(?:可以|能|去|帮|为您?|为你?|随时|把|替|给|协助|接手)?\s*[^。？！?!\n]{0,15}?" + ACTION + r"[^。？！?!\n]{0,15}?(?:[，,]\s*)?(?:(?:如果|若|倘若|假如|要是|一旦|如|只要)\s*(?:你|您)?\s*(?:有需要|需要|想要?|要|希望|打算|愿意|觉得(?:需要|合适|行|可以|有必要)|允许|同意|许可|吩咐|指示|交代|开口|点头|认可|批准|授权|发话|说|招呼|一声令下|一句话|想)(?:的话|一声|一句|一下|下来)?|(?:只要|等)\s*(?:你|您)\s*(?:一声令下|一句话|吩咐一声|发话|点头|同意|批准|授权|认可|开口|说一声|吩咐|批准)|(?:如有需要|若有需要|有需要的话|需要的话|想要的话|如果要的话|若要的话|若需|如有需|如需))"
-    + r"|(?:您|你)?\s*看\s*(?:需不需要|要不要|该不该|是否需要|用不用|是否)\s*[^，。？！?!\n]{0,15}?" + ACTION
-    + r"|(?:听候差遣|听候吩咐|听候指令|听候安排)[^。？！?!\n]{0,15}?(?:由(?:你|您)|看(?:你|您)|等(?:你|您))?"
-    + r"|(?:由|看)(?:你|您)\s*(?:定夺|决断|安排|裁夺)"
-    + r"|(?:随时|随时可以|随时能够|随时准备|随时听候)\s*(?:为您?|为你?|为您效劳|吩咐|排查|开工|动手|处理|开始|修复|修改|改|做|干|搞|差遣|指令)"
-    + r"|(?:有需要|如有需要|需要的话|若有需要)[^。？！?!\n]{0,15}?(?:随时(?:叫我|找我|吩咐|联系|告知|通知|跟我说|对我说)|叫我一声|通知我)"
-    + r"|随时(?:叫我|找我|吩咐我|听候吩咐|听候差遣|听候指令)"
     + r"|should i|shall i|do you want me to|want me to|would you like me to|let me know if you(?:'d| would) like me to"
-    + r"|if you (?:need|want|prefer|would like|wish|require)[^.?!]{0,30}?(?:i can|i will|i\'ll|i am ready to|let me know)"
-    + r"|let me know if you (?:need|want|would like|wish)"
-    + r"|just let me know and i (?:can|will|\'ll)"
-    + r"|ready whenever you are"
-    + r"|i\s*(?:can|will|\'ll|could)\s*[^.?!]{0,25}?(?:if you (?:would like|want|need|prefer|wish)|whenever you (?:want|wish|say|are ready))"
-    + r"|i\s*(?:am|\'m)\s*ready to\s*[^.?!]{0,25}?(?:whenever you|if you)",
+    # ⛔ 2026-10-11 (Frank:「明明你能自动化帮我打开...留给我我自己手动做，还要我手动？」):
+    #   形状: 把本该自己全自动做完的可逆操作/打开操作/配置还原,以陈述句方式甩锅给用户手动做。
+    #   抓取: "你可以手动..." / "请自行点击..." / "通过该链接打开一次即可..." / "遗留事项供你决定...改回即可"
+    + r"|(?:(?:留给|交由?|需要|请|可由)\s*(?:你|您)|你可以?)\s*(?:手动|自己|自行|亲自)?\s*[^，。？！?!\n]{0,15}?(?:点|点击|打开|执行|运行|复制|修改|改回|改|调|弄|搞|处理|操作|访问)"
+    + r"|(?:通过|点击|打开)\s*(?:该|此|这个)?\s*(?:链接|url|网址|地址)\s*[^。？！?!\n]{0,25}?(?:即可|自行|手动)"
+    + r"|(?:若|如果|要是)\s*(?:你|您)\s*(?:希望|想|要)\s*[^。？！?!\n]{0,35}?(?:自行|手动|自己|改回|下次重启时\s*把[^。？！?!\n]{0,15}?改回)"
+    + r"|遗留事项\s*[(（]\s*供(?:你|您)决定\s*[)）]",
     re.I,
 )
 # 明确的不可逆/对外/产品成本部署 —— profile 允许问,命中则不拦(判断出口)。
 # ⛔ critic finding:去掉裸"价格/收费"(会把"价格计算的bug要不要我修"这种纯code请示误豁免);只留决策味强的词。
 EXEMPT = re.compile(
     r"删库|drop\s+table|force\s*push|覆盖.{0,6}(?:他人|别人)|发布到|发出去|发给(?!我)|上线到生产|部署到生产|"
-    r"定价|报价|多少钱|每月.{0,4}(?:收费|价钱)|成本预算|产品(?:决策|设计|形态|方向|体验)|属于产品|页面(?:长|要).{0,4}(?:什么|哪|A还是B|布局)|"
+    r"定价|报价|多少钱|每月.{0,4}(?:收费|价钱)|成本预算|产品(?:形态|方向|体验)|页面(?:长|要).{0,4}(?:什么|哪|A还是B|布局)|"
     r"哪个平台|部署(?:到哪|目标)|不可逆|无法(?:撤销|revert|回退)|"
     # 2026-07-27:【我物理上做不到、只能人做】的动作 —— 说"等你去过滑块"不是推诿,是真边界。
     # 刻意写窄(不用裸"验证码/登录",否则"要不要我修验证码的bug"会被误豁免):只认人去操作的形状。
@@ -157,10 +139,6 @@ EXEMPT = re.compile(
 _NAG_POS = [
     "这个bug要不要我修", "需要我继续做吗", "你说方向我就来改",
     "要不要我把这几个一起处理掉", "should I fix this now", "do you want me to continue",
-    "如果你需要我现在就可以直接针对Dola进行排查修复",
-    "如果你想我也可以现在直接在后台帮你把服务拉起来",
-    "只要你说一声我现在就可以做",
-    "如果你需要我现在就可以直接动手",
 ]
 _NAG_NEG = [
     "no-nagging这个闸抓的是请示式收尾要不要我改", "我在描述防唠叨拦截的触发条件和边界",
@@ -280,55 +258,6 @@ except Exception:
         return True   # 拿不到=退回旧行为(一刀切skip),绝不因此多拦
 
 
-def check_text(text, user_prompt=""):
-    """Standalone evaluation function for no-nagging-guard. Returns violation message or None."""
-    if not text:
-        return None
-    scan = strip_doc(text)
-    tail = scan[-1200:]
-
-    HARD_CHOICE = re.compile(
-        r"(?:我(?:都|两件都|两个都|全部都)?\s*(?:能|可以|随时能|随时可以|立刻|马上)\s*(?:做|开工|动手|上手|跑|改|建)"
-        r"|两件我都|两个我都|都能立刻|都可以马上)"
-        r"[^\n]{0,60}?"
-        r"(?:还是|优先级|先做哪|先弄哪|你说一个|你挑|你选|你决定先)"
-        r"|(?:还是|先做哪|先弄哪)[^\n]{0,40}?(?:你说一个|优先级|你挑|你选)", re.S)
-    if HARD_CHOICE.search(tail):
-        return (
-            "[TruthGate 拦截 - no-nagging-guard] ⛔ 检测到硬选择题推诿：\n"
-            "把两件自己能做的可逆技术活摆成选择题丢给用户！\n"
-            "既然都能做又可逆，正确行为是全部做完再汇报，别让零编程用户替你排优先级！"
-        )
-
-    real_m = None
-    for m in NAG.finditer(tail):
-        if not _mentioned_nag(tail, m):
-            real_m = m
-            break
-
-    if not real_m:
-        return None
-
-    if EXEMPT.search(tail):
-        if should_escalate and callable(should_escalate):
-            try:
-                esc = should_escalate(tail, _ESC_POS, _ESC_NEG)
-                if not esc:
-                    return None
-            except Exception:
-                return None
-        else:
-            return None
-
-    snippet = real_m.group(0)
-    return (
-        f"[TruthGate 拦截 - no-nagging-guard] ⛔ 检测到【请示式收尾 / 废话推诿句式】（命中: 「{snippet}」）！\n"
-        "按 CLAUDE.md 授权即执行铁律：授权即执行，能 revert 的可逆技术活直接做完，严禁说「如果你需要我就做 / 要不要我做 / 只要你说一声」！\n"
-        "按 Vibe Coder 铁律：技术决策(改哪、删哪行、重建还是退役)你自己定，别甩给零编程的用户。\n"
-        "现在【别问废话，直接做完再汇报】！"
-    )
-
-
 def main():
     data = json.loads(sys.stdin.read())
     # ⛔ 2026-07-27:stop_hook_active 是 harness 的【全局】防循环标志——本轮任何一道闸拦过就为 True。
@@ -432,10 +361,8 @@ def main():
         return
     m = real
     # Phase3 语义降级:触发窗更像【讨论/引用规则】而非真请示 → 误拦降级放行(服务挂/模糊=保持拦,不漏拦)
-    # ⛔ 显式推诿句式（如果你需要/如果你想/只要你说一声/要不要我）禁止被语义分类器误降级！
-    is_explicit = is_explicit_nag(m.group(0))
     window = tail[max(0, m.start() - 40): m.end() + 40]
-    if not is_explicit and should_downgrade(window, _NAG_POS, _NAG_NEG):
+    if should_downgrade(window, _NAG_POS, _NAG_NEG):
         _log("allow(semantic-downgrade: 像在讨论/引用规则而非真请示)")
         return
     _log("BLOCK(nag) " + trig(window))
@@ -449,44 +376,8 @@ def main():
     print(json.dumps({"decision": "block", "reason": reason}, ensure_ascii=False))
 
 
-def is_explicit_nag(text: str) -> bool:
-    """Explicit nagging phrases that MUST NEVER be downgraded by semantic classification."""
-    t = text.lower()
-    explicit_keys = (
-        "如果", "若你", "倘若", "假如", "要是", "只要", "要不要我", "需要我", "该不该我", "用不用我",
-        "可不可以我", "要我", "你说", "你说哪个", "你定", "你说了算", "你决定", "等你", "一句话", "一声令下",
-        "吩咐", "交代", "随时", "听候", "效劳", "现在就可以", "也可以现在", "马上就可以",
-        "如有需要", "若有需要", "需要的话", "想要的话", "如需", "如有需", "若需"
-    )
-    explicit_en = ("should i", "do you want me", "want me to", "would you like me to", "let me know if you", "ready whenever")
-    return any(k in text for k in explicit_keys) or any(k in t for k in explicit_en)
-
-
-def check_text(text, blob=""):
-    """Standard check_text entrypoint for Antigravity & dynamic runner integration."""
-    if not text:
-        return None
-    scan = strip_doc(text)
-    tail = scan[-1200:]
-    if EXEMPT.search(tail):
-        return None
-    for m in NAG.finditer(tail):
-        if not _mentioned_nag(tail, m):
-            is_explicit = is_explicit_nag(m.group(0))
-            window = tail[max(0, m.start() - 40): m.end() + 40]
-            if is_explicit or not should_downgrade(window, _NAG_POS, _NAG_NEG):
-                return (
-                    f"[TruthGate 拦截 - no-nagging-guard] ⛔ 检测到【请示式收尾 / 废话推诿句式】（命中: 「{m.group(0)}」）！\n"
-                    "按 CLAUDE.md 授权即执行铁律：授权即执行，能 revert 的可逆技术活直接做完，严禁说「如果你需要我就做 / 要不要我做 / 只要你说一声」！\n"
-                    "按 Vibe Coder 铁律：技术决策(改哪、删哪行、重建还是退役)你自己定，别甩给零编程的用户。\n"
-                    "现在【别问废话，直接做完再汇报】！"
-                )
-    return None
-
-
 if __name__ == "__main__":
     try:
         main()
     except Exception as e:
         _log(f"error(fail-open): {e}")
-

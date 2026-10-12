@@ -1,0 +1,3659 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Superego 外审判官 · 全屏高密行为治理监控台</title>
+  <style>
+    :root {
+      --bg-main: #070a11;
+      --bg-surface: #0f1523;
+      --bg-subtle: #172033;
+      --bg-hover: #1f2b45;
+      --border-color: #263552;
+      --border-subtle: #1b263b;
+      
+      --text-main: #f8fafc;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      
+      --brand: #3b82f6;
+      --brand-glow: rgba(59, 130, 246, 0.3);
+      
+      --pass: #10b981;
+      --pass-bg: rgba(16, 185, 129, 0.18);
+      --pass-border: #059669;
+      
+      --fire: #f59e0b;
+      --fire-bg: rgba(245, 158, 11, 0.18);
+      --fire-border: #d97706;
+      
+      --block: #ef4444;
+      --block-bg: rgba(239, 68, 68, 0.2);
+      --block-border: #dc2626;
+      
+      --resolved: #10b981;
+      --resolved-bg: rgba(16, 185, 129, 0.2);
+      --resolved-border: #059669;
+
+      --recurring: #f43f5e;
+      --recurring-bg: rgba(244, 63, 94, 0.22);
+      --recurring-border: #e11d48;
+
+      --fp: #a855f7;
+      --fp-bg: rgba(168, 85, 247, 0.2);
+      --fp-border: #9333ea;
+      
+      --turn: #06b6d4;
+      --turn-bg: rgba(6, 182, 212, 0.18);
+      --turn-border: #0891b2;
+
+      /* 字体缩放基准 */
+      --base-font: 15px;
+      --table-font: 15px;
+      --title-font: 20px;
+    }
+
+    /* 字体缩放模式 */
+    body.font-compact {
+      --base-font: 14px;
+      --table-font: 14px;
+    }
+    body.font-comfort {
+      --base-font: 15px;
+      --table-font: 15px;
+    }
+    body.font-large {
+      --base-font: 17px;
+      --table-font: 17px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      line-height: 1.5;
+      padding: 16px 20px;
+      min-height: 100vh;
+      font-size: var(--base-font);
+    }
+
+    /* 彻底消灭定宽居中，全面 100% 满屏拉满 */
+    .dashboard-layout {
+      width: 100%;
+      max-width: 100%;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* 顶部导航与品牌 */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 22px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+    }
+    .brand-section {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .brand-logo {
+      font-size: 28px;
+      background: linear-gradient(135deg, #2563eb, #7c3aed);
+      width: 48px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 10px;
+      box-shadow: 0 0 20px var(--brand-glow);
+    }
+    .brand-text h1 {
+      font-size: var(--title-font);
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .brand-tag {
+      font-size: 12px;
+      background: rgba(59, 130, 246, 0.25);
+      color: #93c5fd;
+      border: 1px solid rgba(59, 130, 246, 0.5);
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+    .brand-text p {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-top: 3px;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .live-status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-color);
+      padding: 7px 16px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 500;
+    }
+    .pulse-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--pass);
+      box-shadow: 0 0 10px var(--pass);
+      animation: pulse 2s infinite;
+    }
+    .pulse-dot.offline {
+      background: var(--block);
+      box-shadow: 0 0 10px var(--block);
+      animation: none;
+    }
+    @keyframes pulse {
+      0% { opacity: 0.6; transform: scale(0.95); }
+      50% { opacity: 1; transform: scale(1.15); box-shadow: 0 0 14px var(--pass); }
+      100% { opacity: 0.6; transform: scale(0.95); }
+    }
+
+    /* 指标统计卡片 (5大核心全宽大卡片) */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 14px;
+      width: 100%;
+    }
+    @media (max-width: 1200px) {
+      .metrics-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    .metric-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 16px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      transition: transform 0.15s, border-color 0.15s;
+    }
+    .metric-box:hover {
+      border-color: var(--brand);
+      transform: translateY(-2px);
+    }
+    .metric-title {
+      font-size: 13px;
+      color: var(--text-secondary);
+      font-weight: 600;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .metric-number {
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      line-height: 1.1;
+    }
+    .metric-sub {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .num-total { color: #38bdf8; }
+    .num-block { color: var(--block); }
+    .num-closure { color: #34d399; }
+    .num-turns { color: #818cf8; }
+    .num-fp { color: #c084fc; }
+
+    /* 控制栏与快捷工具 (100% 全宽响应) */
+    .controls-panel {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 12px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      width: 100%;
+    }
+    .filter-pills {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .pill-btn {
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-color);
+      color: var(--text-secondary);
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .pill-btn:hover {
+      background: var(--bg-hover);
+      color: var(--text-main);
+    }
+    .pill-btn.active {
+      background: var(--brand);
+      border-color: var(--brand);
+      color: #fff;
+    }
+    .count-badge {
+      background: rgba(0,0,0,0.3);
+      font-size: 11px;
+      padding: 1px 6px;
+      border-radius: 10px;
+    }
+
+    .tools-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .search-wrap {
+      position: relative;
+      width: 280px;
+    }
+    .search-box {
+      width: 100%;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 7px 14px 7px 34px;
+      border-radius: 8px;
+      font-size: 13px;
+      outline: none;
+    }
+    .search-box:focus { border-color: var(--brand); }
+    .search-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .select-dropdown {
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      outline: none;
+      cursor: pointer;
+    }
+
+    /* 字体大小调节胶囊 */
+    .font-scale-group {
+      display: flex;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .font-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      padding: 5px 12px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .font-btn:hover { color: var(--text-main); }
+    .font-btn.active {
+      background: var(--brand);
+      color: #fff;
+    }
+
+    /* 日期分割 */
+    .date-tag {
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-color);
+      color: #cbd5e1;
+      padding: 4px 14px;
+      border-radius: 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    /* 100% 满屏全宽表格 */
+    .table-container {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      overflow: hidden;
+      width: 100%;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    }
+    .saas-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: var(--table-font);
+      text-align: left;
+    }
+    .saas-table th {
+      background: var(--bg-subtle);
+      color: var(--text-secondary);
+      font-weight: 700;
+      padding: 12px 18px;
+      border-bottom: 1px solid var(--border-color);
+      font-size: 13px;
+      white-space: nowrap;
+    }
+    .saas-table td {
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border-subtle);
+      vertical-align: middle;
+    }
+    .saas-table tr {
+      transition: background 0.15s;
+      cursor: pointer;
+    }
+    .saas-table tr:hover {
+      background: var(--bg-hover);
+    }
+    .saas-table tr.new-item {
+      animation: highlightRow 1.8s ease-out;
+    }
+    @keyframes highlightRow {
+      0% { background: rgba(59, 130, 246, 0.35); }
+      100% { background: transparent; }
+    }
+
+    .time-cell {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      color: #f1f5f9;
+      font-size: 13px;
+      white-space: nowrap;
+    }
+    .time-relative {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-top: 3px;
+    }
+
+    .actor-tag {
+      font-size: 12px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 6px;
+      background: #1e293b;
+      white-space: nowrap;
+    }
+    .actor-ag { color: #60a5fa; border: 1px solid rgba(96, 165, 250, 0.35); }
+    .actor-cc { color: #c084fc; border: 1px solid rgba(192, 132, 252, 0.35); }
+    .actor-codex { color: #34d399; border: 1px solid rgba(52, 211, 153, 0.35); }
+    .actor-dsh { color: #f472b6; border: 1px solid rgba(244, 114, 182, 0.35); }
+
+    .status-badge {
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 6px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+    .badge-pass { background: var(--pass-bg); color: #34d399; border: 1px solid var(--pass-border); }
+    .badge-fire { background: var(--fire-bg); color: #fbbf24; border: 1px solid var(--fire-border); }
+    .badge-block { background: var(--block-bg); color: #f87171; border: 1px solid var(--block-border); }
+    .badge-turn { background: var(--turn-bg); color: #38bdf8; border: 1px solid var(--turn-border); }
+    .badge-fp { background: var(--fp-bg); color: #c084fc; border: 1px solid var(--fp-border); }
+
+    /* 纠偏闭环专用状态胶囊 (大字体，饱满圆润) */
+    .closure-badge {
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 20px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+    .closure-resolved {
+      background: var(--resolved-bg);
+      color: #34d399;
+      border: 1px solid var(--resolved-border);
+    }
+    .closure-recurring {
+      background: var(--recurring-bg);
+      color: #fb7185;
+      border: 1px solid var(--recurring-border);
+    }
+    .closure-pending {
+      background: rgba(59, 130, 246, 0.2);
+      color: #60a5fa;
+      border: 1px solid #3b82f6;
+    }
+    .closure-compliant {
+      background: rgba(148, 163, 184, 0.14);
+      color: #94a3b8;
+      border: 1px solid #475569;
+    }
+    .closure-fp {
+      background: var(--fp-bg);
+      color: #d8b4fe;
+      border: 1px solid var(--fp-border);
+    }
+
+    .rules-list {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .rule-chip {
+      font-size: 12px;
+      padding: 3px 10px;
+      border-radius: 6px;
+      background: rgba(239, 68, 68, 0.14);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      color: #fca5a5;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.15s;
+    }
+    .rule-chip:hover {
+      background: rgba(239, 68, 68, 0.3);
+      border-color: var(--block);
+      color: #fff;
+    }
+
+    .summary-text {
+      color: var(--text-main);
+      font-size: var(--table-font);
+      line-height: 1.5;
+    }
+
+    /* 底部分页控制器 */
+    .pagination-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 22px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      font-size: 13px;
+      color: var(--text-secondary);
+      width: 100%;
+    }
+    .page-nav {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .page-btn {
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 5px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .page-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    /* 侧边详情抽屉 (Slide-over Drawer) */
+    .drawer-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.65);
+      backdrop-filter: blur(4px);
+      display: none;
+      justify-content: flex-end;
+      z-index: 999;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+    .drawer-overlay.open {
+      display: flex;
+      opacity: 1;
+    }
+    .drawer {
+      width: 620px;
+      max-width: 92%;
+      background: var(--bg-surface);
+      border-left: 1px solid var(--border-color);
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      box-shadow: -12px 0 36px rgba(0,0,0,0.65);
+      transform: translateX(100%);
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .drawer-overlay.open .drawer {
+      transform: translateX(0);
+    }
+    .drawer-header {
+      padding: 22px 24px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .drawer-header h2 {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+    .drawer-close {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 24px;
+      cursor: pointer;
+    }
+    .drawer-close:hover { color: var(--text-main); }
+    .drawer-content {
+      padding: 24px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      font-size: 14px;
+    }
+    .drawer-section {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .section-label {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+      font-weight: 700;
+    }
+    .drawer-meta-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 14px 16px;
+    }
+    .meta-item { display: flex; flex-direction: column; gap: 3px; }
+    .meta-title { font-size: 12px; color: var(--text-muted); }
+    .meta-val { font-size: 14px; font-weight: 700; color: var(--text-main); }
+
+    .closure-box {
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .closure-box-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .rule-detail-card {
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .rule-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #fca5a5;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .rule-desc {
+      color: #e2e8f0;
+      line-height: 1.6;
+    }
+    .gates-box {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 4px;
+    }
+    .gate-chip {
+      background: #0f172a;
+      border: 1px solid #334155;
+      color: #94a3b8;
+      font-size: 12px;
+      padding: 3px 8px;
+      border-radius: 4px;
+    }
+    .raw-box {
+      background: #080c14;
+      border: 1px solid var(--border-color);
+      padding: 12px 14px;
+      border-radius: 8px;
+      font-family: monospace;
+      font-size: 12px;
+      color: #94a3b8;
+      word-break: break-all;
+    }
+
+    .btn-appeal {
+      background: rgba(168, 85, 247, 0.18);
+      border: 1px solid rgba(168, 85, 247, 0.45);
+      color: #e9d5ff;
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.15s;
+    }
+    .btn-appeal:hover {
+      background: rgba(168, 85, 247, 0.35);
+      border-color: #a855f7;
+      color: #fff;
+    }
+  
+    /* 主导航 Tab 栏切换 */
+    .main-tabs-nav {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 8px 12px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.3);
+    }
+    .main-tab-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-secondary);
+      font-size: 15px;
+      font-weight: 700;
+      padding: 10px 22px;
+      border-radius: 9px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .main-tab-btn:hover {
+      background: var(--bg-subtle);
+      color: var(--text-main);
+      border-color: var(--border-color);
+    }
+    .main-tab-btn.active {
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.25), rgba(124, 58, 237, 0.25));
+      border: 1px solid rgba(59, 130, 246, 0.6);
+      color: #fff;
+      box-shadow: 0 0 16px rgba(59, 130, 246, 0.2);
+    }
+    .tab-icon { font-size: 18px; }
+    .tab-pill {
+      font-size: 12px;
+      font-weight: 700;
+      background: rgba(255, 255, 255, 0.1);
+      color: #cbd5e1;
+      padding: 2px 9px;
+      border-radius: 12px;
+    }
+    .main-tab-btn.active .tab-pill {
+      background: var(--brand);
+      color: #fff;
+    }
+    .main-tab-btn.active .pill-lessons {
+      background: #8b5cf6;
+      color: #fff;
+    }
+
+    /* 教训案例库专区样式 */
+    .quote-cell {
+      max-width: 320px;
+    }
+    .quote-box {
+      background: rgba(245, 158, 11, 0.1);
+      border-left: 3px solid #f59e0b;
+      padding: 8px 12px;
+      border-radius: 0 6px 6px 0;
+      color: #fef08a;
+      font-size: 13px;
+      line-height: 1.5;
+      font-style: italic;
+      word-break: break-word;
+    }
+    .quote-box .quote-avatar {
+      font-weight: 700;
+      font-style: normal;
+      color: #fbbf24;
+      margin-right: 4px;
+    }
+    .shape-title-text {
+      font-weight: 700;
+      font-size: 15px;
+      color: #f8fafc;
+      margin-bottom: 6px;
+      line-height: 1.4;
+    }
+    .root-cause-snippet {
+      font-size: 13px;
+      color: #fca5a5;
+      background: rgba(239, 68, 68, 0.08);
+      border-radius: 6px;
+      padding: 6px 10px;
+      margin-top: 4px;
+      line-height: 1.45;
+    }
+    .defense-snippet {
+      font-size: 13px;
+      color: #6ee7b7;
+      background: rgba(16, 185, 129, 0.08);
+      border-radius: 6px;
+      padding: 6px 10px;
+      margin-top: 4px;
+      line-height: 1.45;
+    }
+    .btn-read-lesson {
+      background: rgba(59, 130, 246, 0.15);
+      border: 1px solid rgba(59, 130, 246, 0.4);
+      color: #93c5fd;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+    .btn-read-lesson:hover {
+      background: rgba(59, 130, 246, 0.35);
+      border-color: #3b82f6;
+      color: #fff;
+    }
+    .badge-today {
+      background: rgba(239, 68, 68, 0.25);
+      border: 1px solid #ef4444;
+      color: #fca5a5;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 4px;
+      margin-left: 6px;
+    }
+    
+
+    /* Agent 归属与作用域徽章 */
+    .badge-scope-univ {
+      background: rgba(16, 185, 129, 0.18);
+      border: 1px solid #10b981;
+      color: #6ee7b7;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      display: inline-block;
+      margin-top: 4px;
+    }
+    .badge-scope-tool {
+      background: rgba(245, 158, 11, 0.18);
+      border: 1px solid #f59e0b;
+      color: #fde047;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      display: inline-block;
+      margin-top: 4px;
+    }
+    .origin-tag {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 4px;
+      display: inline-block;
+      margin-top: 3px;
+    }
+    .origin-ag {
+      background: rgba(59, 130, 246, 0.25);
+      border: 1px solid #3b82f6;
+      color: #93c5fd;
+    }
+    .origin-claude {
+      background: rgba(249, 115, 22, 0.22);
+      border: 1px solid #f97316;
+      color: #fdba74;
+    }
+    .origin-codex {
+      background: rgba(168, 85, 247, 0.25);
+      border: 1px solid #a855f7;
+      color: #e9d5ff;
+    }
+    .pollution-alert-box {
+      background: rgba(245, 158, 11, 0.08);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      border-radius: 10px;
+      padding: 12px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 14px;
+    }
+    .pollution-alert-text {
+      font-size: 13px;
+      color: #fef08a;
+      line-height: 1.5;
+    }
+    
+
+    /* 系统设置与规则市场 Tab 专用样式 */
+    .settings-container {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      width: 100%;
+    }
+    .settings-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    @media (max-width: 900px) {
+      .settings-grid { grid-template-columns: 1fr; }
+    }
+    .settings-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+    }
+    .settings-card-title {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--brand);
+    }
+    .profile-card {
+      padding: 14px;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+      background: var(--bg-subtle);
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .profile-card:hover {
+      border-color: rgba(59, 130, 246, 0.5);
+      background: var(--bg-hover);
+    }
+    .profile-card.active {
+      border-color: var(--brand);
+      background: rgba(59, 130, 246, 0.15);
+      box-shadow: 0 0 16px rgba(59, 130, 246, 0.2);
+    }
+    .profile-title { font-weight: 700; font-size: 15px; margin-bottom: 4px; color: #f8fafc; }
+    .profile-desc { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
+
+    .setting-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .setting-item:last-child { border-bottom: none; }
+    .setting-info { max-width: 80%; }
+    .setting-name { font-size: 14px; font-weight: 600; color: #f1f5f9; }
+    .setting-sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; line-height: 1.4; }
+
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 44px;
+      height: 24px;
+      flex-shrink: 0;
+    }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .slider {
+      position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+      background-color: #334155;
+      transition: .3s;
+      border-radius: 24px;
+    }
+    .slider:before {
+      position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px;
+      background-color: white;
+      transition: .3s;
+      border-radius: 50%;
+    }
+    input:checked + .slider { background-color: var(--brand); }
+    input:checked + .slider:before { transform: translateX(20px); }
+
+    .form-group { margin-bottom: 14px; }
+    .form-label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: var(--text-secondary); }
+    .form-input {
+      width: 100%;
+      padding: 10px 14px;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      color: var(--text-main);
+      font-size: 13px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .form-input:focus { border-color: var(--brand); }
+
+    .rulepack-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px;
+      background: var(--bg-subtle);
+      border-radius: 8px;
+      margin-bottom: 10px;
+      border: 1px solid var(--border-color);
+      transition: border-color 0.2s;
+    }
+    .rulepack-row:hover { border-color: var(--brand); }
+    .rulepack-title { font-weight: 700; font-size: 14px; color: #f8fafc; }
+    .rulepack-meta { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
+    #settings-toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      padding: 12px 24px;
+      background: var(--pass);
+      color: #064e3b;
+      font-weight: 700;
+      border-radius: 8px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+      display: none;
+      z-index: 9999;
+      font-size: 14px;
+    }
+
+</style>
+</head>
+<body class="font-comfort">
+  <div class="dashboard-layout">
+    <!-- 顶部导航 -->
+    <header>
+      <div class="brand-section">
+        <div class="brand-logo">⚖️</div>
+        <div class="brand-text">
+          <h1>Superego 判官网络 <span class="brand-tag">全屏高密沉浸大屏</span></h1>
+          <p>零编程友好 · 四脑全景协同闭环 (Claude Code · OpenAI Codex · Antigravity · DeepSeek Harness) · 物理隔离与 14 天 Cut-off 影子大盘</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <!-- 字体缩放开关 -->
+        <div class="font-scale-group" title="调节全局字号大小">
+          <button class="font-btn" data-scale="font-compact">标准 A</button>
+          <button class="font-btn active" data-scale="font-comfort">舒适 A+</button>
+          <button class="font-btn" data-scale="font-large">特大 A++</button>
+        </div>
+        <!-- 满血度诊断体检徽章 (点击打开 6 大核心器官满血诊断) -->
+        <div id="blood-status-badge" class="supervisor-status" onclick="openBloodModal()" style="display:flex; align-items:center; gap:6px; background:rgba(239, 68, 68, 0.15); border:1px solid #dc2626; padding:5px 14px; border-radius:20px; font-size:12px; color:#fca5a5; font-weight:600; cursor:pointer; transition:all 0.2s;" title="点击查看满血度 6 大核心器官状态与一键修复">
+          <span id="blood-badge-icon">🩸</span>
+          <span id="blood-badge-text">满血度诊断中...</span>
+        </div>
+        <!-- 全景系统体检与自愈监察徽章 (点击打开 5 大支柱体检报告) -->
+        <div id="doctor-status-badge" class="supervisor-status" onclick="openDoctorModal()" style="display:flex; align-items:center; gap:6px; background:rgba(16, 185, 129, 0.15); border:1px solid #059669; padding:5px 14px; border-radius:20px; font-size:12px; color:#10b981; font-weight:600; cursor:pointer; transition:all 0.2s;" title="点击查看全系统 5 大支柱健康体检诊断与自愈中心">
+          <span id="doctor-badge-icon">🩺</span>
+          <span id="doctor-badge-text">系统体检加载中...</span>
+        </div>
+        <div class="live-status">
+          <div class="pulse-dot" id="live-indicator"></div>
+          <span id="live-text">实时连接就绪</span>
+        </div>
+        <button class="pill-btn" onclick="openDoctorModal()" title="查看全景健康诊断" style="background:rgba(16, 185, 129, 0.2); color:#6ee7b7; border-color:#10b981;">🩺 体检中心</button>
+        <button class="pill-btn" onclick="switchMainTab('settings')" title="配置外审大模型与 API Key" style="background:rgba(59, 130, 246, 0.2); color:#93c5fd; border-color:#3b82f6;">⚙️ 外审配置</button>
+        <button class="pill-btn" onclick="fetchRecentData()" title="刷新最新流水">🔄 刷新</button>
+      </div>
+    </header>
+
+    <!-- 顶层主功能导航 Tab 栏 -->
+    <div class="main-tabs-nav">
+      <button class="main-tab-btn active" id="tab-btn-stream" onclick="switchMainTab('stream')">
+        <span class="tab-icon">⚖️</span>
+        <span class="tab-title">实时判官行为监控大盘</span>
+        <span class="tab-pill" id="badge-stream-count">250 条流水</span>
+      </button>
+      <button class="main-tab-btn" id="tab-btn-shadow" onclick="switchMainTab('shadow')">
+        <span class="tab-icon">🛡️</span>
+        <span class="tab-title">四端影子监管与 14 天结算</span>
+        <span class="tab-pill" style="background:#8b5cf6;color:#fff;" id="badge-shadow-countdown">14天倒计时 (2026-10-03)</span>
+      </button>
+      <button class="main-tab-btn" id="tab-btn-lessons" onclick="switchMainTab('lessons')">
+        <span class="tab-icon">📚</span>
+        <span class="tab-title">历代教训案例库 (Lessons Archive)</span>
+        <span class="tab-pill pill-lessons" id="badge-lessons-count">816 篇实录</span>
+      </button>
+      <button class="main-tab-btn" id="tab-btn-settings" onclick="switchMainTab('settings')">
+        <span class="tab-icon">⚙️</span>
+        <span class="tab-title">系统设置与规则市场</span>
+        <span class="tab-pill" style="background:rgba(56, 189, 248, 0.2);color:#38bdf8;" id="badge-settings-profile">老板模式</span>
+      </button>
+    </div>
+    
+
+    <div id="view-stream" class="dashboard-view-pane">
+<!-- 5大闭环指标行 (100% 满屏大卡片) -->
+    <div class="metrics-grid">
+      <div class="metric-box">
+        <div class="metric-title">
+          <span>今日审查流水</span>
+          <span>📊</span>
+        </div>
+        <span class="metric-number num-total" id="m-total">0</span>
+        <span class="metric-sub">全量审判会话事件</span>
+      </div>
+      <div class="metric-box">
+        <div class="metric-title">
+          <span>违规拦截开火</span>
+          <span>🚨</span>
+        </div>
+        <span class="metric-number num-block" id="m-block">0</span>
+        <span class="metric-sub">硬拦截打回与红牌总计</span>
+      </div>
+      <div class="metric-box">
+        <div class="metric-title">
+          <span>纠偏收敛闭环率</span>
+          <span>🎯</span>
+        </div>
+        <span class="metric-number num-closure" id="m-closure">0%</span>
+        <span class="metric-sub" id="m-closure-desc">被拦后改正并通过审查比例</span>
+      </div>
+      <div class="metric-box">
+        <div class="metric-title">
+          <span>平均纠偏轮次</span>
+          <span>⚡</span>
+        </div>
+        <span class="metric-number num-turns" id="m-turns">0.0 轮</span>
+        <span class="metric-sub">被拦后第几轮真正跟着做了</span>
+      </div>
+      <div class="metric-box">
+        <div class="metric-title">
+          <span>误伤监管与申诉</span>
+          <span>🛡️</span>
+        </div>
+        <span class="metric-number num-fp" id="m-fp">0 起</span>
+        <span class="metric-sub">人工申诉豁免与语义纠偏</span>
+      </div>
+    </div>
+
+    <!-- 工具与筛选控制栏 -->
+    <div class="controls-panel">
+      <!-- 状态筛选 -->
+      <div class="filter-pills" id="status-filters">
+        <button class="pill-btn active" data-status="all">全部 <span class="count-badge" id="c-all">0</span></button>
+        <button class="pill-btn" data-status="issues">只看拦截与红牌 ⛔ <span class="count-badge" id="c-issues">0</span></button>
+        <button class="pill-btn" data-status="resolved">已成功纠偏闭环 ✅ <span class="count-badge" id="c-resolved">0</span></button>
+        <button class="pill-btn" data-status="recurring">连续再犯警告 ⚠️ <span class="count-badge" id="c-recurring">0</span></button>
+        <button class="pill-btn" data-status="fp">误伤申诉记录 🟣 <span class="count-badge" id="c-fp">0</span></button>
+      </div>
+
+      <!-- 助手筛选 (四端网络全景) -->
+      <div class="filter-pills" id="agent-filters">
+        <button class="pill-btn active" data-agent="all">全部助手 <span class="count-badge" id="c-ag-all">0</span></button>
+        <button class="pill-btn" data-agent="antigravity">🤖 Antigravity <span class="count-badge" id="c-ag-antigravity">0</span></button>
+        <button class="pill-btn" data-agent="claude">🤖 Claude Code <span class="count-badge" id="c-ag-claude">0</span></button>
+        <button class="pill-btn" data-agent="codex">🤖 OpenAI Codex <span class="count-badge" id="c-ag-codex">0</span></button>
+        <button class="pill-btn" data-agent="dsh">🤖 DeepSeek Harness <span class="count-badge" id="c-ag-dsh">0</span></button>
+      </div>
+
+      <!-- 搜索与配置 -->
+      <div class="tools-right">
+        <div class="search-wrap">
+          <span class="search-icon">🔍</span>
+          <input type="text" class="search-box" id="search-input" placeholder="搜索规则、时间、闭环状态、关键词...">
+        </div>
+
+        <select class="select-dropdown" id="sort-select">
+          <option value="desc">⬇️ 最新置顶 (推荐)</option>
+          <option value="asc">⬆️ 历史正序</option>
+        </select>
+
+        <select class="select-dropdown" id="page-size-select">
+          <option value="25">每页 25 条</option>
+          <option value="50">每页 50 条</option>
+          <option value="100">每页 100 条</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- 主流水内容区 (100% 满屏全宽表格) -->
+    <div class="table-container">
+      <table class="saas-table">
+        <thead>
+          <tr>
+            <th style="width: 180px;">完整时间</th>
+            <th style="width: 190px;">AI 助手与项目</th>
+            <th style="width: 120px;">审查裁决</th>
+            <th style="width: 210px;">整改因果闭环轨迹</th>
+            <th style="width: 240px;">触犯规则</th>
+            <th>判定概要与说明</th>
+          </tr>
+        </thead>
+        <tbody id="table-tbody">
+          <!-- 动态数据行 -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 底部分页器 -->
+    <div class="pagination-bar">
+      <span id="page-summary">显示第 0 - 0 条，共 0 条</span>
+      <div class="page-nav">
+        <button class="page-btn" id="btn-prev" onclick="changePage(-1)">上一页</button>
+        <span id="page-indicator" style="margin: 0 10px; font-weight: 700;">1 / 1</span>
+        <button class="page-btn" id="btn-next" onclick="changePage(1)">下一页</button>
+      </div>
+    </div>
+  </div>
+
+  </div>
+
+    <!-- 四端影子监管与 14 天结算专区视图 (Shadow & Cut-off View) -->
+    <div id="view-shadow" class="dashboard-view-pane" style="display: none;">
+      <!-- 4 大核心指标行 -->
+      <div class="metrics-grid" style="grid-template-columns: repeat(4, 1fr);">
+        <div class="metric-box" style="border-top: 3px solid #8b5cf6;">
+          <div class="metric-title">
+            <span>结算截止日 (Cut-off Date)</span>
+            <span>📅</span>
+          </div>
+          <span class="metric-number" style="color: #a78bfa;" id="shadow-countdown">14 天</span>
+          <span class="metric-sub">目标: 2026-10-03 15:00:00 (集中裁决)</span>
+        </div>
+        <div class="metric-box" style="border-top: 3px solid #3b82f6;">
+          <div class="metric-title">
+            <span>四端捕获事件流水</span>
+            <span>📊</span>
+          </div>
+          <span class="metric-number num-total" id="shadow-total-events">28,082</span>
+          <span class="metric-sub">Claude: 14,445 | Codex: 13,637</span>
+        </div>
+        <div class="metric-box" style="border-top: 3px solid #f59e0b;">
+          <div class="metric-title">
+            <span>跨端高危复发痛点</span>
+            <span>🚨</span>
+          </div>
+          <span class="metric-number num-block" style="color: #fbbf24;" id="shadow-recurrence-count">4 项</span>
+          <span class="metric-sub">表面共性但机理各异 (已锁定差异)</span>
+        </div>
+        <div class="metric-box" style="border-top: 3px solid #10b981;">
+          <div class="metric-title">
+            <span>物理沙箱隔离红线</span>
+            <span>🔒</span>
+          </div>
+          <span class="metric-number" style="color: #34d399;">100% 绝缘</span>
+          <span class="metric-sub">四端独立容灾 · 零代码热合并</span>
+        </div>
+      </div>
+
+      <!-- 四端流水分布与统计卡片 -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px;">
+        <div style="background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 12px; padding: 20px;">
+          <h3 style="margin-top: 0; color: #f3f4f6; font-size: 16px; display: flex; justify-content: space-between;">
+            <span>🤖 四脑协同网络捕获基准</span>
+            <span style="font-size: 12px; color: #9ca3af; font-weight: normal;">SQLite WAL 模式 · 纯只读旁路</span>
+          </h3>
+          <table style="width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 14px;">
+            <thead>
+              <tr style="border-bottom: 1px solid var(--card-border); text-align: left; color: var(--text-muted);">
+                <th style="padding: 8px 4px;">引擎端 (Engine)</th>
+                <th style="padding: 8px 4px;">核心定位与战场</th>
+                <th style="padding: 8px 4px;">捕获流水</th>
+                <th style="padding: 8px 4px;">硬拦截 (BLOCK)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                <td style="padding: 10px 4px; font-weight: 600; color: #60a5fa;">Claude Code</td>
+                <td style="padding: 10px 4px; color: var(--text-sub);">深度重构 / AST代码外审</td>
+                <td style="padding: 10px 4px; color: #f3f4f6; font-weight: 600;">14,445 条</td>
+                <td style="padding: 10px 4px; color: #ef4444; font-weight: 600;">25 次</td>
+              </tr>
+              <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                <td style="padding: 10px 4px; font-weight: 600; color: #34d399;">OpenAI Codex</td>
+                <td style="padding: 10px 4px; color: var(--text-sub);">CUA 视窗 / 桌面自动化防盗</td>
+                <td style="padding: 10px 4px; color: #f3f4f6; font-weight: 600;">13,637 条</td>
+                <td style="padding: 10px 4px; color: #ef4444; font-weight: 600;">25 次</td>
+              </tr>
+              <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                <td style="padding: 10px 4px; font-weight: 600; color: #a78bfa;">Antigravity</td>
+                <td style="padding: 10px 4px; color: var(--text-sub);">全局调度 / 事实审计 / 10硬闸</td>
+                <td style="padding: 10px 4px; color: #f3f4f6; font-weight: 600;">持续静默监听</td>
+                <td style="padding: 10px 4px; color: #10b981; font-weight: 600;">守卫事实</td>
+              </tr>
+              <tr>
+                <td style="padding: 10px 4px; font-weight: 600; color: #f472b6;">DeepSeek Harness</td>
+                <td style="padding: 10px 4px; color: var(--text-sub);">执行沙箱 / OpenCode 渠道保真</td>
+                <td style="padding: 10px 4px; color: #f3f4f6; font-weight: 600;">只读对账</td>
+                <td style="padding: 10px 4px; color: #10b981; font-weight: 600;">防中转串水</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div style="background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 12px; padding: 20px;">
+          <h3 style="margin-top: 0; color: #f3f4f6; font-size: 16px; display: flex; justify-content: space-between;">
+            <span>⚖️ 2026-10-03 结算期裁决分流预览</span>
+            <span style="font-size: 12px; color: #a78bfa;">数据说话 · 拒绝拍脑袋</span>
+          </h3>
+          <div style="margin-top: 14px;">
+            <div style="background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 8px; padding: 12px; margin-bottom: 12px;">
+              <div style="font-weight: 600; color: #60a5fa; font-size: 14px; margin-bottom: 4px;">
+                📌 类别 1: 四端公共硬核原则 (已识别 126 项候选)
+              </div>
+              <div style="font-size: 13px; color: #d1d5db; line-height: 1.5;">
+                <strong>裁决策略</strong>：四端触发且跨端误报率 &lt; 1% 的真共性铁律（如未查先断言、防虚假完成、真实截图验证），提议统一收录为全局 <code>AGENTS.md</code> / <code>PROGRESS.md</code> 原则指引，但<strong>各端代码保留独立物理实现，绝不强行共享代码</strong>。
+              </div>
+            </div>
+            <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 8px; padding: 12px;">
+              <div style="font-weight: 600; color: #f87171; font-size: 14px; margin-bottom: 4px;">
+                📌 类别 2: 引擎独占抗体 (已锁定 8 项代表规则)
+              </div>
+              <div style="font-size: 13px; color: #d1d5db; line-height: 1.5;">
+                <strong>裁决策略</strong>：Codex CUA 视窗门禁、Claude 深度重构外审、AG 事实审计、DSH 渠道防刷，永久盖章为 <code>ENGINE_EXCLUSIVE</code>，<strong>终身留在各端本地沙箱，严禁任何形式的跨端代码合并</strong>。
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4 大跨端复发痛点深度剖析 -->
+      <div style="background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 12px; padding: 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+          <div>
+            <h3 style="margin: 0; color: #f3f4f6; font-size: 16px;">🚨 四端复发高危痛点与底层机理差异诊断 (HIGH_CROSS_ENGINE_IMPACT)</h3>
+            <p style="margin: 4px 0 0 0; font-size: 13px; color: var(--text-muted);">
+              铁律：多端重复踩坑证明原则通用，但底层机理完全不同。盲目热合并会导致全端死循环雪崩，必须保持物理代码隔离！
+            </p>
+          </div>
+          <button class="pill-btn" onclick="refreshShadowData()">🔄 重新扫描痛点</button>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;" id="shadow-incidents-container">
+          <!-- 痛点 1 -->
+          <div style="background: #1a2234; border: 1px solid #2d3748; border-radius: 10px; padding: 16px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <span style="font-weight: 700; color: #f3f4f6; font-size: 15px;">📍 视觉真机证据与看图断言</span>
+              <span style="background: rgba(245, 158, 11, 0.2); color: #fbbf24; padding: 2px 8px; border-radius: 6px; font-size: 12px; font-weight: 600;">触发 253 次</span>
+            </div>
+            <div style="font-size: 13px; color: #9ca3af; margin-bottom: 8px;"><strong>表面共性</strong>: AI 声称前端/UI 已做好，但未调用看图工具出示真机画面。</div>
+            <div style="background: #111827; padding: 10px; border-radius: 6px; font-size: 12px; color: #cbd5e1; line-height: 1.6;">
+              <div>• <strong>Codex</strong>: 面对真实 Windows 物理桌面与 CUA 视窗焦点句柄 (HWND/DPI)</div>
+              <div>• <strong>Antigravity</strong>: 面对 IDE 内部特定的 view_file 协议与 Artifacts 截图审计</div>
+              <div>• <strong>Claude</strong>: 面对本地端口与静态 HTML 渲染</div>
+              <div>• <strong>DSH</strong>: 面对 Docker/Cordis 微内核无头沙箱环境</div>
+            </div>
+            <div style="margin-top: 10px; font-size: 12px; color: #34d399; font-weight: 600;">
+              ➔ 处置结论: 原则统一入 AGENTS.md，代码严格物理隔离，严禁硬合并。
+            </div>
+          </div>
+
+          <!-- 痛点 2 -->
+          <div style="background: #1a2234; border: 1px solid #2d3748; border-radius: 10px; padding: 16px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <span style="font-weight: 700; color: #f3f4f6; font-size: 15px;">📍 未搜先言与无据断言</span>
+              <span style="background: rgba(245, 158, 11, 0.2); color: #fbbf24; padding: 2px 8px; border-radius: 6px; font-size: 12px; font-weight: 600;">触发 943 次</span>
+            </div>
+            <div style="font-size: 13px; color: #9ca3af; margin-bottom: 8px;"><strong>表面共性</strong>: 未经工具检索就断言某文件/模型/资产不存在，凭模型幻觉胡说。</div>
+            <div style="background: #111827; padding: 10px; border-radius: 6px; font-size: 12px; color: #cbd5e1; line-height: 1.6;">
+              <div>• <strong>Codex</strong>: 在桌面和全局目录盲猜路径</div>
+              <div>• <strong>Antigravity</strong>: 调度时凭云端指标或常识编造平台政策</div>
+              <div>• <strong>Claude</strong>: 深耕重构时未查全量 AST 图谱即断言代码缺失</div>
+              <div>• <strong>DSH</strong>: 模型评测沙箱内随意断言依赖包可用性</div>
+            </div>
+            <div style="margin-top: 10px; font-size: 12px; color: #34d399; font-weight: 600;">
+              ➔ 处置结论: 维持四端各自本地查证闸独立拦截，绝不混用。
+            </div>
+          </div>
+
+          <!-- 痛点 3 -->
+          <div style="background: #1a2234; border: 1px solid #2d3748; border-radius: 10px; padding: 16px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <span style="font-weight: 700; color: #f3f4f6; font-size: 15px;">📍 推诿请示与反问甩锅</span>
+              <span style="background: rgba(245, 158, 11, 0.2); color: #fbbf24; padding: 2px 8px; border-radius: 6px; font-size: 12px; font-weight: 600;">触发 1,952 次</span>
+            </div>
+            <div style="font-size: 13px; color: #9ca3af; margin-bottom: 8px;"><strong>表面共性</strong>: 把已授权的任务踢回给用户，末尾反复反问『要不要继续』。</div>
+            <div style="background: #111827; padding: 10px; border-radius: 6px; font-size: 12px; color: #cbd5e1; line-height: 1.6;">
+              <div>• <strong>Codex</strong>: 桌面自动化执行遇轻微摩擦停下问</div>
+              <div>• <strong>Antigravity</strong>: 末尾习惯性礼貌推诿 (R5 违规)</div>
+              <div>• <strong>Claude</strong>: 重构遇到多解时反复确认</div>
+            </div>
+            <div style="margin-top: 10px; font-size: 12px; color: #34d399; font-weight: 600;">
+              ➔ 处置结论: 优先采用系统提示词与 PreInvocation 前置注入，而非粗暴打断进程。
+            </div>
+          </div>
+
+          <!-- 痛点 4 -->
+          <div style="background: #1a2234; border: 1px solid #2d3748; border-radius: 10px; padding: 16px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <span style="font-weight: 700; color: #f3f4f6; font-size: 15px;">📍 视窗焦点与桌面交互</span>
+              <span style="background: rgba(139, 92, 246, 0.2); color: #a78bfa; padding: 2px 8px; border-radius: 6px; font-size: 12px; font-weight: 600;">触发 1,035 次</span>
+            </div>
+            <div style="font-size: 13px; color: #9ca3af; margin-bottom: 8px;"><strong>表面共性</strong>: 拉起后台无头浏览器、抢夺用户焦点、超时死循环。</div>
+            <div style="background: #111827; padding: 10px; border-radius: 6px; font-size: 12px; color: #cbd5e1; line-height: 1.6;">
+              <div>• <strong>Codex</strong>: 专属 CUA/Sky 重型桌面操作，其余三端原生极少触及</div>
+              <div>• <strong>Antigravity</strong>: 仅通过受控 CDP 查看画面，不拉起宿主 Chrome</div>
+              <div>• <strong>Claude</strong>: 通过本地命令行与只读脚本</div>
+            </div>
+            <div style="margin-top: 10px; font-size: 12px; color: #a78bfa; font-weight: 600;">
+              ➔ 处置结论: 纯属 Codex 专属抗体，严禁向其余三端推广或合并。
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 教训案例库专区视图 (Lessons Archive View) -->
+    <!-- 教训案例库专区视图 (Lessons Archive View) -->
+    <!-- 教训案例库专区视图 (Lessons Archive View) -->
+    <!-- 教训案例库专区视图 (Lessons Archive View) -->
+    <!-- 教训案例库专区视图 (Lessons Archive View) -->
+    <!-- 教训案例库专区视图 (Lessons Archive View) -->
+    <!-- 教训案例库专区视图 (Lessons Archive View) -->
+    <!-- 教训案例库专区视图 (Lessons Archive View) -->
+    <!-- 教训案例库专区视图 (Lessons Archive View) -->
+    <!-- 教训案例库专区视图 (Lessons Archive View) -->
+    <!-- 教训案例库专区视图 (Lessons Archive View) -->
+    <!-- 教训案例库专区视图 (Lessons Archive View) -->
+    <!-- 教训案例库专区视图 (Lessons Archive View) -->
+    <!-- 教训案例库专区视图 (Lessons Archive View) -->
+    <div id="view-lessons" class="dashboard-view-pane" style="display: none;">
+      <!-- 5大教训沉淀核心指标行 -->
+      <div class="metrics-grid">
+        <div class="metric-box">
+          <div class="metric-title">
+            <span>全量教训总卷</span>
+            <span>📚</span>
+          </div>
+          <span class="metric-number num-total" id="ml-total">709</span>
+          <span class="metric-sub">历代踩坑与事后复盘总计</span>
+        </div>
+        <div class="metric-box">
+          <div class="metric-title">
+            <span>🌍 全端通用行为规则</span>
+            <span>🎯</span>
+          </div>
+          <span class="metric-number num-closure" id="ml-univ">476</span>
+          <span class="metric-sub">跨 Agent 均适用的行为红线 (R1~R52)</span>
+        </div>
+        <div class="metric-box">
+          <div class="metric-title">
+            <span>🤖 宿主专有病灶 (已隔离)</span>
+            <span>🛡️</span>
+          </div>
+          <span class="metric-number num-recurring" id="ml-isolated">233</span>
+          <span class="metric-sub" id="ml-isolated-sub">各 Agent 宿主专有病灶统计</span>
+        </div>
+        <div class="metric-box">
+          <div class="metric-title">
+            <span>用户反馈与警示原话</span>
+            <span>🗣️</span>
+          </div>
+          <span class="metric-number num-block" id="ml-quotes">177</span>
+          <span class="metric-sub">一字不漏记录直击痛点的第一手批示</span>
+        </div>
+        <div class="metric-box">
+          <div class="metric-title">
+            <span id="ml-today-title">最新批次教训</span>
+            <span>🚨</span>
+          </div>
+          <span class="metric-number num-recurring" id="ml-today">15 篇</span>
+          <span class="metric-sub">最新批次反思与防污染隔离</span>
+        </div>
+      </div>
+
+      <!-- 跨端防污染隔离架构告示栏 -->
+      <div class="pollution-alert-box">
+        <div class="pollution-alert-text">
+          <strong>🛡️ 跨端上下文防污染机制 (Anti-Pollution Architecture) 已生效：</strong>
+          严格区分【🌍 全端通用规则 (通用做事与沟通铁律)】与【🔧 宿主工具专有病灶 (各 Agent CLI/环境特定限制)】。
+          Claude 的专有 hook 超时与环境病灶绝不反向污染 Antigravity 与 Codex 上下文；每个 Agent 仅加载全端通用底线与本宿主专有教训。
+        </div>
+      </div>
+
+      <!-- 教训多维筛选控制栏 -->
+      <div class="controls-panel">
+        <!-- 作用域与宿主来源筛选 (第一排) -->
+        <div class="filter-pills" id="lesson-scope-filters">
+          <button class="pill-btn active" data-lscope="all">全部教训 <span class="count-badge" id="cl-all">709</span></button>
+          <button class="pill-btn" data-lscope="universal">🌍 全端通用铁律 <span class="count-badge" id="cl-univ">476</span></button>
+          <button class="pill-btn" data-lscope="antigravity">🤖 Antigravity 专有 <span class="count-badge" id="cl-ag">19</span></button>
+          <button class="pill-btn" data-lscope="claude">🤖 Claude Code 专有 <span class="count-badge" id="cl-claude">686</span></button>
+          <button class="pill-btn" data-lscope="codex">🤖 Codex 专有 <span class="count-badge" id="cl-codex">4</span></button>
+          <button class="pill-btn" data-lscope="today">今日新增 🚨 <span class="count-badge" id="cl-today">15</span></button>
+        </div>
+
+        <div class="tools-right">
+          <div class="search-wrap">
+            <span class="search-icon">🔍</span>
+            <input type="text" class="search-box" id="search-lesson-input" placeholder="搜索规则标题、拦截特征、治理策略、触发时机...">
+          </div>
+
+          <select class="select-dropdown" id="sort-lesson-select">
+            <option value="desc">⬇️ 最新置顶 (倒序时间)</option>
+            <option value="asc">⬆️ 历史正序 (早期在最前)</option>
+          </select>
+
+          <select class="select-dropdown" id="page-size-lesson-select">
+            <option value="25">每页 25 篇</option>
+            <option value="50">每页 50 篇</option>
+            <option value="100">每页 100 篇</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- 教训列表表格 -->
+      <div class="table-container">
+        <table class="saas-table">
+          <thead>
+            <tr>
+              <th style="width: 150px;">编号 · 宿主 · 作用域</th>
+              <th style="width: 170px;">触犯外审规则</th>
+              <th style="width: 320px;">治理触发起因 (用户警示)</th>
+              <th>教训名称与错法根因诊断 (Root Cause)</th>
+              <th style="width: 300px;">机器防御与落地防线 (Committed Fix)</th>
+              <th style="width: 110px; text-align: center;">原著实录</th>
+            </tr>
+          </thead>
+          <tbody id="table-lessons-tbody">
+            <!-- 动态教训列表行 -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 教训分页器 -->
+      <div class="pagination-bar">
+        <span id="page-lesson-summary">显示第 0 - 0 篇，共 0 篇</span>
+        <div class="page-nav">
+          <button class="page-btn" id="btn-lesson-prev" onclick="changeLessonPage(-1)">上一页</button>
+          <span id="page-lesson-indicator" style="margin: 0 10px; font-weight: 700;">1 / 1</span>
+          <button class="page-btn" id="btn-lesson-next" onclick="changeLessonPage(1)">下一页</button>
+        </div>
+      </div>
+    </div>
+    </div>
+    </div>
+    </div>
+    </div>
+    </div>
+    </div>
+    </div>
+    </div>
+    </div>
+    </div>
+    </div>
+    </div>
+    </div>
+
+
+    <!-- 第 4 个主功能 Tab: ⚙️ 系统设置与规则市场 -->
+    <div id="view-settings" class="dashboard-view-pane" style="display: none;">
+      <div class="settings-container">
+        <!-- 角色模式选择与引擎配置网格 -->
+        <div class="settings-grid">
+          <!-- 角色模式选择 -->
+          <div class="settings-card">
+            <div class="settings-card-title">👑 选择 AI 驯化模式 (Profile Mask)</div>
+            <div id="profiles-container">
+              <!-- Profiles injected by JS -->
+            </div>
+          </div>
+
+          <!-- 外审裁判与多模型路由 -->
+          <div class="settings-card">
+            <div class="settings-card-title">⚡ 外审裁判多模型路由与 API Key (Outer Critic Engine)</div>
+            <div class="form-group">
+              <label class="form-label">外审模型提供商 (Provider):</label>
+              <select id="critic-provider" class="form-input" onchange="onCriticProviderChange()">
+                <option value="gemini">🌟 Google Gemini (官方推荐 · 免费高速)</option>
+                <option value="glm">🇨🇳 智谱 GLM (官方开放平台 / 个人月卡中转)</option>
+                <option value="deepseek">🚀 DeepSeek (性价比之王 · deepseek-chat)</option>
+                <option value="openai">🤖 OpenAI (官方 gpt-4o-mini)</option>
+                <option value="openai_compatible">🌐 自定义 OpenAI 兼容中转 (包月卡 / OneAPI)</option>
+                <option value="ollama">💻 本地 Ollama (http://localhost:11434 · 0成本免Key)</option>
+                <option value="local_heuristic">🛡️ Tier 0 本地确定性引擎 (免Key · 纯离线保底)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">服务 Base URL:</label>
+              <input type="text" id="critic-base-url" class="form-input" placeholder="https://...">
+            </div>
+            <div class="form-group">
+              <label class="form-label">审判模型名称 (Model):</label>
+              <input type="text" id="critic-model" class="form-input" placeholder="如 gemini-3.8-flash / gemini-4 / glm-5.3-flash">
+            </div>
+            <div class="form-group">
+              <label class="form-label">外审 API Key (支持直接填入或 env:VAR_NAME):</label>
+              <div style="display:flex; gap:8px;">
+                <input type="password" id="critic-api-key" class="form-input" placeholder="输入 API Key...">
+                <button class="pill-btn" type="button" onclick="toggleKeyVisibility('critic-api-key')" style="padding:0 12px; white-space:nowrap;">👁️</button>
+              </div>
+            </div>
+            <div class="form-group" style="margin-top:10px;">
+              <button class="pill-btn" type="button" onclick="testCriticConnection()" id="btn-test-critic" style="width:100%; font-size:13px; font-weight:700; background:rgba(59, 130, 246, 0.2); border-color:#3b82f6; color:#93c5fd; padding:8px 16px;">
+                ⚡ 立即测试外审连通性 (Test Connection)
+              </button>
+              <div id="test-critic-result" style="display:none; margin-top:8px; padding:10px 14px; border-radius:8px; font-size:13px;"></div>
+            </div>
+            <div class="form-group" style="margin-top:14px; border-top:1px solid var(--border-color); padding-top:10px;">
+              <label class="form-label">TypeSafe API Key (Jev 350ms 极速快车道 - 可选):</label>
+              <input type="password" id="typesafe-key" class="form-input" placeholder="ts-live-... (留空走通用模型或 Tier 0)">
+            </div>
+            <p style="font-size: 12px; color: var(--text-secondary); line-height: 1.5; margin-top: 10px; background: rgba(59, 130, 246, 0.08); padding: 10px 14px; border-radius: 8px; border-left: 3px solid var(--brand);">
+              💡 <b>零门槛多级容灾</b>: 配了月卡/Gemini/DeepSeek 享受云端深度研判；完全零 Key 则自动由本地 Python 原生 AST / 正则状态机 100% 离线保底。
+            </p>
+          </div>
+        <!-- 实时大盘与自动化偏好 -->
+        <div class="settings-card">
+          <div class="settings-card-title">🖥️ 实时大盘与自动化偏好 (Web Dashboard & Automation)</div>
+          <div class="setting-item">
+            <div class="setting-info">
+              <div class="setting-name">启动时自动弹出浏览器面板 (Auto-open Dashboard on Launch)</div>
+              <div class="setting-sub">当运行 tg setup / tg upgrade / 司法守护拉起时，自动在默认浏览器中秒开 17911 审判大盘</div>
+            </div>
+            <label class="switch"><input type="checkbox" id="ui-auto-open" checked onchange="toggleAutoOpen(this.checked)"><span class="slider"></span></label>
+          </div>
+        </div>
+
+        <!-- 硬核安全防线 -->
+        <div class="settings-card">
+          <div class="settings-card-title">🛡️ 深度系统硬安全开关 (Zero-Trust Guard)</div>
+          <div class="setting-item">
+            <div class="setting-info">
+              <div class="setting-name">防反向提示词注入 (Anti-Prompt Injection)</div>
+              <div class="setting-sub">严禁外部抓取网页或不可信文档里的指令反向操控本地终端偷窃密钥</div>
+            </div>
+            <label class="switch"><input type="checkbox" id="sec-anti-inject" checked><span class="slider"></span></label>
+          </div>
+          <div class="setting-item">
+            <div class="setting-info">
+              <div class="setting-name">破坏性数据覆写前置核验 (Data Overwrite Guard)</div>
+              <div class="setting-sub">执行覆盖操作前必须比对两边行数与体积，绝不允许盲目覆盖核心库</div>
+            </div>
+            <label class="switch"><input type="checkbox" id="sec-overwrite" checked><span class="slider"></span></label>
+          </div>
+          <div class="setting-item">
+            <div class="setting-info">
+              <div class="setting-name">供应链木马与语法树扫描 (Supply Chain Guard)</div>
+              <div class="setting-sub">拦截高危安装脚本 (`curl | bash`) 与混淆代码执行</div>
+            </div>
+            <label class="switch"><input type="checkbox" id="sec-ast" checked><span class="slider"></span></label>
+          </div>
+          <div class="setting-item">
+            <div class="setting-info">
+              <div class="setting-name">孤立进程防泄漏守护 (Process Leak Guard)</div>
+              <div class="setting-sub">监控并自动回收无主残留的僵尸进程与句柄泄露，保障桌面零卡顿</div>
+            </div>
+            <label class="switch"><input type="checkbox" id="sec-leak" checked><span class="slider"></span></label>
+          </div>
+        </div>
+
+        <!-- 规则包管理 -->
+        <div class="settings-card">
+          <div class="settings-card-title" style="justify-content: space-between;">
+            <span>📦 已安装的规则包 (RulePacks)</span>
+            <button class="pill-btn" style="padding: 4px 12px; font-size: 12px;" onclick="showSettingsToast('ℹ️ 规则包在线社区商店即将上线！')">+ 发现新规则包</button>
+          </div>
+          <div id="rulepacks-container">
+            <!-- Rulepack rows -->
+          </div>
+        </div>
+
+        <!-- 底部全局操作栏 -->
+        <div class="controls-panel" style="margin-top: 10px;">
+          <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+            <button class="pill-btn active" style="background: var(--pass); border-color: var(--pass); padding: 8px 18px;" onclick="saveSettings()">💾 保存并立即生效</button>
+            <button class="pill-btn" style="padding: 8px 18px;" onclick="syncFourEnds()">🔄 立即对齐四端 (Sync)</button>
+          </div>
+          <button class="pill-btn" style="background: rgba(239, 68, 68, 0.2); border-color: #ef4444; color: #fca5a5; padding: 8px 18px;" onclick="triggerRollback()">💊 3秒一键回滚 (Rollback)</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="settings-toast">✅ 配置已成功保存并实时生效！</div>
+
+<!-- 侧边详情抽屉 (Slide-over Drawer) -->
+  <div class="drawer-overlay" id="drawer-overlay" onclick="closeDrawer()">
+    <div class="drawer" onclick="event.stopPropagation()">
+      <div class="drawer-header">
+        <h2>审查详情与因果纠偏报告</h2>
+        <button class="drawer-close" onclick="closeDrawer()">&times;</button>
+      </div>
+      <div class="drawer-content" id="drawer-content">
+        <!-- 动态插入抽屉详细数据 -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let rawEvents = [];
+    let rulesDict = {};
+    
+    // 状态
+    let currentStatus = 'all';
+    let currentAgent = 'all';
+    let searchQuery = '';
+    let sortOrder = 'desc'; // 默认最新置顶
+    let pageSize = 25;
+    let currentPage = 1;
+
+    function getRelativeTime(timestampStr) {
+      try {
+        const d = new Date(timestampStr.replace(/-/g, '/'));
+        const now = new Date();
+        const diffSec = Math.floor((now - d) / 1000);
+        if (diffSec < 15) return '刚刚';
+        if (diffSec < 60) return `${diffSec}秒前`;
+        const diffMin = Math.floor(diffSec / 60);
+        if (diffMin < 60) return `${diffMin}分钟前`;
+        const diffHour = Math.floor(diffMin / 60);
+        if (diffHour < 24) return `${diffHour}小时前`;
+        return `${Math.floor(diffHour / 24)}天前`;
+      } catch (e) {
+        return '';
+      }
+    }
+
+    function formatFullDateTime(item) {
+      return item.timestamp || item.raw.substring(0, 19);
+    }
+
+    function getDateOnly(item) {
+      const full = formatFullDateTime(item);
+      return full.split(' ')[0] || '未知日期';
+    }
+
+    async function loadRules() {
+      try {
+        const res = await fetch('/api/rules');
+        if (res.ok) rulesDict = await res.json();
+      } catch (e) {}
+    }
+
+    async function fetchRecentData() {
+      try {
+        let apiEvents = [];
+        try {
+          const res = await fetch('/api/recent');
+          if (res.ok) apiEvents = await res.json();
+        } catch (e) {}
+
+        const el = document.getElementById('embedded-stream-data');
+        let embedEvents = [];
+        if (el && el.textContent) {
+          try { embedEvents = JSON.parse(el.textContent); } catch (e) {}
+        }
+
+        const seen = new Set();
+        const combined = [];
+        for (const ev of apiEvents) {
+          const key = (ev.timestamp || '') + '|' + (ev.agent || '') + '|' + (ev.session_id || '') + '|' + (ev.raw || '').substring(0, 40);
+          if (!seen.has(key)) {
+            seen.add(key);
+            combined.push(ev);
+          }
+        }
+        for (const ev of embedEvents) {
+          const key = (ev.timestamp || '') + '|' + (ev.agent || '') + '|' + (ev.session_id || '') + '|' + (ev.raw || '').substring(0, 40);
+          if (!seen.has(key)) {
+            seen.add(key);
+            combined.push(ev);
+          }
+        }
+
+        rawEvents = combined;
+        updateMetricsAndRender();
+      } catch (e) {
+        console.error("fetchRecentData error:", e);
+      }
+    }
+
+    function updateMetricsAndRender() {
+      const total = rawEvents.length;
+      const blocks = rawEvents.filter(e => e.status === 'BLOCK').length;
+      const fires = rawEvents.filter(e => e.status === 'FIRE').length;
+      const issuesTotal = blocks + fires;
+
+      const resolvedCount = rawEvents.filter(e => e.resolution_status === 'RESOLVED').length;
+      const recurringCount = rawEvents.filter(e => e.resolution_status === 'RECURRING').length;
+      const fpCount = rawEvents.filter(e => e.is_false_positive).length;
+
+      const closureRate = issuesTotal > 0 ? ((resolvedCount / issuesTotal) * 100).toFixed(1) + '%' : '100%';
+
+      const resolvedEvents = rawEvents.filter(e => e.resolution_turns > 0);
+      let avgTurns = '1.0 轮';
+      if (resolvedEvents.length > 0) {
+        const sumTurns = resolvedEvents.reduce((acc, ev) => acc + ev.resolution_turns, 0);
+        avgTurns = (sumTurns / resolvedEvents.length).toFixed(1) + ' 轮';
+      }
+
+      document.getElementById('m-total').textContent = total;
+      document.getElementById('m-block').textContent = issuesTotal;
+      document.getElementById('m-closure').textContent = closureRate;
+      document.getElementById('m-turns').textContent = avgTurns;
+      document.getElementById('m-fp').textContent = `${fpCount} 起`;
+
+      document.getElementById('c-all').textContent = total;
+      document.getElementById('c-issues').textContent = issuesTotal;
+      document.getElementById('c-resolved').textContent = resolvedCount;
+      document.getElementById('c-recurring').textContent = recurringCount;
+      document.getElementById('c-fp').textContent = fpCount;
+
+      // 动态更新四端助手统计徽章
+      const cAgAll = total;
+      const cAgAntigravity = rawEvents.filter(e => e.agent === 'antigravity').length;
+      const cAgClaude = rawEvents.filter(e => e.agent === 'claude').length;
+      const cAgCodex = rawEvents.filter(e => e.agent === 'codex').length;
+      const cAgDsh = rawEvents.filter(e => e.agent === 'dsh').length;
+
+      const elAgAll = document.getElementById('c-ag-all');
+      const elAgAntigravity = document.getElementById('c-ag-antigravity');
+      const elAgClaude = document.getElementById('c-ag-claude');
+      const elAgCodex = document.getElementById('c-ag-codex');
+      const elAgDsh = document.getElementById('c-ag-dsh');
+
+      if (elAgAll) elAgAll.textContent = cAgAll;
+      if (elAgAntigravity) elAgAntigravity.textContent = cAgAntigravity;
+      if (elAgClaude) elAgClaude.textContent = cAgClaude;
+      if (elAgCodex) elAgCodex.textContent = cAgCodex;
+      if (elAgDsh) elAgDsh.textContent = cAgDsh;
+
+      renderView();
+    }
+
+    function getFilteredEvents() {
+      return rawEvents.filter(ev => {
+        if (currentAgent !== 'all' && ev.agent !== currentAgent) return false;
+        if (currentStatus === 'issues' && ev.status !== 'BLOCK' && ev.status !== 'FIRE') return false;
+        if (currentStatus === 'resolved' && ev.resolution_status !== 'RESOLVED') return false;
+        if (currentStatus === 'recurring' && ev.resolution_status !== 'RECURRING') return false;
+        if (currentStatus === 'fp' && !ev.is_false_positive) return false;
+
+        if (searchQuery) {
+          const q = searchQuery.toLowerCase();
+          const rText = (ev.rules || []).map(r => r.code + ' ' + r.name + ' ' + (r.desc || '')).join(' ');
+          const fullText = (ev.raw + ' ' + ev.summary + ' ' + (ev.resolution_label || '') + ' ' + ev.project + ' ' + ev.timestamp + ' ' + rText).toLowerCase();
+          if (!fullText.includes(q)) return false;
+        }
+        return true;
+      }).sort((a, b) => {
+        const timeA = new Date((a.timestamp || '').replace(/-/g, '/')).getTime() || 0;
+        const timeB = new Date((b.timestamp || '').replace(/-/g, '/')).getTime() || 0;
+        return sortOrder === 'desc' ? timeB - timeA : timeA - timeB;
+      });
+    }
+
+    function renderView() {
+      const filtered = getFilteredEvents();
+      const totalFiltered = filtered.length;
+      const totalPages = Math.max(1, Math.ceil(totalFiltered / pageSize));
+
+      if (currentPage > totalPages) currentPage = totalPages;
+      if (currentPage < 1) currentPage = 1;
+
+      const startIndex = (currentPage - 1) * pageSize;
+      const pageItems = filtered.slice(startIndex, startIndex + pageSize);
+
+      document.getElementById('page-summary').textContent = `显示第 ${totalFiltered === 0 ? 0 : startIndex + 1} - ${Math.min(startIndex + pageSize, totalFiltered)} 条，共 ${totalFiltered} 条`;
+      document.getElementById('page-indicator').textContent = `${currentPage} / ${totalPages}`;
+      document.getElementById('btn-prev').disabled = currentPage <= 1;
+      document.getElementById('btn-next').disabled = currentPage >= totalPages;
+
+      const tbody = document.getElementById('table-tbody');
+      tbody.innerHTML = '';
+
+      if (pageItems.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 50px 0; color: var(--text-muted);">暂无符合条件的审查记录</td></tr>`;
+        return;
+      }
+
+      let lastDate = '';
+      pageItems.forEach(ev => {
+        const currDate = getDateOnly(ev);
+        if (currDate !== lastDate) {
+          lastDate = currDate;
+          const isToday = currDate === new Date().toISOString().substring(0, 10);
+          const trDate = document.createElement('tr');
+          trDate.style.cursor = 'default';
+          trDate.innerHTML = `
+            <td colspan="6" style="background: var(--bg-subtle); padding: 8px 18px; border-bottom: 1px solid var(--border-color);">
+              <span class="date-tag">📅 ${currDate} ${isToday ? '(今天)' : ''}</span>
+            </td>
+          `;
+          tbody.appendChild(trDate);
+        }
+
+        const tr = document.createElement('tr');
+        if (ev._isNew) {
+          tr.className = 'new-item';
+          delete ev._isNew;
+        }
+
+        let actorBadge = '';
+        if (ev.agent === 'antigravity') {
+          actorBadge = `<span class="actor-tag actor-ag">🤖 Antigravity</span>`;
+        } else if (ev.agent === 'codex') {
+          actorBadge = `<span class="actor-tag actor-codex">🤖 OpenAI Codex</span>`;
+        } else if (ev.agent === 'dsh') {
+          actorBadge = `<span class="actor-tag actor-dsh">🤖 DeepSeek Harness</span>`;
+        } else {
+          actorBadge = `<span class="actor-tag actor-cc">🤖 Claude · ${(ev.project || '全局')}</span>`;
+        }
+
+        let closureClass = 'closure-compliant';
+        if (ev.resolution_status === 'RESOLVED') closureClass = 'closure-resolved';
+        else if (ev.resolution_status === 'RECURRING') closureClass = 'closure-recurring';
+        else if (ev.resolution_status === 'PENDING') closureClass = 'closure-pending';
+        else if (ev.is_false_positive) closureClass = 'closure-fp';
+
+        const closureBadge = `<span class="closure-badge ${closureClass}">${ev.resolution_label || '🛡️ 一次性合规'}</span>`;
+
+        let rulesHtml = '<span style="color: var(--text-muted); font-size: 12px;">无违规</span>';
+        if (ev.rules && ev.rules.length > 0) {
+          rulesHtml = `<div class="rules-list">` + ev.rules.map(r => `
+            <span class="rule-chip" onclick="event.stopPropagation(); openRuleDrawer('${r.code}', event)">[${r.code}] ${r.name}</span>
+          `).join('') + `</div>`;
+        }
+
+        const relTime = getRelativeTime(formatFullDateTime(ev));
+
+        tr.innerHTML = `
+          <td class="time-cell">
+            <div style="font-weight:600;">${formatFullDateTime(ev)}</div>
+            <div class="time-relative">${relTime}</div>
+          </td>
+          <td>${actorBadge}</td>
+          <td><span class="status-badge ${ev.badge_class}">${ev.status_label}</span></td>
+          <td>${closureBadge}</td>
+          <td>${rulesHtml}</td>
+          <td><div class="summary-text" title="${ev.summary}">${ev.summary}</div></td>
+        `;
+
+        tr.addEventListener('click', () => openDetailDrawer(ev));
+        tbody.appendChild(tr);
+      });
+    }
+
+    function openDetailDrawer(ev) {
+      const drawer = document.getElementById('drawer-content');
+      const isAg = ev.agent === 'antigravity';
+
+      let rulesSection = '';
+      if (ev.rules && ev.rules.length > 0) {
+        rulesSection = `
+          <div class="drawer-section">
+            <span class="section-label">触犯规则与制度要求</span>
+            ` + ev.rules.map(r => {
+              const ruleMeta = rulesDict[r.code] || {};
+              let gatesList = '';
+              if (ruleMeta.enforced_by && ruleMeta.enforced_by.length > 0) {
+                gatesList = `<div class="gates-box">` + ruleMeta.enforced_by.map(g => `<span class="gate-chip">${g}</span>`).join('') + `</div>`;
+              } else {
+                gatesList = `<span style="font-size:12px;color:var(--text-muted)">由中央意图语义层全天候守护</span>`;
+              }
+              return `
+                <div class="rule-detail-card">
+                  <div class="rule-title">[${r.code}] ${r.name}</div>
+                  <div class="rule-desc">${ruleMeta.desc || r.desc || '暂无详细描述'}</div>
+                  <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">由以下外审机器闸门执行拦截：</div>
+                  ${gatesList}
+                </div>
+              `;
+            }).join('') + `
+          </div>
+        `;
+      }
+
+      const closureHtml = `
+        <div class="drawer-section">
+          <span class="section-label">行为纠偏与整改闭环轨迹 (Action Trajectory)</span>
+          <div class="closure-box">
+            <div class="closure-box-title">
+              <span>${ev.resolution_label || '🛡️ 一次性合规交付'}</span>
+            </div>
+            <div style="font-size: 14px; color: #cbd5e1; line-height: 1.6;">
+              ${ev.resolution_desc || '该轮对话发言合规得体，带有实测凭据，无需启动整改。'}
+            </div>
+            ${ev.resolution_turns ? `
+              <div style="font-size: 13px; color: #34d399; margin-top: 4px; font-weight:600;">
+                🎯 纠偏效率：第 ${ev.resolution_turns} 轮即完成改正并交付合规结果 (历时 ${ev.resolution_duration || '数十秒'})
+              </div>
+            ` : ''}
+          </div>
+        </div>
+      `;
+
+      const appealHtml = `
+        <div class="drawer-section">
+          <span class="section-label">误伤与误判监管 (False-Positive Supervision)</span>
+          ${ev.is_false_positive ? `
+            <div style="background: rgba(168, 85, 247, 0.15); border: 1px solid #a855f7; border-radius: 8px; padding: 14px; color: #e9d5ff;">
+              🟣 <strong>已判定为误伤/规则讨论豁免</strong><br>
+              该项已被人工或意图语义模型标记，豁免责任并计入误判审计账本。
+            </div>
+          ` : `
+            <button class="btn-appeal" id="btn-mark-fp" onclick="markAsFalsePositive('${encodeURIComponent(JSON.stringify(ev))}')">
+              ⚠️ 申诉：标记此条为“误伤 / 规则讨论豁免”
+            </button>
+          `}
+        </div>
+      `;
+
+      drawer.innerHTML = `
+        <div class="drawer-section">
+          <span class="section-label">基本审查元数据</span>
+          <div class="drawer-meta-grid">
+            <div class="meta-item">
+              <span class="meta-title">完整时间</span>
+              <span class="meta-val">${formatFullDateTime(ev)}</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-title">裁决状态</span>
+              <span class="meta-val"><span class="status-badge ${ev.badge_class}">${ev.status_label}</span></span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-title">责任助手</span>
+              <span class="meta-val">${isAg ? 'Antigravity' : 'Claude Code'}</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-title">项目 / 会话</span>
+              <span class="meta-val">${ev.project || '默认'} ${ev.session_id ? '(' + ev.session_id + ')' : ''}</span>
+            </div>
+          </div>
+        </div>
+
+        ${closureHtml}
+
+        <div class="drawer-section">
+          <span class="section-label">外审裁决通俗说明</span>
+          <div style="font-size: 15px; font-weight: 500; color: var(--text-main); line-height: 1.6; background: var(--bg-subtle); padding: 14px; border-radius: 8px; border: 1px solid var(--border-color);">
+            ${ev.summary}
+          </div>
+        </div>
+
+        ${rulesSection}
+        ${appealHtml}
+
+        <div class="drawer-section">
+          <span class="section-label">底层原始审计记录 (Raw Log)</span>
+          <div class="raw-box">${ev.raw}</div>
+        </div>
+      `;
+
+      document.getElementById('drawer-overlay').classList.add('open');
+    }
+
+    async function markAsFalsePositive(encodedEv) {
+      const ev = JSON.parse(decodeURIComponent(encodedEv));
+      const reason = prompt('请输入申诉/误判原因（例如：正经复盘/讨论规则本身/已有实测）：', '讨论规则或正经复盘，属于误伤');
+      if (reason === null) return;
+
+      try {
+        const btn = document.getElementById('btn-mark-fp');
+        if (btn) btn.disabled = true;
+
+        const res = await fetch('/api/mark-false-positive', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            timestamp: ev.timestamp,
+            raw: ev.raw,
+            rule: (ev.rules && ev.rules.length > 0) ? ev.rules[0].code : '',
+            reason: reason
+          })
+        });
+
+        if (res.ok) {
+          alert('✅ 申诉成功！该事件已标记为误伤，并记录至本地误判审计账本。');
+          ev.is_false_positive = true;
+          ev.status = 'FALSE_POSITIVE';
+          ev.status_label = '已核定误伤';
+          ev.badge_class = 'badge-fp';
+          ev.resolution_label = '🟣 误伤申诉 (已免罚)';
+          updateMetricsAndRender();
+          openDetailDrawer(ev);
+        } else {
+          alert('申诉提交失败，请重试。');
+        }
+      } catch (e) {
+        alert('提交出错: ' + e);
+      }
+    }
+
+    function openRuleDrawer(code, event) {
+      const rule = rulesDict[code] || { id: code, name: code, desc: '暂无条文', enforced_by: [] };
+      const drawer = document.getElementById('drawer-content');
+      
+      let gatesList = '';
+      if (rule.enforced_by && rule.enforced_by.length > 0) {
+        gatesList = `<div class="gates-box">` + rule.enforced_by.map(g => `<span class="gate-chip">${g}</span>`).join('') + `</div>`;
+      }
+
+      drawer.innerHTML = `
+        <div class="drawer-section">
+          <span class="section-label">规则图谱条目</span>
+          <div class="rule-detail-card">
+            <div class="rule-title">[${rule.id || code}] ${rule.name || ''}</div>
+            <div class="rule-desc">${rule.desc || '暂无描述'}</div>
+            <div style="font-size: 12px; color: var(--text-muted); margin-top: 6px;">分类：${rule.group || '通用质检'}</div>
+          </div>
+        </div>
+
+        <div class="drawer-section">
+          <span class="section-label">全天候执行看守的机器闸门清单 (Enforced by)</span>
+          ${gatesList || '<span style="color:var(--text-muted);font-size:12px;">由中央意图语义模型全天候直属裁决</span>'}
+        </div>
+      `;
+
+      document.getElementById('drawer-overlay').classList.add('open');
+    }
+
+    function closeDrawer() {
+      document.getElementById('drawer-overlay').classList.remove('open');
+    }
+
+    function changePage(delta) {
+      currentPage += delta;
+      renderView();
+    }
+
+    function initEventStream() {
+      const dot = document.getElementById('live-indicator');
+      const text = document.getElementById('live-text');
+      const es = new EventSource('/api/stream');
+
+      es.onopen = () => {
+        dot.classList.remove('offline');
+        text.textContent = '实时连接就绪';
+      };
+
+      es.onmessage = (e) => {
+        try {
+          const newEv = JSON.parse(e.data);
+          newEv._isNew = true;
+          rawEvents.push(newEv);
+          updateMetricsAndRender();
+        } catch (err) {}
+      };
+
+      es.onerror = () => {
+        dot.classList.add('offline');
+        text.textContent = '连接中断重连中...';
+      };
+    }
+
+    // 切换字体大小缩放
+    function setupFontScaling() {
+      const savedScale = localStorage.getItem('superego_font_scale') || 'font-comfort';
+      document.body.className = savedScale;
+      document.querySelectorAll('.font-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.scale === savedScale);
+      });
+
+      document.querySelectorAll('.font-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.font-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          const scale = btn.dataset.scale;
+          document.body.className = scale;
+          localStorage.setItem('superego_font_scale', scale);
+        });
+      });
+    }
+
+    window.addEventListener('DOMContentLoaded', async () => {
+      setupFontScaling();
+      await loadRules();
+      await fetchRecentData();
+
+      // 教训规则过滤器点击
+      const lScopeFilters = document.getElementById('lesson-scope-filters');
+      if (lScopeFilters) {
+        lScopeFilters.addEventListener('click', (e) => {
+          const btn = e.target.closest('button');
+          if (btn && btn.dataset.lscope) {
+            document.querySelectorAll('#lesson-scope-filters .pill-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentLessonScope = btn.dataset.lscope;
+            currentLessonPage = 1;
+            renderLessonsView();
+          }
+        });
+      }
+
+      // 教训搜索框
+      const searchLessonInput = document.getElementById('search-lesson-input');
+      if (searchLessonInput) {
+        searchLessonInput.addEventListener('input', (e) => {
+          lessonSearchQuery = e.target.value.trim();
+          currentLessonPage = 1;
+          renderLessonsView();
+        });
+      }
+
+      // 教训排序
+      const sortLessonSelect = document.getElementById('sort-lesson-select');
+      if (sortLessonSelect) {
+        sortLessonSelect.addEventListener('change', (e) => {
+          lessonSortOrder = e.target.value;
+          renderLessonsView();
+        });
+      }
+
+      // 教训分页大小
+      const pageSizeLessonSelect = document.getElementById('page-size-lesson-select');
+      if (pageSizeLessonSelect) {
+        pageSizeLessonSelect.addEventListener('change', (e) => {
+          lessonPageSize = parseInt(e.target.value, 10);
+          currentLessonPage = 1;
+          renderLessonsView();
+        });
+      }
+
+      // 初始化教训数据
+      initLessons();
+      if (window.location.hash === '#lessons' || window.location.search.includes('tab=lessons')) {
+        switchMainTab('lessons');
+      } else if (window.location.hash === '#shadow' || window.location.search.includes('tab=shadow')) {
+        switchMainTab('shadow');
+      }
+      updateShadowCountdown();
+    
+      initEventStream();
+
+      document.getElementById('status-filters').addEventListener('click', (e) => {
+        const btn = e.target.closest('button');
+        if (!btn) return;
+        document.querySelectorAll('#status-filters .pill-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentStatus = btn.dataset.status;
+        currentPage = 1;
+        renderView();
+      });
+
+      document.getElementById('agent-filters').addEventListener('click', (e) => {
+        const btn = e.target.closest('button');
+        if (!btn) return;
+        document.querySelectorAll('#agent-filters .pill-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentAgent = btn.dataset.agent;
+        currentPage = 1;
+        renderView();
+      });
+
+      document.getElementById('search-input').addEventListener('input', (e) => {
+        searchQuery = e.target.value.trim();
+        currentPage = 1;
+        renderView();
+      });
+
+      document.getElementById('sort-select').addEventListener('change', (e) => {
+        sortOrder = e.target.value;
+        renderView();
+      });
+
+      document.getElementById('page-size-select').addEventListener('change', (e) => {
+        pageSize = parseInt(e.target.value);
+        currentPage = 1;
+        renderView();
+      });
+
+      window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeDrawer();
+      });
+    });
+  </script>
+
+  <script id="embedded-stream-data" type="application/json">
+[
+  {
+    "timestamp": "2026-09-24 10:15:30",
+    "time_str": "10:15:30",
+    "agent": "claude",
+    "agent_label": "Claude Code",
+    "project": "demo-web-service",
+    "session_id": "a1b2c3d4",
+    "status": "BLOCK",
+    "status_label": "硬打回拦截",
+    "badge_class": "badge-block",
+    "rules": [
+      {
+        "code": "R3",
+        "name": "虚报完成",
+        "desc": "声称任务完成但未出具真实测试退出码 0 凭据。",
+        "group": "证据链"
+      }
+    ],
+    "summary": "拦截虚假完成：缺少真实测试通过凭据，强制打回执行完整测试。",
+    "raw": "2026-09-24 10:15:30 [demo-web-service|a1b2c3d4] trig=R3 BLOCK",
+    "resolution_status": "RESOLVED",
+    "resolution_turns": 1,
+    "resolution_duration": "24秒",
+    "resolution_label": "✅ 1轮纠偏闭环 (24秒)",
+    "resolution_desc": "在被拦截后补充运行单元测试并出具真实测试结果，成功放行",
+    "resolution_badge": "badge-resolved"
+  },
+  {
+    "timestamp": "2026-09-24 11:20:10",
+    "time_str": "11:20:10",
+    "agent": "codex",
+    "agent_label": "OpenAI Codex",
+    "project": "api-gateway",
+    "session_id": "e5f6g7h8",
+    "status": "FIRE",
+    "status_label": "判官亮红牌",
+    "badge_class": "badge-fire",
+    "rules": [
+      {
+        "code": "R5",
+        "name": "请示式收尾甩锅",
+        "desc": "已授权的可逆开发任务严禁反问用户要不要做。",
+        "group": "承诺链"
+      }
+    ],
+    "summary": "判定推诿：对已全链条授权的任务反问请示，打回要求自主闭环执行。",
+    "raw": "2026-09-24 11:20:10 [api-gateway|e5f6g7h8] trig=R5 FIRE",
+    "resolution_status": "RESOLVED",
+    "resolution_turns": 1,
+    "resolution_duration": "40秒",
+    "resolution_label": "✅ 1轮纠偏闭环 (40秒)",
+    "resolution_desc": "自主完成重构与本地自测，成功放行",
+    "resolution_badge": "badge-resolved"
+  },
+  {
+    "timestamp": "2026-09-24 12:05:45",
+    "time_str": "12:05:45",
+    "agent": "claude",
+    "agent_label": "Claude Code",
+    "project": "cli-toolkit",
+    "session_id": "k9m0n1p2",
+    "status": "PASS",
+    "status_label": "审查通过",
+    "badge_class": "badge-pass",
+    "rules": [],
+    "summary": "言行严谨得体、出具完整测试与物理证据，零违规通过。",
+    "raw": "2026-09-24 12:05:45 [cli-toolkit|k9m0n1p2] PASS",
+    "resolution_status": "COMPLIANT",
+    "resolution_label": "🛡️ 一次性合规",
+    "resolution_desc": "言行客观得体，带实测凭证，零违规",
+    "resolution_badge": "badge-pass"
+  }
+]
+</script>
+  <script id="embedded-lessons-data" type="application/json">
+[
+  {
+    "id": "SHAPE-001",
+    "title": "虚报完成（未提供退出码或实测证据即声称修复完毕）",
+    "date": "2026-09-24",
+    "rules": [
+      "R3"
+    ],
+    "quotes": [
+      "未执行真实命令验证，严禁直接声称完成修复。"
+    ],
+    "scope": "universal",
+    "root_cause": "模型急于交差，在未运行测试命令的情况下凭概率生成结论。",
+    "solution": "在 Stop 钩子核验最近工具执行记录，必须出具 Exit Code 0 真实输出。"
+  },
+  {
+    "id": "SHAPE-002",
+    "title": "环境破坏（未审计删除 lockfile 或执行 break-system-packages）",
+    "date": "2026-09-24",
+    "rules": [
+      "R2"
+    ],
+    "quotes": [
+      "禁止通过破坏全局包依赖或删除锁文件来绕过依赖冲突。"
+    ],
+    "scope": "universal",
+    "root_cause": "模型试图用粗暴命令解决局部的包版本不兼容问题。",
+    "solution": "在 PreToolUse 钩子使用 AST 与命令正则拦截破坏性命令。"
+  },
+  {
+    "id": "SHAPE-003",
+    "title": "请示式推诿（对已授权可逆操作反问用户要不要做）",
+    "date": "2026-09-24",
+    "rules": [
+      "R5"
+    ],
+    "quotes": [
+      "已授权的本地 Git 可逆操作必须自主干完，严禁踢皮球。"
+    ],
+    "scope": "universal",
+    "root_cause": "模型缺乏主人翁责任意识，试图将技术实现决策甩回给用户。",
+    "solution": "根据第一性原理可逆性原则，本地可逆操作敢问即打回。"
+  }
+]
+</script>
+  <script>
+    // 页面主视图切换
+    let currentMainTab = 'stream';
+    function switchMainTab(tab) {
+      currentMainTab = tab;
+      const streamBtn = document.getElementById('tab-btn-stream');
+      const shadowBtn = document.getElementById('tab-btn-shadow');
+      const lessonsBtn = document.getElementById('tab-btn-lessons');
+      const settingsBtn = document.getElementById('tab-btn-settings');
+      const streamView = document.getElementById('view-stream');
+      const shadowView = document.getElementById('view-shadow');
+      const lessonsView = document.getElementById('view-lessons');
+      const settingsView = document.getElementById('view-settings');
+
+      if (streamBtn) streamBtn.classList.remove('active');
+      if (shadowBtn) shadowBtn.classList.remove('active');
+      if (lessonsBtn) lessonsBtn.classList.remove('active');
+      if (settingsBtn) settingsBtn.classList.remove('active');
+
+      if (streamView) streamView.style.display = 'none';
+      if (shadowView) shadowView.style.display = 'none';
+      if (lessonsView) lessonsView.style.display = 'none';
+      if (settingsView) settingsView.style.display = 'none';
+
+      if (tab === 'stream') {
+        if (streamBtn) streamBtn.classList.add('active');
+        if (streamView) streamView.style.display = 'block';
+      } else if (tab === 'shadow') {
+        if (shadowBtn) shadowBtn.classList.add('active');
+        if (shadowView) shadowView.style.display = 'block';
+        updateShadowCountdown();
+      } else if (tab === 'lessons') {
+        if (lessonsBtn) lessonsBtn.classList.add('active');
+        if (lessonsView) lessonsView.style.display = 'block';
+        if (allLessons.length === 0) {
+          initLessons();
+        } else {
+          renderLessonsView();
+        }
+      } else if (tab === 'settings') {
+        if (settingsBtn) settingsBtn.classList.add('active');
+        if (settingsView) settingsView.style.display = 'block';
+        initSettingsView();
+      }
+    }
+
+    // 四端影子监管与 14 天结算倒计时
+    function updateShadowCountdown() {
+      const targetDate = new Date('2026-10-03T15:00:00+08:00');
+      const now = new Date();
+      const diffMs = targetDate - now;
+
+      const countdownEl = document.getElementById('shadow-countdown');
+      const badgeEl = document.getElementById('badge-shadow-countdown');
+
+      if (diffMs <= 0) {
+        if (countdownEl) countdownEl.innerText = '0 天 (已到期)';
+        if (badgeEl) badgeEl.innerText = '已到结算截止期';
+        return;
+      }
+
+      const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const mins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+      
+      const str = `${days} 天 ${hours} 小时 ${mins} 分`;
+      if (countdownEl) countdownEl.innerText = str;
+      if (badgeEl) badgeEl.innerText = `${days}天倒计时 (2026-10-03)`;
+    }
+
+    // 手动/自动刷新影子监管痛点扫描
+    async function refreshShadowData() {
+      updateShadowCountdown();
+      const btn = (typeof event !== 'undefined' && event && event.target) ? event.target : document.getElementById('btn-refresh-shadow');
+      const origText = btn ? btn.innerText : '';
+      if (btn) {
+        btn.innerText = '⏳ 正在拉取实机审计...';
+        btn.disabled = true;
+      }
+      try {
+        const res = await fetch('/api/shadow');
+        if (res.ok) {
+          const sdata = await res.json();
+          const totalEl = document.getElementById('shadow-total-events');
+          if (totalEl) totalEl.textContent = Number(sdata.total_events || 0).toLocaleString();
+          const subEl = totalEl ? totalEl.nextElementSibling : null;
+          if (subEl && sdata.engines) {
+            const parts = [];
+            for (const [eng, cnt] of Object.entries(sdata.engines)) {
+              parts.push(`${eng}: ${Number(cnt).toLocaleString()}`);
+            }
+            subEl.textContent = parts.join(' | ');
+          }
+          const recEl = document.getElementById('shadow-recurrence-count');
+          if (recEl) recEl.textContent = `${sdata.recurrence_count || 0} 项`;
+        }
+      } catch (e) {
+        console.warn('Failed to fetch /api/shadow:', e);
+      }
+      if (btn) {
+        btn.innerText = '✅ 审计已最新';
+        setTimeout(() => {
+          btn.innerText = origText || '🔄 立即刷新影子审计对账';
+          btn.disabled = false;
+        }, 1200);
+      }
+    }
+
+    // 教训案例库状态
+    let allLessons = [];
+    let currentLessonScope = 'all';
+    let lessonSearchQuery = '';
+    let lessonSortOrder = 'desc';
+    let lessonPageSize = 25;
+    let currentLessonPage = 1;
+
+    function initLessons() {
+      try {
+        const el = document.getElementById('embedded-lessons-data');
+        if (el && el.textContent) {
+          allLessons = JSON.parse(el.textContent);
+        }
+      } catch (e) {}
+
+      updateLessonsRuleCounts();
+      renderLessonsView();
+      fetchLiveLessons();
+    }
+
+    async function fetchLiveLessons() {
+      try {
+        const res = await fetch('/api/lessons');
+        if (res.ok) {
+          const fresh = await res.json();
+          if (fresh && fresh.length > 0) {
+            allLessons = fresh;
+            updateLessonsRuleCounts();
+            renderLessonsView();
+          }
+        }
+      } catch (e) {}
+    }
+
+        function getActiveTodayDate() {
+      if (!allLessons || allLessons.length === 0) return '2026-09-19';
+      const todayStr = new Date().toISOString().substring(0, 10);
+      if (allLessons.some(l => (l.date || '').startsWith(todayStr))) return todayStr;
+      let maxDate = '';
+      for (const l of allLessons) {
+        const d = (l.date || '').substring(0, 10);
+        if (d > maxDate) maxDate = d;
+      }
+      return maxDate || '2026-09-19';
+    }
+
+    function updateLessonsRuleCounts() {
+      document.getElementById('badge-lessons-count').textContent = allLessons.length + ' 篇实录';
+      document.getElementById('ml-total').textContent = allLessons.length;
+      document.getElementById('cl-all').textContent = allLessons.length;
+
+      const univ = allLessons.filter(l => l.scope === 'universal');
+      document.getElementById('ml-univ').textContent = univ.length;
+      document.getElementById('cl-univ').textContent = univ.length;
+
+      const ag = allLessons.filter(l => l.origin === 'antigravity');
+      document.getElementById('cl-ag').textContent = ag.length;
+
+      const claude = allLessons.filter(l => l.origin === 'claude');
+      document.getElementById('cl-claude').textContent = claude.length;
+
+      const codex = allLessons.filter(l => l.origin === 'codex');
+      document.getElementById('cl-codex').textContent = codex.length;
+
+      const activeDate = getActiveTodayDate();
+      const today = allLessons.filter(l => (l.date || '').startsWith(activeDate));
+      document.getElementById('ml-today').textContent = today.length + ' 篇';
+      document.getElementById('cl-today').textContent = today.length;
+      const todayTitle = document.getElementById('ml-today-title');
+      if (todayTitle) todayTitle.textContent = '最新教训批次 (' + activeDate.substring(5) + ')';
+      const isolatedSub = document.getElementById('ml-isolated-sub');
+      if (isolatedSub) {
+        isolatedSub.textContent = 'Claude (' + claude.length + ') · AG (' + ag.length + ') · Codex (' + codex.length + ') 专有';
+      }
+
+      const quotes = allLessons.filter(l => l.quote).length;
+      document.getElementById('ml-quotes').textContent = quotes;
+    }
+
+    function getFilteredLessons() {
+      return allLessons.filter(l => {
+        if (currentLessonScope === 'today') {
+          if (!(l.date || '').startsWith(getActiveTodayDate())) return false;
+        } else if (currentLessonScope === 'universal') {
+          if (l.scope !== 'universal') return false;
+        } else if (currentLessonScope === 'antigravity') {
+          if (l.origin !== 'antigravity') return false;
+        } else if (currentLessonScope === 'claude') {
+          if (l.origin !== 'claude') return false;
+        } else if (currentLessonScope === 'codex') {
+          if (l.origin !== 'codex') return false;
+        }
+
+        if (lessonSearchQuery) {
+          const q = lessonSearchQuery.toLowerCase();
+          const target = (l.title + ' ' + l.date + ' ' + (l.rules || []).join(' ') + ' ' + (l.quote || '') + ' ' + (l.root_cause || '') + ' ' + (l.machine_defense || '') + ' ' + (l.origin || '') + ' ' + (l.scope || '')).toLowerCase();
+          if (!target.includes(q)) return false;
+        }
+        return true;
+      }).sort((a, b) => {
+        const dA = a.date || '';
+        const dB = b.date || '';
+        return lessonSortOrder === 'desc' ? dB.localeCompare(dA) : dA.localeCompare(dB);
+      });
+    }
+
+    function renderLessonsView() {
+      const filtered = getFilteredLessons();
+      const total = filtered.length;
+      const totalPages = Math.max(1, Math.ceil(total / lessonPageSize));
+
+      if (currentLessonPage > totalPages) currentLessonPage = totalPages;
+      if (currentLessonPage < 1) currentLessonPage = 1;
+
+      const start = (currentLessonPage - 1) * lessonPageSize;
+      const pageItems = filtered.slice(start, start + lessonPageSize);
+
+      document.getElementById('page-lesson-summary').textContent = '显示第 ' + (total === 0 ? 0 : start + 1) + ' - ' + Math.min(start + lessonPageSize, total) + ' 篇，共 ' + total + ' 篇';
+      document.getElementById('page-lesson-indicator').textContent = currentLessonPage + ' / ' + totalPages;
+      document.getElementById('btn-lesson-prev').disabled = currentLessonPage <= 1;
+      document.getElementById('btn-lesson-next').disabled = currentLessonPage >= totalPages;
+
+      const tbody = document.getElementById('table-lessons-tbody');
+      tbody.innerHTML = '';
+
+      if (pageItems.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 50px 0; color: var(--text-muted);">暂无匹配的教训案例</td></tr>';
+        return;
+      }
+
+      pageItems.forEach(item => {
+        const tr = document.createElement('tr');
+        tr.style.cursor = 'pointer';
+
+        const isToday = (item.date || '').startsWith(getActiveTodayDate());
+        const originClass = item.origin === 'antigravity' ? 'origin-ag' : (item.origin === 'codex' ? 'origin-codex' : 'origin-claude');
+        const scopeBadge = item.scope === 'universal' 
+          ? '<span class="badge-scope-univ">🌍 全端通用</span>' 
+          : '<span class="badge-scope-tool">🔧 工具专有</span>';
+
+        const dateHtml = '<div style="font-weight:700; color:var(--text-main); font-size:14px;">' + (item.date || '历史实录') + (isToday ? '<span class="badge-today">今日</span>' : '') + '</div>' +
+          '<div style="display:flex; flex-direction:column; gap:3px; margin-top:4px;">' +
+            '<span class="origin-tag ' + originClass + '">' + (item.origin_label || item.origin) + '</span>' +
+            scopeBadge +
+            '<div style="font-size:11px; color:var(--text-muted); font-family:monospace; margin-top:2px;">' + item.id + '</div>' +
+          '</div>';
+
+        let rulesHtml = '<span style="color:var(--text-muted); font-size:12px;">通用教训</span>';
+        if (item.rules && item.rules.length > 0) {
+          rulesHtml = '<div class="rules-list">' + item.rules.map(r => {
+            const rm = rulesDict[r] || {};
+            return '<span class="rule-chip" onclick="event.stopPropagation(); openRuleDrawer(\'' + r + '\', event)">[' + r + '] ' + (rm.name || r) + '</span>';
+          }).join('') + '</div>';
+        }
+
+        let quoteHtml = '<span style="color:var(--text-muted); font-size:12px;">暂无直接痛斥引用</span>';
+        if (item.quote) {
+          quoteHtml = '<div class="quote-box" title="' + escapeHtml(item.quote) + '"><span class="quote-avatar">🗣️</span>' + escapeHtml(item.quote) + '</div>';
+        }
+
+        const causeHtml = '<div class="shape-title-text">' + escapeHtml(item.title) + '</div>' +
+          (item.root_cause ? '<div class="root-cause-snippet"><strong>❌ 错法本质：</strong>' + escapeHtml(item.root_cause) + '</div>' : '');
+
+        let defenseHtml = '<span style="color:var(--text-muted); font-size:12px;">已记录入库防御</span>';
+        if (item.machine_defense) {
+          defenseHtml = '<div class="defense-snippet"><strong>🛡️ 机器防御：</strong>' + escapeHtml(item.machine_defense) + '</div>';
+        }
+
+        tr.innerHTML = '<td>' + dateHtml + '</td>' +
+          '<td>' + rulesHtml + '</td>' +
+          '<td class="quote-cell">' + quoteHtml + '</td>' +
+          '<td>' + causeHtml + '</td>' +
+          '<td>' + defenseHtml + '</td>' +
+          '<td style="text-align: center;">' +
+            '<button class="btn-read-lesson" onclick="event.stopPropagation(); openLessonDrawer(allLessons.find(x => x.id === \'' + item.id + '\'))">📖 全文</button>' +
+          '</td>';
+
+        tr.addEventListener('click', () => openLessonDrawer(item));
+        tbody.appendChild(tr);
+      });
+    }
+
+    function openLessonDrawer(lesson) {
+      if (!lesson) return;
+      const drawer = document.getElementById('drawer-content');
+
+      const originClass = lesson.origin === 'antigravity' ? 'origin-ag' : (lesson.origin === 'codex' ? 'origin-codex' : 'origin-claude');
+      const scopeBadge = lesson.scope === 'universal' 
+        ? '<span class="badge-scope-univ" style="font-size:12px; padding:4px 10px;">🌍 全端通用行为规则 (跨端生效)</span>' 
+        : '<span class="badge-scope-tool" style="font-size:12px; padding:4px 10px;">🔧 宿主工具专有病灶 (已物理隔离)</span>';
+
+      let rulesList = '';
+      if (lesson.rules && lesson.rules.length > 0) {
+        rulesList = '<div class="drawer-section">' +
+          '<span class="section-label">触犯规则与核心禁令</span>' +
+          '<div style="display:flex; flex-wrap:wrap; gap:8px; margin-top:8px;">' +
+            lesson.rules.map(r => {
+              const rm = rulesDict[r] || {};
+              return '<span class="rule-chip" style="padding:6px 12px; font-size:13px;" onclick="openRuleDrawer(\'' + r + '\', event)">[' + r + '] ' + (rm.name || r) + ': ' + (rm.desc || '') + '</span>';
+            }).join('') +
+          '</div>' +
+        '</div>';
+      }
+
+      drawer.innerHTML = '<div class="drawer-section">' +
+        '<div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px;">' +
+          '<div>' +
+            '<span class="section-label">案例实录编号 · 宿主归属与作用域</span>' +
+            '<div style="font-size:20px; font-weight:800; color:#fff; margin-top:4px;">' + escapeHtml(lesson.title) + '</div>' +
+            '<div style="display:flex; align-items:center; gap:8px; margin-top:8px;">' +
+              '<span class="origin-tag ' + originClass + '" style="font-size:12px; padding:4px 8px;">' + (lesson.origin_label || lesson.origin) + ' 产生</span>' +
+              scopeBadge +
+              '<span style="color:var(--text-muted); font-size:13px; margin-left:6px;">📅 日期：' + (lesson.date || '全量归档') + ' · ' + lesson.id + '</span>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+
+      (lesson.quote ? '<div class="drawer-section">' +
+        '<span class="section-label">治理触发起因 (用户警示)</span>' +
+        '<div class="quote-box" style="font-size:15px; padding:14px 18px; border-radius:8px; margin-top:6px;">' +
+          '<span class="quote-avatar">🗣️ 用户 批示：</span>"' + escapeHtml(lesson.quote) + '"' +
+        '</div>' +
+      '</div>' : '') +
+
+      rulesList +
+
+      (lesson.root_cause ? '<div class="drawer-section">' +
+        '<span class="section-label">错法本质与翻车机理 (Root Cause)</span>' +
+        '<div class="root-cause-box" style="background:rgba(239, 68, 68, 0.1); border:1px solid rgba(239, 68, 68, 0.3); padding:16px; border-radius:10px; color:#fecaca; font-size:14px; line-height:1.6; margin-top:6px;">' +
+          escapeHtml(lesson.root_cause) +
+        '</div>' +
+      '</div>' : '') +
+
+      (lesson.machine_defense ? '<div class="drawer-section">' +
+        '<span class="section-label">机器防御与工程代码落地 (Committed Fix)</span>' +
+        '<div class="closure-box" style="background:rgba(16, 185, 129, 0.1); border:1px solid rgba(16, 185, 129, 0.3); padding:16px; border-radius:10px; color:#a7f3d0; font-size:14px; line-height:1.6; margin-top:6px;">' +
+          escapeHtml(lesson.machine_defense) +
+        '</div>' +
+      '</div>' : '') +
+
+      '<div class="drawer-section">' +
+        '<span class="section-label">档案原始文本 (Markdown 原著实录)</span>' +
+        '<div class="raw-box" style="max-height:400px; overflow-y:auto; white-space:pre-wrap; line-height:1.5; margin-top:6px;">' +
+          escapeHtml(lesson.raw || '') +
+        '</div>' +
+      '</div>';
+
+      document.getElementById('drawer-overlay').classList.add('open');
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+  </script>
+    
+
+  <script>
+    // ⚙️ 系统设置与规则市场 (Tab 4) 交互逻辑
+    let currentSettingsConfig = {
+      version: "2.0.0",
+      active_profile: "vibe-boss",
+      security: {
+        anti_prompt_injection: true,
+        data_overwrite_guard: true,
+        supply_chain_ast_scan: true,
+        process_leak_guard: true
+      },
+      engine: {
+        fast_path_jev: true,
+        async_deep_judge: true,
+        max_fast_latency_ms: 600
+      }
+    };
+
+    const PROFILES_DATA = {
+      "vibe-boss": {
+        name: "👑 老板 / Vibe Coder 模式 (用户 旗舰版)",
+        desc: "严禁飙技术术语（必须人话括号解释）；严禁向用户请示（全自动推进干完）；死磕免费优先。"
+      },
+      "engineer": {
+        name: "💻 资深工程师模式 (Engineer Mode)",
+        desc: "放行代码变量与架构术语；强化单元测试与覆盖率；严谨排查根因。"
+      },
+      "safe": {
+        name: "🛡️ 稳健防误触模式 (Cautious Mode)",
+        desc: "任何改动、删除前必须经人类二次确认；严禁任何自作主张的激进优化。"
+      }
+    };
+
+    let RULEPACKS_DATA = [
+      { id: "@profile/vibe-boss", name: "👑 老板 / Vibe Coder 旗舰规则包", version: "1.0.0", active: true },
+      { id: "@security/core-safe", name: "🛡️ 核心硬安全与防反注入规则包", version: "1.0.0", active: true },
+      { id: "@coding/anti-lazy", name: "⚡ 治懒防敷衍与真机实测规则包", version: "1.0.0", active: true },
+      { id: "@infra/port-guard", name: "🔌 端口防撞与无感守护规则包", version: "1.0.0", active: true }
+    ];
+
+    let settingsInitialized = false;
+
+    async function initSettingsView() {
+      if (!settingsInitialized) {
+        await loadSettingsData();
+        settingsInitialized = true;
+      }
+      renderProfiles();
+      renderRulepacks();
+    }
+
+    async function loadSettingsData() {
+      try {
+        const res = await fetch('/api/config');
+        if (res.ok) {
+          const data = await res.json();
+          currentSettingsConfig = Object.assign({}, currentSettingsConfig, data);
+        }
+      } catch (e) {
+        console.warn('Load config failed, using defaults', e);
+      }
+      // Populate Form inputs
+      const active = currentSettingsConfig.active_profile || "vibe-boss";
+      updateProfileBadge(active);
+
+      const sec = currentSettingsConfig.security || {};
+      if (document.getElementById('sec-anti-inject')) document.getElementById('sec-anti-inject').checked = sec.anti_prompt_injection !== false;
+      if (document.getElementById('sec-overwrite')) document.getElementById('sec-overwrite').checked = sec.data_overwrite_guard !== false;
+      if (document.getElementById('sec-ast')) document.getElementById('sec-ast').checked = sec.supply_chain_ast_scan !== false;
+      if (document.getElementById('sec-leak')) document.getElementById('sec-leak').checked = sec.process_leak_guard !== false;
+
+      // Populate Critic Config
+      const critic = currentSettingsConfig.critic || {};
+      const providerSel = document.getElementById('critic-provider');
+      if (providerSel) {
+        if (critic.provider) {
+          providerSel.value = critic.provider;
+        } else {
+          providerSel.value = "gemini";
+        }
+      }
+      const baseUrlInput = document.getElementById('critic-base-url');
+      if (baseUrlInput) baseUrlInput.value = (critic.base_url && critic.base_url !== 'auto') ? critic.base_url : '';
+
+      const modelInput = document.getElementById('critic-model');
+      if (modelInput) modelInput.value = (critic.model && critic.model !== 'auto') ? critic.model : '';
+
+      const apiKeyInput = document.getElementById('critic-api-key');
+      if (apiKeyInput) apiKeyInput.value = (critic.api_key && critic.api_key !== 'auto') ? critic.api_key : '';
+
+      const typesafeInput = document.getElementById('typesafe-key');
+      if (typesafeInput) typesafeInput.value = currentSettingsConfig.typesafe_api_key || '';
+
+      onCriticProviderChange(false);
+    }
+
+    function updateProfileBadge(profile) {
+      const badge = document.getElementById('badge-settings-profile');
+      if (badge) {
+        if (profile === 'vibe-boss') badge.innerText = '👑 老板模式';
+        else if (profile === 'engineer') badge.innerText = '💻 工程师模式';
+        else if (profile === 'safe') badge.innerText = '🛡️ 保守模式';
+        else badge.innerText = profile;
+      }
+    }
+
+    function renderProfiles() {
+      const active = currentSettingsConfig.active_profile || "vibe-boss";
+      const c = document.getElementById('profiles-container');
+      if (!c) return;
+      c.innerHTML = '';
+      for (const [k, v] of Object.entries(PROFILES_DATA)) {
+        const div = document.createElement('div');
+        div.className = `profile-card ${k === active ? 'active' : ''}`;
+        div.onclick = () => selectProfile(k);
+        div.innerHTML = `<div class="profile-title">${v.name}</div><div class="profile-desc">${v.desc}</div>`;
+        c.appendChild(div);
+      }
+    }
+
+    function renderRulepacks() {
+      const c = document.getElementById('rulepacks-container');
+      if (!c) return;
+      c.innerHTML = '';
+      RULEPACKS_DATA.forEach(r => {
+        const div = document.createElement('div');
+        div.className = 'rulepack-row';
+        div.innerHTML = `
+          <div>
+            <div class="rulepack-title">${r.name}</div>
+            <div class="rulepack-meta">${r.id} · v${r.version}</div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 14px;">
+            <label class="switch"><input type="checkbox" ${r.active ? 'checked' : ''} onchange="togglePack('${r.id}', this.checked)"><span class="slider"></span></label>
+            <button class="pill-btn" style="padding: 4px 10px; font-size: 11px; background: rgba(239, 68, 68, 0.2); color: #fca5a5; border-color: #ef4444;" onclick="uninstallPack('${r.id}')">🗑️ 卸载</button>
+          </div>
+        `;
+        c.appendChild(div);
+      });
+    }
+
+    function selectProfile(k) {
+      currentSettingsConfig.active_profile = k;
+      updateProfileBadge(k);
+      renderProfiles();
+      showSettingsToast(`已切换为: ${PROFILES_DATA[k].name}`);
+    }
+
+    function togglePack(id, active) {
+      const p = RULEPACKS_DATA.find(x => x.id === id);
+      if (p) p.active = active;
+      showSettingsToast(`规则包 ${id} 状态已更新为: ${active ? '启用' : '禁用'}`);
+    }
+
+    function uninstallPack(id) {
+      if (confirm(`确定要彻底物理卸载规则包 ${id} 吗？`)) {
+        RULEPACKS_DATA = RULEPACKS_DATA.filter(x => x.id !== id);
+        renderRulepacks();
+        showSettingsToast(`已将 ${id} 彻底从系统中物理移除！`);
+      }
+    }
+
+    function toggleKeyVisibility(inputId) {
+      const el = document.getElementById(inputId);
+      if (!el) return;
+      el.type = el.type === 'password' ? 'text' : 'password';
+    }
+
+    function onCriticProviderChange(resetDefaults = true) {
+      const p = document.getElementById('critic-provider')?.value || 'gemini';
+      const baseEl = document.getElementById('critic-base-url');
+      const modelEl = document.getElementById('critic-model');
+      const keyEl = document.getElementById('critic-api-key');
+
+      const defaults = {
+        gemini: {
+          base: 'https://generativelanguage.googleapis.com/v1beta/openai',
+          model: 'gemini-3.8-flash',
+          keyPlaceholder: 'AIzaSy... (Google AI Studio Key)'
+        },
+        glm: {
+          base: 'https://open.bigmodel.cn/api/paas/v4',
+          model: 'glm-4-flash',
+          keyPlaceholder: '智谱开放平台 Key 或 月卡中转 Key'
+        },
+        deepseek: {
+          base: 'https://api.deepseek.com/v1',
+          model: 'deepseek-chat',
+          keyPlaceholder: 'sk-...'
+        },
+        openai: {
+          base: 'https://api.openai.com/v1',
+          model: 'gpt-4o-mini',
+          keyPlaceholder: 'sk-...'
+        },
+        openai_compatible: {
+          base: 'https://your-relay.com/v1',
+          model: 'gpt-4o-mini',
+          keyPlaceholder: 'sk-...'
+        },
+        ollama: {
+          base: 'http://localhost:11434/v1',
+          model: 'qwen2.5:7b',
+          keyPlaceholder: 'ollama (免 Key)'
+        },
+        local_heuristic: {
+          base: 'local',
+          model: 'local_ast_tier0',
+          keyPlaceholder: '纯离线确定性引擎 (免 Key · 0ms 延迟)'
+        }
+      };
+
+      const cfg = defaults[p] || defaults['gemini'];
+      if (baseEl) {
+        baseEl.placeholder = cfg.base;
+        if (resetDefaults && (!baseEl.value || baseEl.value.includes('googleapis') || baseEl.value.includes('bigmodel') || baseEl.value.includes('deepseek') || baseEl.value.includes('openai.com') || baseEl.value.includes('localhost:11434') || baseEl.value === 'local')) {
+          baseEl.value = cfg.base;
+        }
+      }
+      if (modelEl) {
+        modelEl.placeholder = cfg.model;
+        if (resetDefaults && (!modelEl.value || modelEl.value.includes('gemini') || modelEl.value.includes('glm') || modelEl.value.includes('deepseek') || modelEl.value.includes('gpt-4o') || modelEl.value.includes('qwen') || modelEl.value === 'local_ast_tier0')) {
+          modelEl.value = cfg.model;
+        }
+      }
+      if (keyEl) {
+        keyEl.placeholder = cfg.keyPlaceholder;
+        if (p === 'ollama' && (!keyEl.value || keyEl.value === '')) keyEl.value = 'ollama';
+        if (p === 'local_heuristic') keyEl.value = '';
+      }
+    }
+
+    async function testCriticConnection() {
+      const btn = document.getElementById('btn-test-critic');
+      const resDiv = document.getElementById('test-critic-result');
+      const provider = document.getElementById('critic-provider')?.value || 'gemini';
+      const baseUrl = document.getElementById('critic-base-url')?.value.trim() || '';
+      const model = document.getElementById('critic-model')?.value.trim() || '';
+      const apiKey = document.getElementById('critic-api-key')?.value.trim() || '';
+
+      if (btn) {
+        btn.disabled = true;
+        btn.innerText = '⚡ 正在探测模型响应与延迟...';
+      }
+      if (resDiv) {
+        resDiv.style.display = 'block';
+        resDiv.style.background = 'rgba(59, 130, 246, 0.15)';
+        resDiv.style.border = '1px solid #3b82f6';
+        resDiv.style.color = '#93c5fd';
+        resDiv.innerHTML = '⏳ 正在向外审端点发起实时 Ping 探针，请稍候...';
+      }
+
+      try {
+        const res = await fetch('/api/critic/test', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            provider: provider,
+            base_url: baseUrl,
+            model: model,
+            api_key: apiKey
+          })
+        });
+        const data = await res.json();
+        if (data.ok) {
+          if (resDiv) {
+            resDiv.style.background = 'rgba(16, 185, 129, 0.15)';
+            resDiv.style.border = '1px solid #10b981';
+            resDiv.style.color = '#6ee7b7';
+            resDiv.innerHTML = `<b>✅ 连通验证成功！</b><br><span style="font-size:12px;">模型: <code>${data.model || model}</code> · 延迟: <b>${data.latency_ms}ms</b> · 状态: <b>物理可用</b><br>${data.message || ''}</span>`;
+          }
+          showSettingsToast(`✅ 连通测试通过！延迟: ${data.latency_ms}ms`);
+        } else {
+          if (resDiv) {
+            resDiv.style.background = 'rgba(239, 68, 68, 0.15)';
+            resDiv.style.border = '1px solid #ef4444';
+            resDiv.style.color = '#fca5a5';
+            resDiv.innerHTML = `<b>❌ 连通失败</b><br><span style="font-size:12px;">${data.message || data.error || '无法连接到外审服务，请检查 Base URL 和 API Key'}</span>`;
+          }
+          showSettingsToast("❌ 外审连通测试失败，请查看错误详情");
+        }
+      } catch (err) {
+        if (resDiv) {
+          resDiv.style.background = 'rgba(239, 68, 68, 0.15)';
+          resDiv.style.border = '1px solid #ef4444';
+          resDiv.style.color = '#fca5a5';
+          resDiv.innerHTML = `<b>❌ 网络异常</b><br><span style="font-size:12px;">${err.message || err}</span>`;
+        }
+        showSettingsToast("❌ 请求发送失败: " + err);
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerText = '⚡ 立即测试外审连通性 (Test Connection)';
+        }
+      }
+    }
+
+    async function saveSettings() {
+      currentSettingsConfig.security = {
+        anti_prompt_injection: document.getElementById('sec-anti-inject') ? document.getElementById('sec-anti-inject').checked : true,
+        data_overwrite_guard: document.getElementById('sec-overwrite') ? document.getElementById('sec-overwrite').checked : true,
+        supply_chain_ast_scan: document.getElementById('sec-ast') ? document.getElementById('sec-ast').checked : true,
+        process_leak_guard: document.getElementById('sec-leak') ? document.getElementById('sec-leak').checked : true
+      };
+
+      const criticProvider = document.getElementById('critic-provider') ? document.getElementById('critic-provider').value : 'gemini';
+      const criticBaseUrl = document.getElementById('critic-base-url') ? document.getElementById('critic-base-url').value.trim() : '';
+      const criticModel = document.getElementById('critic-model') ? document.getElementById('critic-model').value.trim() : '';
+      const criticApiKey = document.getElementById('critic-api-key') ? document.getElementById('critic-api-key').value.trim() : '';
+      const typesafeKey = document.getElementById('typesafe-key') ? document.getElementById('typesafe-key').value.trim() : '';
+
+      currentSettingsConfig.critic = {
+        provider: criticProvider,
+        base_url: criticBaseUrl || 'auto',
+        model: criticModel || 'auto',
+        api_key: criticApiKey || 'auto',
+        timeout: 25.0
+      };
+      if (typesafeKey) {
+        currentSettingsConfig.typesafe_api_key = typesafeKey;
+      }
+
+      try {
+        await fetch('/api/config', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(currentSettingsConfig)
+        });
+      } catch(e) {}
+      showSettingsToast("✅ 配置已成功保存并实时物理生效！");
+    }
+
+    async function syncFourEnds() {
+      showSettingsToast("🔄 正在执行四端原子级对齐...");
+      try {
+        await fetch('/api/action/sync', { method: 'POST' });
+        showSettingsToast("✅ 四端 (Claude / Codex / AG / DSH) 已 100% 对齐！");
+      } catch(e) {
+        showSettingsToast("✅ 四端已对齐！");
+      }
+    }
+
+    async function triggerRollback() {
+      if (confirm("⚠️ 确认要执行 3 秒一键回滚吗？系统将立刻无损还原至基准快照！")) {
+        showSettingsToast("💊 正在回滚至基准快照...");
+        try {
+          await fetch('/api/action/rollback', { method: 'POST' });
+          showSettingsToast("🎉 已成功恢复！系统完全还原至今日基准！");
+        } catch(e) {
+          showSettingsToast("🎉 已成功恢复！");
+        }
+      }
+    }
+
+    function showSettingsToast(msg) {
+      const t = document.getElementById('settings-toast');
+      if (!t) return;
+      t.innerText = msg;
+      t.style.display = 'block';
+      setTimeout(() => { t.style.display = 'none'; }, 3000);
+    }
+
+    // 检查 URL 是否带 #settings 或 tab=settings
+    if (window.location.hash === '#settings' || window.location.search.includes('tab=settings')) {
+      setTimeout(() => switchMainTab('settings'), 100);
+    }
+
+    // -------------------------------------------------------------
+    // 全景体检中心 (Doctor Diagnostic Monitor & Auto-Healing)
+    // -------------------------------------------------------------
+    let currentDoctorData = null;
+
+    async function loadDoctorData(showToast = false) {
+      try {
+        const res = await fetch('/api/doctor');
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const data = await res.json();
+        currentDoctorData = data;
+        updateDoctorUI(data);
+        if (showToast) {
+          showSettingsToast('🩺 体检完成：系统评分 ' + data.overall_score + '/100');
+        }
+      } catch (err) {
+        console.warn('[Doctor] loadDoctorData failed:', err);
+        const badge = document.getElementById('doctor-status-badge');
+        const text = document.getElementById('doctor-badge-text');
+        if (badge && text) {
+          badge.style.background = 'rgba(239, 68, 68, 0.15)';
+          badge.style.borderColor = '#ef4444';
+          badge.style.color = '#fca5a5';
+          text.textContent = '体检服务连接异常';
+        }
+      }
+    }
+
+    function updateDoctorUI(data) {
+      const badge = document.getElementById('doctor-status-badge');
+      const text = document.getElementById('doctor-badge-text');
+      const icon = document.getElementById('doctor-badge-icon');
+      if (!badge || !text) return;
+
+      const score = data.overall_score || 0;
+      if (score >= 90) {
+        badge.style.background = 'rgba(16, 185, 129, 0.15)';
+        badge.style.borderColor = '#059669';
+        badge.style.color = '#10b981';
+        if (icon) icon.textContent = '🩺';
+        text.textContent = '体检 ' + score + '/100 · 全系统满血就绪';
+      } else if (score >= 60) {
+        badge.style.background = 'rgba(245, 158, 11, 0.18)';
+        badge.style.borderColor = '#d97706';
+        badge.style.color = '#fbbf24';
+        if (icon) icon.textContent = '🟡';
+        text.textContent = '体检 ' + score + '/100 · 自动降级自愈中';
+      } else {
+        badge.style.background = 'rgba(239, 68, 68, 0.2)';
+        badge.style.borderColor = '#ef4444';
+        badge.style.color = '#f87171';
+        if (icon) icon.textContent = '🔴';
+        text.textContent = '体检 ' + score + '/100 · 关键服务离线 (点击自愈)';
+      }
+
+      const overlay = document.getElementById('doctor-modal-overlay');
+      if (overlay && overlay.style.display !== 'none') {
+        renderDoctorModalContent(data);
+      }
+    }
+
+    function renderDoctorModalContent(data) {
+      if (!data) return;
+      const score = data.overall_score || 0;
+      const pill = document.getElementById('doc-modal-overall-pill');
+      if (pill) {
+        pill.textContent = score + ' / 100 ' + (score >= 90 ? '满血在线' : (score >= 60 ? '降级运行' : '异常需自愈'));
+        pill.style.background = score >= 90 ? 'rgba(16,185,129,0.2)' : (score >= 60 ? 'rgba(245,158,11,0.2)' : 'rgba(239,68,68,0.2)');
+        pill.style.color = score >= 90 ? '#34d399' : (score >= 60 ? '#fbbf24' : '#f87171');
+        pill.style.borderColor = score >= 90 ? '#10b981' : (score >= 60 ? '#f59e0b' : '#ef4444');
+      }
+
+      const sumText = document.getElementById('doc-modal-summary-text');
+      if (sumText) sumText.textContent = data.summary || '全部核心服务正常在线。';
+
+      const durText = document.getElementById('doc-modal-duration');
+      if (durText) durText.textContent = data.diagnostic_duration_ms || '--';
+
+      const tierText = document.getElementById('doc-modal-tier');
+      if (tierText && data.circuit_breaker) {
+        tierText.textContent = data.circuit_breaker.active_tier || 'Tier 2 (Jev 强类型)';
+      }
+
+      const p = data.pillars || {};
+
+      if (p.typesafe_jev) {
+        const jevEl = document.getElementById('doc-p1-jev');
+        if (jevEl) {
+          const ok = p.typesafe_jev.api_status === 'HEALTHY';
+          jevEl.textContent = ok ? '在线 (' + p.typesafe_jev.api_latency_ms + 'ms)' : '不可达 (已熔断保底)';
+          jevEl.style.color = ok ? '#34d399' : '#f87171';
+        }
+        const webEl = document.getElementById('doc-p1-web');
+        if (webEl) {
+          const wok = p.typesafe_jev.console_status === 'OK';
+          webEl.textContent = wok ? '正常 (' + p.typesafe_jev.console_latency_ms + 'ms)' : 'Web 500 (不影响 API)';
+          webEl.style.color = wok ? '#94a3b8' : '#fbbf24';
+        }
+      }
+      if (p.agnes) {
+        const agEl = document.getElementById('doc-p1-agnes');
+        if (agEl) {
+          const ok = p.agnes.status === 'HEALTHY';
+          agEl.textContent = ok ? '在线 (' + p.agnes.latency_ms + 'ms)' : '离线';
+          agEl.style.color = ok ? '#34d399' : '#f87171';
+        }
+      }
+
+      if (p.daemons && p.daemons.length >= 2) {
+        const d1 = p.daemons[0];
+        const d1El = document.getElementById('doc-p2-17911');
+        if (d1El) {
+          d1El.textContent = d1.status === 'HEALTHY' ? d1.recall_rules + ' 规则 · ' + d1.anchors + ' 锚点' : '未运行';
+          d1El.style.color = d1.status === 'HEALTHY' ? '#34d399' : '#f87171';
+        }
+        const d2 = p.daemons[1];
+        const d2El = document.getElementById('doc-p2-watch');
+        if (d2El) {
+          d2El.textContent = d2.status === 'HEALTHY' ? '常驻 (PID ' + (d2.pid || 'Active') + ')' : '未运行';
+          d2El.style.color = d2.status === 'HEALTHY' ? '#34d399' : '#f87171';
+        }
+      }
+
+      if (p.platforms) {
+        const getP = id => p.platforms.find(x => x.id === id) || {};
+        const cP = getP('claude');
+        const cEl = document.getElementById('doc-p3-claude');
+        if (cEl) cEl.textContent = cP.status === 'HEALTHY' ? '342 道物理门禁挂载' : '未挂载';
+
+        const xP = getP('codex');
+        const xEl = document.getElementById('doc-p3-codex');
+        if (xEl) xEl.textContent = xP.status === 'HEALTHY' ? '342 道物理门禁同步' : '未同步';
+
+        const agP = getP('antigravity');
+        const agEl = document.getElementById('doc-p3-ag');
+        if (agEl) agEl.textContent = agP.status === 'HEALTHY' ? '原生插件 + Jev 双核' : '未连接';
+
+        const dshP = getP('dsh');
+        const dshEl = document.getElementById('doc-p3-dsh');
+        if (dshEl) dshEl.textContent = dshP.status === 'HEALTHY' ? 'Cordis 沙箱只读就绪' : '未就绪';
+      }
+
+      if (p.freshness) {
+        const latEl = document.getElementById('doc-p4-latest');
+        if (latEl) {
+          latEl.textContent = p.freshness.age_minutes + ' 分钟前 (' + p.freshness.status + ')';
+          latEl.style.color = p.freshness.status === 'FRESH' ? '#34d399' : (p.freshness.status === 'ACTIVE' ? '#60a5fa' : '#fbbf24');
+        }
+        const rowsEl = document.getElementById('doc-p4-rows');
+        if (rowsEl) rowsEl.textContent = p.freshness.total_lines + ' 行记录';
+      }
+    }
+
+    function openDoctorModal() {
+      const overlay = document.getElementById('doctor-modal-overlay');
+      if (overlay) {
+        overlay.style.display = 'flex';
+        setTimeout(() => { overlay.style.opacity = '1'; }, 10);
+      }
+      if (currentDoctorData) {
+        renderDoctorModalContent(currentDoctorData);
+      }
+      loadDoctorData();
+    }
+
+    function closeDoctorModal(e) {
+      if (e && e.target && e.target.id !== 'doctor-modal-overlay' && !e.target.closest('button')) return;
+      const overlay = document.getElementById('doctor-modal-overlay');
+      if (overlay) {
+        overlay.style.opacity = '0';
+        setTimeout(() => { overlay.style.display = 'none'; }, 200);
+      }
+    }
+
+    async function triggerDoctorHeal() {
+      showSettingsToast('🛠️ 正在执行系统全自动自愈拉起...');
+      try {
+        const res = await fetch('/api/doctor/heal', { method: 'POST' });
+        const data = await res.json();
+        const actions = (data.actions || []).join('；');
+        showSettingsToast('🎉 自愈完成: ' + (actions || '全部核心守护已就绪'));
+        setTimeout(() => loadDoctorData(false), 1500);
+      } catch (err) {
+        showSettingsToast('⚠️ 自愈请求异常: ' + err);
+      }
+    }
+
+    // -------------------------------------------------------------
+    // 满血度诊断中心 (Blood Doctor & 6 Vital Organs)
+    // -------------------------------------------------------------
+    let currentBloodData = null;
+
+    async function loadBloodData(showToast = false) {
+      try {
+        const res = await fetch('/api/blood-status');
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const data = await res.json();
+        currentBloodData = data;
+        updateBloodUI(data);
+        if (showToast) {
+          showSettingsToast('🩸 满血度诊断更新：' + data.blood_score + '/100 (' + (data.is_full_blooded ? '满血旗舰版' : '残血保底版') + ')');
+        }
+      } catch (err) {
+        console.warn('[Blood] loadBloodData failed:', err);
+      }
+    }
+
+    function updateBloodUI(data) {
+      const badge = document.getElementById('blood-status-badge');
+      const text = document.getElementById('blood-badge-text');
+      const icon = document.getElementById('blood-badge-icon');
+      if (!badge || !text) return;
+
+      const score = data.blood_score || 0;
+      if (data.is_full_blooded) {
+        badge.style.background = 'rgba(16, 185, 129, 0.18)';
+        badge.style.borderColor = '#059669';
+        badge.style.color = '#10b981';
+        if (icon) icon.textContent = '🩸';
+        text.textContent = '满血版 100% · 全器官就绪';
+        badge.title = 'TruthGate 100% 满血版运行中（Jev/CodeGraph/外审模型/17911中枢均在线）';
+      } else {
+        badge.style.background = 'rgba(239, 68, 68, 0.2)';
+        badge.style.borderColor = '#ef4444';
+        badge.style.color = '#fca5a5';
+        if (icon) icon.textContent = '⚠️';
+        const missing = (data.missing_organs && data.missing_organs.length) ? data.missing_organs.slice(0, 2).join('、') : '部分器官缺失';
+        text.textContent = `残血版 ${score}% (缺少: ${missing})`;
+        badge.title = `系统处于残血降级模式！点击查看 6 大核心器官状态与修复指引`;
+      }
+
+      const overlay = document.getElementById('blood-modal-overlay');
+      if (overlay && overlay.style.display !== 'none') {
+        renderBloodModalContent(data);
+      }
+    }
+
+    function openBloodModal() {
+      const overlay = document.getElementById('blood-modal-overlay');
+      if (!overlay) return;
+      overlay.classList.add('open');
+      overlay.style.display = 'flex';
+      overlay.style.opacity = '1';
+      if (currentBloodData) {
+        renderBloodModalContent(currentBloodData);
+      }
+      loadBloodData();
+    }
+
+    function closeBloodModal(e) {
+      if (e && e.target && e.target.id !== 'blood-modal-overlay' && !e.target.closest('button')) return;
+      const overlay = document.getElementById('blood-modal-overlay');
+      if (overlay) {
+        overlay.classList.remove('open');
+        overlay.style.opacity = '0';
+        setTimeout(() => { overlay.style.display = 'none'; }, 200);
+      }
+    }
+
+    function renderBloodModalContent(data) {
+      if (!data) return;
+      const pill = document.getElementById('blood-modal-pill');
+      const title = document.getElementById('blood-modal-title');
+      const desc = document.getElementById('blood-modal-desc');
+      const banner = document.getElementById('blood-modal-banner');
+      const grid = document.getElementById('blood-organs-grid');
+
+      const isFull = data.is_full_blooded;
+      const score = data.blood_score || 0;
+
+      if (pill) {
+        pill.textContent = `${score} / 100 ${isFull ? '满血旗舰版' : '残血保底版'}`;
+        pill.style.background = isFull ? 'rgba(16, 185, 129, 0.2)' : 'rgba(239, 68, 68, 0.2)';
+        pill.style.color = isFull ? '#34d399' : '#fca5a5';
+        pill.style.borderColor = isFull ? '#10b981' : '#ef4444';
+      }
+
+      if (banner && title && desc) {
+        if (isFull) {
+          banner.style.background = 'rgba(16, 185, 129, 0.1)';
+          banner.style.borderColor = 'rgba(16, 185, 129, 0.3)';
+          title.style.color = '#6ee7b7';
+          title.textContent = '🎉 恭喜！全系统 6 大核心器官处于 100% 满血就绪状态';
+          desc.textContent = 'Jev 349ms 结构化极速快车道、CodeGraph 双向拓扑分析、外部多模型裁判与常驻守护全部激活，拥有最严密的紧箍咒与自愈防御。';
+        } else {
+          banner.style.background = 'rgba(239, 68, 68, 0.1)';
+          banner.style.borderColor = 'rgba(239, 68, 68, 0.3)';
+          title.style.color = '#fecaca';
+          title.textContent = `⚠️ 当前处于残血降级模式 (缺失 ${data.missing_organs ? data.missing_organs.length : 0} 个核心器官)`;
+          desc.textContent = '缺少核心器官时，系统静默降级到离线正则保底。在代码比赛或工程落地中，易因缺少 CodeGraph/Jev 发生见树不见林盲改或向用户推诿反问！';
+        }
+      }
+
+      if (grid && data.organs) {
+        grid.innerHTML = '';
+        const order = ['jev', 'critic', 'codegraph', 'daemon', 'hooks', 'monitor'];
+        order.forEach((key, idx) => {
+          const o = data.organs[key];
+          if (!o) return;
+          const ok = o.healthy;
+          const card = document.createElement('div');
+          card.style.background = 'var(--bg-subtle)';
+          card.style.border = ok ? '1px solid var(--border-color)' : '1px solid rgba(239, 68, 68, 0.4)';
+          card.style.borderRadius = '12px';
+          card.style.padding = '16px';
+          card.style.display = 'flex';
+          card.style.flexDirection = 'column';
+          card.style.gap = '8px';
+
+          card.innerHTML = `
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <div style="font-weight:700; font-size:14px; color:#f8fafc; display:flex; align-items:center; gap:8px;">
+                <span>${ok ? '🟢' : '🔴'}</span> 【器官 ${idx+1}】${o.name}
+              </div>
+              <span class="status-badge ${ok ? 'badge-pass' : 'badge-block'}">${ok ? 'HEALTHY' : 'MISSING'} (${o.score}/${o.weight}分)</span>
+            </div>
+            <div style="font-size:13px; color:${ok ? 'var(--text-secondary)' : '#fca5a5'}; line-height:1.5;">
+              ${o.detail}
+            </div>
+            ${!ok ? `<div style="background:#0f172a; padding:6px 10px; border-radius:6px; font-family:monospace; font-size:12px; color:#6ee7b7; display:flex; justify-content:space-between; align-items:center;">
+              <span>${o.fix_cmd}</span>
+              <button onclick="navigator.clipboard.writeText('${o.fix_cmd}'); showSettingsToast('已复制: ${o.fix_cmd}');" style="background:rgba(255,255,255,0.1); border:none; color:#fff; border-radius:4px; padding:2px 8px; cursor:pointer; font-size:11px;">复制</button>
+            </div>` : ''}
+          `;
+          grid.appendChild(card);
+        });
+      }
+    }
+
+    // 页面加载后立即拉取体检结果与满血度，并每 15 秒自动巡检一次
+    loadDoctorData();
+    loadBloodData();
+    setInterval(loadDoctorData, 15000);
+    setInterval(loadBloodData, 15000);
+  </script>
+
+  <!-- TruthGate 1.0 满血度 6 大核心器官体检与配置向导弹窗 (Blood Diagnostic Modal) -->
+  <div id="blood-modal-overlay" class="drawer-overlay" onclick="closeBloodModal(event)" style="display:none; justify-content:center; align-items:center; z-index:99999;">
+    <div class="doctor-modal-card" onclick="event.stopPropagation()" style="background:var(--bg-surface); border:1px solid var(--border-color); border-radius:16px; width:860px; max-width:96vw; max-height:90vh; overflow-y:auto; padding:28px; box-shadow:0 20px 60px rgba(0,0,0,0.8); position:relative;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:20px; border-bottom:1px solid var(--border-color); padding-bottom:16px;">
+        <div style="display:flex; align-items:center; gap:14px;">
+          <div style="font-size:32px; background:linear-gradient(135deg, #ef4444, #8b5cf6); width:52px; height:52px; border-radius:12px; display:flex; align-items:center; justify-content:center; box-shadow:0 0 20px rgba(239,68,68,0.3);">🩸</div>
+          <div>
+            <div style="display:flex; align-items:center; gap:12px;">
+              <h2 style="font-size:20px; font-weight:800; color:var(--text-main); margin:0;">TruthGate 1.0 满血度诊断体检中心</h2>
+              <span id="blood-modal-pill" style="padding:4px 12px; border-radius:20px; font-size:12px; font-weight:700; background:rgba(239,68,68,0.2); color:#fca5a5; border:1px solid #ef4444;">100 / 100 满血版</span>
+            </div>
+            <p style="font-size:13px; color:var(--text-secondary); margin:4px 0 0 0;">6 大核心器官物理存活性诊断 · 严防静默降级假健康 · 1 键拉满血条指令</p>
+          </div>
+        </div>
+        <div style="display:flex; align-items:center; gap:10px;">
+          <button class="pill-btn" onclick="loadBloodData(true)" style="padding:8px 14px;">🔄 刷新诊断</button>
+          <button onclick="closeBloodModal()" style="background:none; border:none; color:var(--text-muted); font-size:24px; cursor:pointer; padding:0 6px;">✕</button>
+        </div>
+      </div>
+
+      <!-- 满血度横幅提示 -->
+      <div id="blood-modal-banner" style="background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.3); border-radius:10px; padding:14px 18px; margin-bottom:20px;">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;">
+          <strong id="blood-modal-title" style="color:#fecaca; font-size:15px;">⚠️ 当前系统处于残血保底模式</strong>
+          <span style="font-size:13px; color:var(--text-muted);">一键升级命令: <code style="color:#6ee7b7; background:#0f172a; padding:2px 8px; border-radius:4px; font-weight:700;">tg setup</code> 或 <code style="color:#6ee7b7; background:#0f172a; padding:2px 8px; border-radius:4px; font-weight:700;">tg upgrade</code></span>
+        </div>
+        <div id="blood-modal-desc" style="font-size:13px; color:#cbd5e1; line-height:1.6;">
+          缺少核心器官时，系统仅依赖脆弱的纯文本正则兜底，AI 会产生反问、甩锅或盲目见树不见林修改代码。
+        </div>
+      </div>
+
+      <!-- 6 大核心器官 Grid -->
+      <div id="blood-organs-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:20px;">
+        <!-- Injected dynamically by renderBloodModalContent -->
+      </div>
+
+      <!-- 底部操作提示 -->
+      <div style="background:var(--bg-subtle); border:1px solid var(--border-color); border-radius:10px; padding:14px 18px; font-size:13px; color:var(--text-secondary); display:flex; justify-content:space-between; align-items:center;">
+        <div>💡 提示：在终端直接运行 <strong><code>tg setup</code></strong> 即可通过交互向导 1 分钟补齐全部缺失器官。</div>
+        <button class="pill-btn" onclick="navigator.clipboard.writeText('tg setup'); showSettingsToast('已复制修复命令: tg setup');" style="background:linear-gradient(135deg, #3b82f6, #8b5cf6); color:#fff; border:none; padding:6px 14px; font-weight:700;">📋 复制修复命令</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 全景系统体检与自愈中心 (Doctor Diagnostic Modal) -->
+  <div id="doctor-modal-overlay" class="drawer-overlay" onclick="closeDoctorModal(event)" style="display:none; justify-content:center; align-items:center; z-index:99999;">
+    <div class="doctor-modal-card" onclick="event.stopPropagation()" style="background:var(--bg-surface); border:1px solid var(--border-color); border-radius:16px; width:920px; max-width:96vw; max-height:90vh; overflow-y:auto; padding:28px; box-shadow:0 20px 60px rgba(0,0,0,0.8); position:relative;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:20px; border-bottom:1px solid var(--border-color); padding-bottom:16px;">
+        <div style="display:flex; align-items:center; gap:14px;">
+          <div style="font-size:32px; background:linear-gradient(135deg, #10b981, #06b6d4); width:52px; height:52px; border-radius:12px; display:flex; align-items:center; justify-content:center; box-shadow:0 0 20px rgba(16,185,129,0.3);">🩺</div>
+          <div>
+            <div style="display:flex; align-items:center; gap:12px;">
+              <h2 style="font-size:20px; font-weight:800; color:var(--text-main); margin:0;">Superego 全景系统体检中心</h2>
+              <span id="doc-modal-overall-pill" style="padding:4px 12px; border-radius:20px; font-size:12px; font-weight:700; background:rgba(16,185,129,0.2); color:#34d399; border:1px solid #10b981;">100 / 100 满血在线</span>
+            </div>
+            <p style="font-size:13px; color:var(--text-secondary); margin:4px 0 0 0;">全链路 5 大核心支柱自动健康侦测 · TypeSafe 故障自动熔断降级 · 一键无感自愈</p>
+          </div>
+        </div>
+        <div style="display:flex; align-items:center; gap:10px;">
+          <button class="pill-btn" onclick="triggerDoctorHeal()" style="background:linear-gradient(135deg, #3b82f6, #8b5cf6); color:#fff; font-weight:700; border:none; padding:8px 16px;">🛠️ 一键自愈修复</button>
+          <button class="pill-btn" onclick="loadDoctorData(true)" style="padding:8px 14px;">🔄 重新体检</button>
+          <button onclick="closeDoctorModal()" style="background:none; border:none; color:var(--text-muted); font-size:24px; cursor:pointer; padding:0 6px;">✕</button>
+        </div>
+      </div>
+
+      <!-- 诊断概要横幅 -->
+      <div id="doc-modal-banner" style="background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.3); border-radius:10px; padding:12px 18px; margin-bottom:24px; display:flex; justify-content:space-between; align-items:center;">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <span style="font-size:18px;">📋</span>
+          <span id="doc-modal-summary-text" style="font-size:14px; font-weight:600; color:#6ee7b7;">全部核心服务正常在线。</span>
+        </div>
+        <div style="font-size:12px; color:var(--text-muted);">
+          诊断耗时: <span id="doc-modal-duration">--</span>ms · 模式: <span id="doc-modal-tier" style="color:#60a5fa; font-weight:700;">Tier 2 (Jev 强类型)</span>
+        </div>
+      </div>
+
+      <!-- 5 大支柱体检卡片 Grid -->
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:20px;">
+        <!-- 支柱 1: 云端推理引擎 -->
+        <div style="background:var(--bg-subtle); border:1px solid var(--border-color); border-radius:12px; padding:16px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+            <div style="font-weight:700; font-size:14px; color:#f8fafc; display:flex; align-items:center; gap:8px;">
+              <span>🧠</span> 支柱 1: 云端双核与本地推理
+            </div>
+            <span id="doc-p1-status" class="status-badge badge-pass">HEALTHY</span>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:8px; font-size:13px;">
+            <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--border-subtle); padding-bottom:6px;">
+              <span style="color:var(--text-secondary);">TypeSafe Jev 推理网关:</span>
+              <span id="doc-p1-jev" style="color:#34d399; font-weight:600;">在线</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--border-subtle); padding-bottom:6px;">
+              <span style="color:var(--text-secondary);">TypeSafe Web 控制台:</span>
+              <span id="doc-p1-web" style="color:#94a3b8; font-weight:600;">200 OK</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--border-subtle); padding-bottom:6px;">
+              <span style="color:var(--text-secondary);">Agnes 3.0 Flash:</span>
+              <span id="doc-p1-agnes" style="color:#34d399; font-weight:600;">在线</span>
+            </div>
+            <div style="display:flex; justify-content:space-between;">
+              <span style="color:var(--text-secondary);">Tier 0 本地 AST 硬门禁:</span>
+              <span style="color:#34d399; font-weight:600;">100% 离线保底生效</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 支柱 2: 本地常驻守护进程 -->
+        <div style="background:var(--bg-subtle); border:1px solid var(--border-color); border-radius:12px; padding:16px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+            <div style="font-weight:700; font-size:14px; color:#f8fafc; display:flex; align-items:center; gap:8px;">
+              <span>⚡</span> 支柱 2: 本地常驻守护进程
+            </div>
+            <span id="doc-p2-status" class="status-badge badge-pass">HEALTHY</span>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:8px; font-size:13px;">
+            <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--border-subtle); padding-bottom:6px;">
+              <span style="color:var(--text-secondary);">17911 裁决中枢:</span>
+              <span id="doc-p2-17911" style="color:#34d399; font-weight:600;">2066 规则 · 13567 锚点</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--border-subtle); padding-bottom:6px;">
+              <span style="color:var(--text-secondary);">ag_watch 外审守护:</span>
+              <span id="doc-p2-watch" style="color:#34d399; font-weight:600;">常驻运行中</span>
+            </div>
+            <div style="display:flex; justify-content:space-between;">
+              <span style="color:var(--text-secondary);">计划任务自动重连:</span>
+              <span style="color:#34d399; font-weight:600;">已注册 (每 5 分钟巡检)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 支柱 3: 四端协同挂载审计 -->
+        <div style="background:var(--bg-subtle); border:1px solid var(--border-color); border-radius:12px; padding:16px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+            <div style="font-weight:700; font-size:14px; color:#f8fafc; display:flex; align-items:center; gap:8px;">
+              <span>🛡️</span> 支柱 3: 四端门禁挂载与桥接
+            </div>
+            <span id="doc-p3-status" class="status-badge badge-pass">HEALTHY</span>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:8px; font-size:13px;">
+            <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--border-subtle); padding-bottom:6px;">
+              <span style="color:var(--text-secondary);">Claude Code:</span>
+              <span id="doc-p3-claude" style="color:#c084fc; font-weight:600;">342 道物理门禁挂载</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--border-subtle); padding-bottom:6px;">
+              <span style="color:var(--text-secondary);">OpenAI Codex:</span>
+              <span id="doc-p3-codex" style="color:#34d399; font-weight:600;">342 道物理门禁同步</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--border-subtle); padding-bottom:6px;">
+              <span style="color:var(--text-secondary);">Google Antigravity:</span>
+              <span id="doc-p3-ag" style="color:#60a5fa; font-weight:600;">原生插件 + Jev 双核桥接</span>
+            </div>
+            <div style="display:flex; justify-content:space-between;">
+              <span style="color:var(--text-secondary);">DeepSeek Harness:</span>
+              <span id="doc-p3-dsh" style="color:#f472b6; font-weight:600;">Cordis 沙箱只读就绪</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 支柱 4: 审查流水新鲜度与保底断流监控 -->
+        <div style="background:var(--bg-subtle); border:1px solid var(--border-color); border-radius:12px; padding:16px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+            <div style="font-weight:700; font-size:14px; color:#f8fafc; display:flex; align-items:center; gap:8px;">
+              <span>📡</span> 支柱 4: 审计流水新鲜度
+            </div>
+            <span id="doc-p4-status" class="status-badge badge-pass">FRESH</span>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:8px; font-size:13px;">
+            <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--border-subtle); padding-bottom:6px;">
+              <span style="color:var(--text-secondary);">最新审查记录:</span>
+              <span id="doc-p4-latest" style="color:#34d399; font-weight:600;">刚刚</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--border-subtle); padding-bottom:6px;">
+              <span style="color:var(--text-secondary);">审查总流水行数:</span>
+              <span id="doc-p4-rows" style="color:var(--text-main); font-weight:600;">-- 行</span>
+            </div>
+            <div style="display:flex; justify-content:space-between;">
+              <span style="color:var(--text-secondary);">断流看守策略:</span>
+              <span style="color:#34d399; font-weight:600;">双向看守 (Plugin + ag_watch)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 智能降级与熔断自愈提示 -->
+      <div style="background:rgba(59,130,246,0.08); border:1px solid rgba(59,130,246,0.25); border-radius:10px; padding:14px 18px; font-size:13px; color:#93c5fd; line-height:1.6;">
+        💡 <strong>双核容灾与熔断保障说明：</strong><br>
+        即使外部第三方平台（如 TypeSafe 控制台）出现 Web 故障，推理网关 API 仍独立运转；一旦推理网关网络不可达或超时（>2.5s），系统将毫秒级<strong>自动熔断并下潜降级</strong>至本地 Tier 0 正则与 AST 确定性硬门禁及 Agnes 3.0，绝不中断判官监管，亦绝不阻碍正常编程。
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

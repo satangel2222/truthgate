@@ -250,10 +250,12 @@ def check_local_daemons():
                     s17911["recall_rules"] = data.get("recall_rules", 0)
                     s17911["anchors"] = data.get("anchors", 0)
                     s17911["detail"] = f"正常监听 (规则: {s17911['recall_rules']}, 锚点: {s17911['anchors']}, 大盘: http://127.0.0.1:17911/dashboard)"
+                    if data.get("service") == "truthgate-dashboard":   # 2026-09-27:这个端口现在归看板,别写成语义服务在线
+                        s17911["detail"] = "端口上是看板 dashboard.py(http://127.0.0.1:17911/dashboard);语义服务 9/25 按 Frank 下线令关着"
             except Exception:
                 s17911["detail"] = "200 OK (http://127.0.0.1:17911/dashboard)"
         else:
-            s17911["detail"] = "未响应或已宕机 (需运行 start-dissat-service.ps1 自愈拉起)"
+            s17911["detail"] = "没人监听(看板没开;语义服务 9/25 按 Frank 下线令关着,别自动拉起)"
     daemons.append(s17911)
 
     # 2. ag_watch.py

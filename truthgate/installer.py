@@ -417,7 +417,6 @@ def install_superego(profile: str = "vibe-boss", dry_run: bool = False) -> bool:
         "verdict_monitor.py",
         "postmortem_guard.py",
         "dashboard.py",
-        "dashboard.html",
         "config.py",
         "replay.py",
         "hook_entry.py",
@@ -425,7 +424,20 @@ def install_superego(profile: str = "vibe-boss", dry_run: bool = False) -> bool:
         "parity_auditor.py",
         "deep_parity_auditor.py",
         "blood_doctor.py",
-        "doctor.py"
+        "doctor.py",
+        "evidence_table.py",
+        "delivery_check.py",
+        "dsh-hooks-shim.py",
+        "anti_stale_assertion_gate.py",
+        "anti_toy_test_gate.py",
+        "misfire_rate.py",
+        "review_loop.py",
+        "single_source.py",
+        "six_universes.py",
+        "source_news.py",
+        "spec_gen.py",
+        "stale_process.py",
+        "vision_proof.py"
     ]
 
     # 同步规则包到 ~/.superego/rulepacks
@@ -449,6 +461,10 @@ def install_superego(profile: str = "vibe-boss", dry_run: bool = False) -> bool:
             rp_dest.mkdir(parents=True, exist_ok=True)
             for rp in rulepacks_src.glob("*.rulepack.json"):
                 shutil.copy2(rp, rp_dest / rp.name)
+        hooks_src = HERE / "hooks"
+        if hooks_src.exists():
+            for hf in hooks_src.glob("*.py"):
+                shutil.copy2(hf, c_hooks / hf.name)
         register_claude_hooks(detected["claude"]["home"])
         print("   [✓] Claude Code 核心门禁与 settings.json 挂载就绪")
 
@@ -465,6 +481,10 @@ def install_superego(profile: str = "vibe-boss", dry_run: bool = False) -> bool:
             rp_dest.mkdir(parents=True, exist_ok=True)
             for rp in rulepacks_src.glob("*.rulepack.json"):
                 shutil.copy2(rp, rp_dest / rp.name)
+        hooks_src = HERE / "hooks"
+        if hooks_src.exists():
+            for hf in hooks_src.glob("*.py"):
+                shutil.copy2(hf, x_hooks / hf.name)
         register_codex_hooks(detected["codex"]["home"])
         print("   [✓] OpenAI Codex 核心安全引擎镜像与 hooks.json 挂载就绪")
 
@@ -479,6 +499,10 @@ def install_superego(profile: str = "vibe-boss", dry_run: bool = False) -> bool:
             src = HERE / cf
             if src.exists():
                 shutil.copy2(src, ag_scripts / cf)
+        hooks_src = HERE / "hooks"
+        if hooks_src.exists():
+            for hf in hooks_src.glob("*.py"):
+                shutil.copy2(hf, ag_scripts / hf.name)
         if rulepacks_src.exists():
             rp_dest = ag_scripts / "rulepacks"
             rp_dest.mkdir(parents=True, exist_ok=True)
@@ -552,7 +576,7 @@ def install_superego(profile: str = "vibe-boss", dry_run: bool = False) -> bool:
                     {
                         "type": "command",
                         "command": f"{py_cmd} {bridge_script} stop",
-                        "timeout": 15
+                        "timeout": 120
                     }
                 ]
             }
@@ -824,9 +848,9 @@ def handle_critic_cli(args: list):
         print("提示: 可使用 'tg critic set ...' (或 python -m truthgate critic set ...) 接入 DeepSeek, Qwen, Ollama, GPT 或 Jev")
     elif sub == "set":
         set_parser = argparse.ArgumentParser(prog="tg critic set")
-        set_parser.add_argument("--provider", choices=["tiered", "gemini", "glm", "zhipu", "deepseek", "openai", "agnes", "ollama", "openai_compatible", "jev", "local_heuristic"], help="外审服务类型")
-        set_parser.add_argument("--base-url", dest="base_url", help="API Base URL (如 https://open.bigmodel.cn/api/paas/v4 或 https://api.deepseek.com/v1)")
-        set_parser.add_argument("--model", help="外审大模型名称 (如 glm-5.3-flash, deepseek-chat, qwen-plus)")
+        set_parser.add_argument("--provider", choices=["tiered", "gemini", "deepseek", "openai", "agnes", "ollama", "openai_compatible", "jev", "local_heuristic"], help="外审服务类型")
+        set_parser.add_argument("--base-url", dest="base_url", help="API Base URL (如 https://api.deepseek.com/v1 或 http://localhost:11434/v1)")
+        set_parser.add_argument("--model", help="外审大模型名称 (如 deepseek-chat, qwen-plus, llama3)")
         set_parser.add_argument("--api-key", dest="api_key", help="API Key，支持直接填入或 env:VAR_NAME")
         set_parser.add_argument("--timeout", type=float, help="审判超时秒数 (默认 3.5)")
         parsed = set_parser.parse_args(args[1:])
@@ -1077,8 +1101,8 @@ def handle_setup_cli(args: list):
             print(f"\n🔬 [3/4] 外审模型: 已配置 ({curr_c_cfg.get('provider')} / {curr_c_cfg.get('model')})")
         else:
             print("\n🔬 [3/4] 配置外审模型裁判 (Outer Critic Engine):")
-            print("   原生支持: Google Gemini、智谱 GLM (官方开放平台/个人月卡)、DeepSeek、OpenAI、本地 Ollama (0成本免Key)、Agnes。")
-            c_val = input("   请输入外审 API Key (如 Gemini/GLM/DeepSeek/OpenAI Key，留空回车使用本地引擎): ").strip()
+            print("   原生支持: Google Gemini、DeepSeek、OpenAI、本地 Ollama (0成本免Key)、Agnes。")
+            c_val = input("   请输入外审 API Key (如 Gemini/DeepSeek/OpenAI API Key，留空回车使用本地引擎): ").strip()
             if c_val:
                 critic_key = c_val
 
@@ -1089,8 +1113,6 @@ def handle_setup_cli(args: list):
                 provider = "gemini"
             elif critic_key.startswith("sk-agnes"):
                 provider = "agnes"
-            elif "glm" in critic_key.lower():
-                provider = "glm"
             elif critic_key.startswith("sk-"):
                 provider = "deepseek"
             else:
@@ -1179,10 +1201,61 @@ def handle_upgrade_cli(args: list):
     print_blood_report()
 
 
+def handle_test_cli(args: List[str]):
+    """处理 tg test / tg qa 统一命令，驱动外部只读测试脚手架"""
+    if not args or args[0] in ("-h", "--help"):
+        print("Usage: tg test <subcommand> [options]")
+        print("Subcommands:")
+        print("  browser   Run universal Playwright browser QA (--url, --out, --selector)")
+        print("  endpoint  Run HTTP/HTTPS endpoint probe (--url, --expected-status, --keyword)")
+        print("  cli       Run command execution QA (--cmd, --expected-code, --check-file)")
+        print("  research  Run zero-token multi-source deep research across academic & global web")
+        print("  critic    Run real multi-platform external critic QA across 4 platforms (Claude/AG/Codex/DSH)")
+        print("  suite     Run full harness self-test suite")
+        return
+
+    sub = args[0]
+    harness_dir = HERE / "harness"
+    if sub == "browser":
+        import subprocess
+        script = harness_dir / "browser_qa.py"
+        subprocess.run([sys.executable, str(script)] + args[1:])
+    elif sub in ("endpoint", "api"):
+        import subprocess
+        script = harness_dir / "endpoint_qa.py"
+        subprocess.run([sys.executable, str(script)] + args[1:])
+    elif sub in ("cli", "cmd"):
+        import subprocess
+        script = harness_dir / "cli_qa.py"
+        subprocess.run([sys.executable, str(script)] + args[1:])
+    elif sub in ("research", "search"):
+        import subprocess
+        script = Path.home() / ".gemini" / "antigravity" / "scripts" / "deep_research.py"
+        subprocess.run([sys.executable, str(script)] + args[1:])
+    elif sub in ("critic", "all-critic"):
+        import subprocess
+        script = HERE / "tests" / "test_all_four_ends_critic.py"
+        subprocess.run([sys.executable, str(script)] + args[1:])
+    elif sub == "suite":
+        import subprocess
+        script = harness_dir / "test_harness.py"
+        subprocess.run([sys.executable, str(script)] + args[1:])
+    else:
+        print(f"Unknown test subcommand: {sub}. Run 'tg test --help' for usage.")
+
+
 def main():
     if len(sys.argv) > 1:
         cmd = sys.argv[1]
-        if cmd == "profile":
+        if cmd in ("test", "qa"):
+            handle_test_cli(sys.argv[2:])
+            return
+        elif cmd in ("test-critic", "critic-test"):
+            import subprocess
+            script = HERE / "tests" / "test_all_four_ends_critic.py"
+            subprocess.run([sys.executable, str(script)] + sys.argv[2:])
+            return
+        elif cmd == "profile":
             handle_profile_cli(sys.argv[2:])
             return
         elif cmd == "rulepack":
@@ -1209,7 +1282,7 @@ def main():
             return
 
     parser = argparse.ArgumentParser(description="TruthGate: Deterministic Physical Gatekeeper and Jev System-1 Fast Intent Guard for AI Coding Agents")
-    parser.add_argument("action", choices=["install", "setup", "upgrade", "blood", "check", "service", "detect", "status", "rollback", "replay", "sessions", "dashboard", "doctor"], default="install", nargs="?")
+    parser.add_argument("action", choices=["install", "setup", "upgrade", "blood", "check", "service", "detect", "status", "rollback", "replay", "sessions", "dashboard", "doctor", "test", "qa", "verify", "harness"], default="install", nargs="?")
     parser.add_argument("target", nargs="?", default=None, help="Target session ID or path for replay")
     parser.add_argument("--profile", default="vibe-boss", help="Profile mask to apply")
     parser.add_argument("--port", type=int, default=17911, help="Port to bind dashboard server (default: 17911)")
@@ -1306,6 +1379,61 @@ def main():
         print(f"📦 已记录的会话账本 (共 {len(s_list)} 个):")
         for s in s_list:
             print(f"   • {s.name} ({time.ctime(s.stat().st_mtime)})")
+    elif args.action in ("test", "qa", "verify", "harness"):
+        sub_args = sys.argv[2:]
+        try:
+            from harness.auto_harness import run_full_auto_harness, print_harness_report
+        except ImportError:
+            try:
+                from truthgate.harness.auto_harness import run_full_auto_harness, print_harness_report
+            except ImportError:
+                print("❌ 无法载入 TruthGate Harness 模块")
+                sys.exit(1)
+
+        sub_parser = argparse.ArgumentParser(description="TruthGate Autonomous Multi-Vector Test & Harness QA CLI")
+        sub_parser.add_argument("subcommand", nargs="?", default="suite", help="Subcommand: browser | endpoint | cli | research | suite")
+        sub_parser.add_argument("param", nargs="?", default=None, help="Target parameter (URL, cmd, query)")
+        sub_parser.add_argument("--url", help="Web UI URL for Playwright QA")
+        sub_parser.add_argument("--endpoint", help="HTTP API URL for SLA probe")
+        sub_parser.add_argument("--cmd", help="CLI command to execute and verify")
+        sub_parser.add_argument("--research", help="Topic query for 0-token multi-source research")
+        sub_parser.add_argument("--screenshot-dir", help="Directory to save screenshots")
+        sub_parser.add_argument("--json", action="store_true", help="Output raw JSON report")
+
+        sub_opts, _ = sub_parser.parse_known_args(sub_args)
+
+        url_arg = sub_opts.url
+        ep_arg = sub_opts.endpoint
+        cmd_arg = sub_opts.cmd
+        res_arg = sub_opts.research
+
+        if sub_opts.subcommand == "browser":
+            url_arg = sub_opts.param or url_arg or "http://127.0.0.1:17911/dashboard"
+        elif sub_opts.subcommand == "endpoint":
+            ep_arg = sub_opts.param or ep_arg or "http://127.0.0.1:17911/health"
+        elif sub_opts.subcommand == "cli":
+            cmd_arg = sub_opts.param or cmd_arg or "python -c \"print('truthgate harness active')\""
+        elif sub_opts.subcommand == "research":
+            res_arg = sub_opts.param or res_arg or "multi-agent coding verification"
+        elif sub_opts.subcommand == "suite":
+            if not any([url_arg, ep_arg, cmd_arg, res_arg]):
+                url_arg = "http://127.0.0.1:17911/dashboard"
+                ep_arg = "http://127.0.0.1:17911/health"
+                cmd_arg = "python -c \"print('truthgate harness active')\""
+                res_arg = "coding agent verification"
+
+        rep = run_full_auto_harness(
+            url=url_arg,
+            endpoint=ep_arg,
+            cli_cmd=cmd_arg,
+            research_query=res_arg,
+            screenshot_dir=sub_opts.screenshot_dir
+        )
+        if sub_opts.json:
+            print(json.dumps(rep, ensure_ascii=False, indent=2))
+        else:
+            print_harness_report(rep)
+        sys.exit(0 if rep["overall_success"] else 1)
     else:
         install_superego(profile=args.profile, dry_run=args.dry_run)
 

@@ -35,6 +35,10 @@ except Exception:
 
 CLAUDE_DIR = Path.home() / ".claude"
 SCRIPTS_DIR = Path(__file__).resolve().parent
+# 2026-09-27 单源：闸和语义判官都在 ~/.truthgate 里（~/.claude/hooks、~/.claude/superego-semantic 只是指过来的联接）
+# 用联接路径调用（物理上就是 ~/.truthgate/hooks、~/.truthgate/semantic）：闸里有代码按「上一级目录」找 ~/.claude 下的东西
+TG_HOOKS = CLAUDE_DIR / "hooks"
+TG_SEM = CLAUDE_DIR / "superego-semantic"
 
 # Check if Superego is off via ~/.claude/superego-toggle.py
 def check_is_off(gate="*", sid=None):
@@ -86,30 +90,11 @@ def is_service_healthy(port):
         with urllib.request.urlopen(req, timeout=0.25) as resp:
             if resp.status == 200:
                 data = json.loads(resp.read().decode("utf-8"))
-                return data.get("ok", False)
+                # 2026-09-27:看板 dashboard.py 也占 17911、也回 ok:true —— 认身份,别把看板当成语义服务(体检原来因此报「本地兜底服务正常在线」)
+                return bool(data.get("ok", False)) and data.get("service") != "truthgate-dashboard"
     except Exception:
         return False
     return False
-
-def trigger_silent_self_heal():
-    """Starts Superego via WMI ShowWindow=7 without focus stealing or popup."""
-    starter_ps1 = CLAUDE_DIR / "dissat-classifier" / "start-dissat-service.ps1"
-    if not starter_ps1.exists():
-        return
-    cmd = (
-        f'powershell.exe -NoProfile -ExecutionPolicy Bypass -Command '
-        f'"& \'{starter_ps1}\'"'
-    )
-    try:
-        subprocess.Popen(
-            cmd,
-            shell=True,
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
-            creationflags=0x08000000  # CREATE_NO_WINDOW for the trigger wrapper
-        )
-    except Exception:
-        pass
 
 def read_transcript_tail_lines(transcript_path, max_bytes=2*1024*1024):
     """Efficiently reads only the last chunk of a large transcript file (up to 2MB)."""
@@ -158,9 +143,9 @@ def handle_pre(payload):
     conv_id = payload.get("conversationId", "")
     inject_steps = []
 
-    # 1. Probe health; self-heal if down
-    if not is_service_healthy(port):
-        trigger_silent_self_heal()
+    # 1. (2026-09-27 PLAN 第 5 步删)原来这里探 17911、没回话就自动拉起语义服务 —— 可语义服务是 Frank 9/25 下令关的,
+    #    PLAN「不做:重开语义服务 17911」。之前没真拉起来只是碰巧:看板 dashboard.py 占着 17911、回 ok:true,被当成「服务健康」。
+    #    要开服务由他自己开(看板按钮 / tg doctor --heal)。
 
     # 2. Check if Superego is toggled off
     if check_is_off("*", sid=conv_id):
@@ -174,12 +159,54 @@ def handle_pre(payload):
         print(json.dumps(result, ensure_ascii=False))
         return
 
+    # 2a. 开局看源头 ~/.truthgate 自 AG 上次开局以来谁改了什么、为什么(2026-09-27,PLAN.md 第 1 步;每个会话只注一次)
+    if conv_id:
+        news_flag = TG_SEM / f".srcnews_{conv_id[:8]}"
+        try:
+            if not news_flag.exists():
+                news_flag.write_text("1", encoding="utf-8")
+                if str(SCRIPTS_DIR) not in sys.path:
+                    sys.path.insert(0, str(SCRIPTS_DIR))
+                from source_news import news
+                src_news = news("ag")
+                if src_news:
+                    inject_steps.append({"ephemeralMessage": src_news})
+        except Exception:
+            pass
+
+    # 2b. 上一轮红线闸熔断放行的,把「拦了 N 次没过」注给 AG(2026-09-25 Claude 加)
+    if conv_id:
+        fused_f = TG_SEM / f".fused_{conv_id[:8]}"
+        try:
+            if fused_f.exists():
+                inject_steps.append({"ephemeralMessage": fused_f.read_text(encoding="utf-8")})
+                fused_f.unlink()
+        except Exception:
+            pass
+
+    # 2c. 2026-10-12 铁律重构 (Frank 指令): PreInvocation 事前极简意图注入 (从挨揍变指路)
+    # 极简按需原则: 不超过 80 字，零上下文稀释，第一步把大模型引上正轨
+    u_prompt = str(payload.get("userPrompt") or payload.get("prompt") or payload.get("text") or "")
+    if u_prompt:
+        if re.search(r"论文|调研|文献|资料|搜索|最新|选型|推荐", u_prompt):
+            inject_steps.append({"ephemeralMessage": "[TruthGate 规范] 调研选型铁律: 文献必须带2025-2026年一手时间戳并查正文摘录，严禁凭旧记忆脑补或单源断言。"})
+        elif re.search(r"修|跑通|报错|修复|测试|交付|完成|bug", u_prompt, re.I):
+            inject_steps.append({"ephemeralMessage": "[TruthGate 规范] 交付验证铁律: 严禁在缺乏真实测试命令输出时声称修好/完成，必须出示真实测试通过或exit code 0凭证。"})
+        elif re.search(r"四端|架构|truthgate|tgate|superego|现状|做过", u_prompt, re.I):
+            inject_steps.append({"ephemeralMessage": "[TruthGate 规范] 系统底账铁律: 四端(Claude/AG/Codex/DSH)已于2026-10-10物理对齐，涉及系统现状必须先读PROGRESS.md核实，严禁失忆捏造。"})
+
     # 3. Reset turn block budget for the new turn
     if conv_id:
-        budget_file = Path.home() / ".claude" / "superego-semantic" / f".turn_blocks_{conv_id[:8]}"
+        budget_file = TG_SEM / f".turn_blocks_{conv_id[:8]}"
         try:
             if budget_file.exists():
                 budget_file.unlink()
+        except Exception:
+            pass
+        # 2026-09-26:新轮次同时清掉上一轮的误报申诉标记(AG 实机核出:原来从不清,同一闸整个会话只能申诉一次)
+        try:
+            for f in (TG_SEM).glob(f".misfire_{conv_id[:8]}_*"):
+                f.unlink()
         except Exception:
             pass
 
@@ -205,10 +232,18 @@ def handle_pre(payload):
                     pass
 
     # 4. Do NOT dump recall banner into chat transcript (prevents spamming Frank's chat UI)
+    # 4b. 事实账本(2026-09-25 Claude 加,Frank 原话「让他不可能再欺骗我欺骗自己」):
+    #     PostToolUse 在 AG 2.17.0 Windows 上不响(实测 223 次工具调用 0 次回调),改在这里记 ——
+    #     PreInvocation 每次调模型前都响(同一会话 699 次),把 transcript 里上次游标之后新增的
+    #     工具调用追加到 ~/.truthgate/ledger/<conv>.jsonl。只记事实(步号/工具/目标/错误),不判断,出错不拦。
+    try:
+        ledger_append_from_transcript(transcript_path, conv_id)
+    except Exception:
+        pass
     # Superego only speaks up when there is a REAL violation or gate fire.
 
     # 5. Check pending verdict from external audit model (Agnes / semantic-superego-gate)
-    sem_gate_file = CLAUDE_DIR / "hooks" / "semantic-superego-gate.py"
+    sem_gate_file = TG_HOOKS / "semantic-superego-gate.py"
     if sem_gate_file.exists():
         try:
             import importlib.util
@@ -248,7 +283,7 @@ def handle_pre(payload):
 
                 # Fallback to DISSAT regex if service was unreachable or not strong
                 if not is_dissat:
-                    dissat_hook = CLAUDE_DIR / "hooks" / "dissatisfaction-postmortem.py"
+                    dissat_hook = TG_HOOKS / "dissatisfaction-postmortem.py"
                     if dissat_hook.exists():
                         import importlib.util
                         spec = importlib.util.spec_from_file_location("dissat_hook_mod", str(dissat_hook))
@@ -259,7 +294,7 @@ def handle_pre(payload):
 
                 if is_dissat:
                     # Deduplicate: only inject once per user turn
-                    dissat_flag = CLAUDE_DIR / "superego-semantic" / f".dissat_done_{conv_id[:8]}" if conv_id else None
+                    dissat_flag = TG_SEM / f".dissat_done_{conv_id[:8]}" if conv_id else None
                     already_injected = False
                     if dissat_flag and dissat_flag.exists():
                         try:
@@ -287,7 +322,7 @@ def handle_pre(payload):
                         })
 
                 # Real-time Audit Pipeline: Log TURN_START so watcher immediately shows activity
-                turn_start_flag = CLAUDE_DIR / "superego-semantic" / f".turn_started_{conv_id[:8]}" if conv_id else None
+                turn_start_flag = TG_SEM / f".turn_started_{conv_id[:8]}" if conv_id else None
                 need_start_log = True
                 if turn_start_flag and turn_start_flag.exists():
                     try:
@@ -300,7 +335,7 @@ def handle_pre(payload):
                         try: turn_start_flag.write_text(prompt_fp, encoding="utf-8")
                         except Exception: pass
                     try:
-                        log_path = CLAUDE_DIR / "hooks" / "semantic-superego-gate.log"
+                        log_path = TG_HOOKS / "semantic-superego-gate.log"
                         sid_short = conv_id[:8] if conv_id else "ag"
                         ts_str = time.strftime("%Y-%m-%d %H:%M:%S")
                         with open(log_path, "a", encoding="utf-8") as f:
@@ -316,7 +351,7 @@ def handle_pre(payload):
             u_prompt = get_last_user_prompt(transcript_path)
             if u_prompt and CROSS_BRAIN_TOPIC_RE.search(u_prompt):
                 tb_fp = hashlib.md5(u_prompt.encode("utf-8")).hexdigest()[:8]
-                tb_flag = CLAUDE_DIR / "superego-semantic" / f".trinity_done_{conv_id[:8]}" if conv_id else None
+                tb_flag = TG_SEM / f".trinity_done_{conv_id[:8]}" if conv_id else None
                 tb_already = False
                 if tb_flag and tb_flag.exists():
                     try:
@@ -340,12 +375,30 @@ def handle_pre(payload):
     except Exception:
         pass
 
+    # 6c. 六宇宙第 1、2 层(2026-10-02):提问像找工具 / 选型 ⇒ 六宇宙清单;像找客户 / 深挖 Reddit ⇒ Reddit Radar。
+    #     判据与 Claude 端 superego-recall-inject 同一份 six_universes.prompt_notes;PreInvocation 每次调模型都响 ⇒ 每条提问只注一次。
+    try:
+        if transcript_path and os.path.exists(transcript_path) and not check_is_off("*", sid=conv_id):
+            u_prompt = get_last_user_prompt(transcript_path)
+            if str(SCRIPTS_DIR) not in sys.path:
+                sys.path.insert(0, str(SCRIPTS_DIR))
+            from six_universes import prompt_notes
+            notes = prompt_notes(u_prompt) if u_prompt else []
+            if notes:
+                su_fp = hashlib.md5(u_prompt.encode("utf-8")).hexdigest()[:8]
+                su_flag = TG_SEM / f".six_universes_{conv_id[:8] or 'noconv'}"   # 没会话号也去重(外审 10-02)
+                if not (su_flag.exists() and su_flag.read_text(encoding="utf-8").strip() == su_fp):
+                    su_flag.write_text(su_fp, encoding="utf-8")
+                    inject_steps.append({"ephemeralMessage": "\n\n".join(notes)})
+    except Exception:
+        pass
+
     # 7. Auto-inject PROGRESS.md on new session start (Single Source of Truth, zero amnesia)
     ws_paths = payload.get("workspacePaths", []) or [os.getcwd()]
     for wp in ws_paths:
         p_file = Path(wp) / "PROGRESS.md"
         if p_file.exists():
-            flag_file = CLAUDE_DIR / "superego-semantic" / f".progress_injected_{conv_id[:8]}" if conv_id else None
+            flag_file = TG_SEM / f".progress_injected_{conv_id[:8]}" if conv_id else None
             already_inj = False
             if flag_file and flag_file.exists():
                 already_inj = True
@@ -377,30 +430,179 @@ def handle_pre(payload):
 
 IMAGE_EXTENSIONS = ('.png', '.jpg', '.jpeg', '.webp', '.gif', '.bmp')
 
-# Regexes aligned 1:1 with ~/.claude/hooks/visual-proof-gate.py
-HEALTH_ASSERTION = re.compile(
-    r"正常|健康|全绿|都绿|没问题|好了|恢复(了|正常|过来)|通了|可用|工作正常|跑通|(?<![a-zA-Z])OK(?![a-zA-Z])|✅"
-    r"|(?:UI|界面|画面|窗口|视窗|看板)[^，。！？\n]{0,8}(?:已就绪|就绪|显示就绪|已经就绪|显示正常|正常显示|已正常|正常渲染)"
-    r"|长这样|效果如下|如下所示|呈现如下",
-    re.I
-)
-
-SCREENFUL_TARGET = re.compile(
-    r"浏览器|chrome|firefox|edge|页面|画面|界面|UI\b|窗口|(?<!自动化)视窗(?!自动化)|看板|实时看板|渲染|前端|网页(?!方案)"
-    r"|登录|登入|登陆|feed|推荐流|时间线|首页|抓取管道|采集管道|标签页|tab\b"
-    r"|控制台|taskbar|任务栏|弹窗",
-    re.I
-)
-
-FRONTEND_DELIVERED = re.compile(
-    r"(?<![不未])(?<!假装)(?:改好了|已改|改完|生效|修好|已修|做好了|完成了|加上了|撤销了|回到原样|升级为|升级成|看板|已换成)"
-)
-
-QUOTING_HISTORIC = re.compile(
+# 引用 / 复盘豁免(桌面弹窗核对、防请示闸在用;2026-09-27 眼见为实的措辞路径已删,只看动作记录)
+VISUAL_QUOTING_HISTORIC = re.compile(
     r"(?:实录|当年|上一轮已|过去式|教训|lessons|形状 20\d\d|举例|比如说明|复盘|"
-    r"visual-proof-gate|门禁|闸门|规则|铁律|宣称|必须|严禁|检查|排查|所谓|假设|探讨|架构)",
+    r"visual-proof-gate|门禁|闸门|规则|铁律|宣称|必须|严禁|检查|排查|所谓|假设|探讨|架构|"
+    r"测试|单测|回归|用例|断言|对账|评测|test_|\bQA\b|拦截|误报|判定|"
+    r"探针|shell|命令行)",
     re.I
 )
+
+NAG_QUOTING_HISTORIC = re.compile(
+    r"(?:^#\s*教训|教训案例库|【形状 20\d\d|历史案卷|历史教训|复盘|门禁|规则|铁律)",
+    re.I
+)
+
+QUOTING_HISTORIC = VISUAL_QUOTING_HISTORIC
+
+LEDGER_DIR = Path.home() / ".truthgate" / "ledger"
+
+
+def ledger_append_from_transcript(transcript_path, conv_id):
+    """把 transcript.jsonl 里游标之后的新步骤记进账本。游标 = 已处理的文件字节数,存在 ledger/<conv>.cursor。
+    每条记录:ts / step / tool / target(文件或命令) / error(紧跟的 ERROR_MESSAGE 开头,没有则空)。
+    """
+    if not transcript_path or not os.path.exists(transcript_path):
+        return
+    conv = (conv_id or Path(transcript_path).parents[2].name or "unknown")[:36]
+    LEDGER_DIR.mkdir(parents=True, exist_ok=True)
+    cur_f = LEDGER_DIR / (conv + ".cursor")
+    try:
+        start = int(cur_f.read_text(encoding="utf-8").strip())
+    except Exception:
+        start = 0
+    size = os.path.getsize(transcript_path)
+    if size < start:          # transcript 被重写/变短:从头来
+        start = 0
+    if size <= start:
+        return
+    with open(transcript_path, "rb") as fh:
+        fh.seek(start)
+        chunk = fh.read()
+    cut = chunk.rfind(b"\n")   # 只吃到最后一个完整换行,半行留给下一次
+    if cut < 0:
+        return
+    chunk = chunk[:cut + 1]
+    rows = []
+    for ln in chunk.decode("utf-8", "replace").splitlines():
+        try:
+            rows.append(json.loads(ln))
+        except Exception:
+            continue
+    out = []
+    for i, r in enumerate(rows):
+        for t in (r.get("tool_calls") or []):
+            if not isinstance(t, dict):
+                continue
+            args = t.get("args") or {}
+            target = ""
+            if isinstance(args, dict):
+                for k in ("TargetFile", "AbsolutePath", "CommandLine", "Url", "Query", "SearchDirectory"):
+                    if args.get(k):
+                        target = str(args[k])
+                        break
+            err = ""
+            code = None
+            nxt = rows[i + 1] if i + 1 < len(rows) else {}
+            nc = str(nxt.get("content") or "")
+            # AG 把命令结果写在紧跟的一行正文里:"The command failed with exit code: 1" / "exit code: 0"
+            # (2026-09-25 全库实测 11,497 条 run_command,8,375 条读得到,1,210 条非 0;error 字段永远为空)
+            m = re.search(r"(?i)(?:exit(?:ed)?\s+(?:with\s+)?code|failed\s+with\s+exit\s+code)[:\s]*(\d+)", nc)
+            if m:
+                code = int(m.group(1))
+                if code != 0:
+                    err = "exit " + str(code) + ": " + nc[:160].replace("\n", " ")
+            if nxt.get("type") == "ERROR_MESSAGE" or nxt.get("status") == "ERROR":
+                err = err or str(nxt.get("content") or nxt.get("error") or "ERROR")[:200]
+            elif r.get("error"):
+                err = err or str(r.get("error"))[:200]
+            out.append({"ts": (r.get("created_at") or "")[:19], "step": r.get("step_index"),
+                        "tool": t.get("name"), "target": target[:300], "code": code, "error": err})
+    if out:
+        with open(LEDGER_DIR / (conv + ".jsonl"), "a", encoding="utf-8") as f:
+            for rec in out:
+                f.write(json.dumps(rec, ensure_ascii=False) + "\n")
+    cur_f.write_text(str(start + len(chunk)), encoding="utf-8")
+
+
+LEDGER_TEST_RE = re.compile(r"(?i)\b(pytest|npm test|npm run test|node .*test|py(?:thon)?[^\n]*test_|selftest|--selftest|regression|vitest|jest|cargo test|go test)")
+LEDGER_CLAIM_RE = re.compile(r"(?:测试|回归|单测|自检|selftest|test)[^。\n]{0,20}?(?:全绿|通过|跑通|全过|都过|已过|绿了|pass(?:ed|es)?\b|green)"
+                             r"|(?:\d+\s*/\s*\d+)\s*(?:通过|全过|绿|pass)"
+                             r"|(?:all|全部)\s*(?:tests?|测试)\s*(?:pass|通过|绿)")
+
+
+def ledger_claim_check(text, conv_id, transcript_path):
+    """回复里宣称测试通过 → 查本轮账本里最后一条测试类命令的退出码。非 0 = 拦;找不到测试命令 = 不管(交给 honest-scope 闸)。"""
+    if not text or not LEDGER_CLAIM_RE.search(text):
+        return None
+    conv = (conv_id or (Path(transcript_path).parents[2].name if transcript_path else "") or "")[:36]
+    led = LEDGER_DIR / (conv + ".jsonl")
+    if not conv or not led.exists():
+        return None
+    try:
+        rows = [json.loads(l) for l in open(led, encoding="utf-8") if l.strip()]
+    except Exception:
+        return None
+    # 只看本轮:从最后一条 USER_INPUT 之后。账本没记 user 边界,用 transcript 里最后一个用户输入的 step 号
+    last_user_step = -1
+    try:
+        for l in read_transcript_tail_lines(transcript_path, max_bytes=2 * 1024 * 1024):
+            try:
+                o = json.loads(l)
+            except Exception:
+                continue
+            if o.get("type") == "USER_INPUT":
+                last_user_step = o.get("step_index", -1)
+    except Exception:
+        pass
+    tests = [r for r in rows if r.get("tool") == "run_command" and (r.get("step") or -1) > last_user_step
+             and LEDGER_TEST_RE.search(str(r.get("target") or ""))]
+    if not tests:
+        return None
+    last = tests[-1]
+    if last.get("code") not in (None, 0):
+        return (f"[TruthGate 拦截 - ledger-claim-gate] 🚨 事实账本对不上:你说测试通过,但本轮最后一条测试命令"
+                f"「{str(last.get('target'))[:80]}」的真实退出码是 {last.get('code')}(步 {last.get('step')})。"
+                f"账本是从工具流水抄的,不看你的措辞。要么修到退出码 0 再说通过,要么如实写「测试红着」。")
+    return None
+
+
+MISFIRE_RE = re.compile(r"误报[:：]\s*([a-z0-9-]+)\s*[—\-–]+\s*(.{4,200})")
+GATE_NAME_RE = re.compile(r"\[(?:TruthGate|Superego) 拦截 - ([a-z0-9-]+)\]")
+
+
+def _gate_name_of(violation):
+    m = GATE_NAME_RE.search(violation or "")
+    return m.group(1) if m else "gate"
+
+
+def _misfire_claim(text, gate_name):
+    """收尾文本里有「误报：<gate> — <理由>」且 gate 对得上 ⇒ 返回理由,否则 None。"""
+    for m in MISFIRE_RE.finditer(text or ""):
+        if m.group(1) == gate_name:
+            return m.group(2).strip()
+    return None
+
+
+# 各闸的「嫌疑词」:用来从它那段话里挑出最可能触发的一句。没登记的闸退回末尾 120 字。
+_GATE_HINTS = {
+    "visual-proof-gate": r"正常|健康|恢复|通了|渲染|画面|截图|看到",
+    "honest-scope-assertion-gate": r"全部|所有|全量|各个|完成|通过|全绿|拦截",
+    "ghost-browser-gate": r"浏览器|窗口|打开|前台|页面",
+    "gui-process-restart-gate": r"重启|restart|进程|服务",
+    "model-authenticity-gate": r"模型|model|gemini|claude|gpt|版本",
+    "dsh-provider-authenticity-gate": r"provider|供应商|模型|DSH",
+    "institutionalize-guard": r"固化|skill|复用|沉淀|hook",
+    "codegraph-topology-gate": r"codegraph|索引|调用链|符号",
+    "cross-brain-retrieval-gate": r"档案|archive|历史|之前|上次",
+    "harness-tool-integrity-gate": r"harness|脚手架|测试|工具",
+    "token-thrift-gate": r"token|上下文|读全文|全量",
+}
+
+
+def _likely_trigger(text, gate_name):
+    t = (text or "").strip()
+    if not t:
+        return "(空)"
+    sents = [x.strip() for x in re.split(r"(?<=[。！？!?\n])", t) if x.strip()]
+    pat = _GATE_HINTS.get(gate_name)
+    if pat:
+        hits = [x for x in sents if re.search(pat, x)]
+        if hits:
+            return "「" + hits[-1][:160] + "」"
+    return "「…" + t[-120:] + "」"
+
 
 def load_antigravity_turn(transcript_path):
     """Parses Antigravity transcript JSONL to get assistant messages and assistant tool calls in current turn."""
@@ -422,13 +624,17 @@ def load_antigravity_turn(transcript_path):
             except Exception:
                 continue
 
-        # Find the last USER_INPUT or SYSTEM_MESSAGE index by parsed JSON type
+        # Find the last USER_INPUT or Stop-Hook SYSTEM_MESSAGE index (stop-hook-boundary-healing)
         last_user_idx = -1
         for i, obj in enumerate(parsed_objs):
-            if obj.get("type") in ("USER_INPUT", "SYSTEM_MESSAGE"):
+            tp = obj.get("type")
+            cnt = str(obj.get("content", ""))
+            # 2026-09-26:边界只认真正的 USER_INPUT。原来把 "Stop hook blocked" 也当边界 ⇒ 被拦一次后本轮工具记录被截断,
+            # 只做口头申诉就变成"零工具调用"再被别的闸拦(AG 实机核出的套娃死循环)。
+            if tp == "USER_INPUT":
                 last_user_idx = i
 
-        # CRITICAL: ONLY take lines strictly AFTER the user prompt!
+        # CRITICAL: ONLY take lines strictly AFTER the prompt / stop-hook boundary!
         post_user_objs = parsed_objs[last_user_idx + 1:] if last_user_idx >= 0 else parsed_objs[-50:]
 
         for obj in post_user_objs:
@@ -489,9 +695,34 @@ def get_default_desktop_windows():
 DESKTOP_POPUP_CLAIM = re.compile(
     r"(?:已(?:在(?:浏览器|桌面|前台|视窗|系统)?(?:中|里)?)?(?:为您|为你|帮您|帮你)?(?:弹出|弹出了|打开了|打开|直接打开|拉起|唤起|启动了|显示在)|"
     r"在你的桌面上直接弹出|弹出了浏览器|为你打开了|帮您打开了|切换到刚弹出来的|已调用系统默认浏览器|已在系统默认浏览器中打开|"
-    r"在浏览器中(?:为你|为您)?打开).*?(?:浏览器|控制台|窗口|视窗|页面|localhost|http|https)?",
+    r"在浏览器中(?:为你|为您)?打开|"
+    r"(?:在|用)(?:默认|系统默认|系统|你的|您的)?浏览器(?:中|里)?(?:自动|直接)?(?:为你|为您|帮你|帮您)?(?:打开|弹出))"
+    r".*?(?:浏览器|控制台|窗口|视窗|页面|localhost|http|https)?",
     re.I
 )
+
+
+def desktop_claim(text):
+    """找「弹出来了 / 已在浏览器打开」这句宣称。豁免词只看这句前后 40 字（2026-09-29 AG cb9b2465：整段回复里
+    出现「检查 / 铁律 / 门禁」就把整段放过，「并在默认浏览器中自动打开」这句真宣称被漏掉）。"""
+    for m in DESKTOP_POPUP_CLAIM.finditer(text or ""):
+        if not QUOTING_HISTORIC.search(text[max(0, m.start() - 40): m.end() + 40]):
+            return m
+    return None
+
+
+def _claimed_page_keys(text):
+    """回复里提到的本地网页 → 对窗口标题用的字样：文件名（去扩展名）+ 网页 <title>（浏览器窗口标题显示的是 <title>）。"""
+    keys = []
+    for p in set(re.findall(r'[A-Za-z]:[\\/][^`"\'<>|\n)\]]+?\.html?', text or "", re.I)):
+        keys.append(Path(p).stem.lower())
+        try:
+            t = re.search(r"<title[^>]*>([^<]+)</title>", open(p, encoding="utf-8", errors="replace").read(65536), re.I)
+            if t and t.group(1).strip():
+                keys.append(t.group(1).strip()[:20].lower())
+        except Exception:
+            pass
+    return [k for k in keys if len(k) >= 4]
 
 NAG_WORDS = re.compile(
     r"(?:要不要|需不需要|需要|该不该|是否(?:要|需要)|用不用|可不可以)\s*我(?!们.{0,6}(?:团队|一起|共同|分工))"
@@ -504,7 +735,7 @@ NAG_WORDS = re.compile(
     r"|你说(?:做|接|继续|干|改|弄)[^，。？！?!\n]{0,4}?我就"
     r"|等(?:你|您)(?:一句话|点头|发话|拍板|确认|决定|定夺|说一?声|回复|同意|批准|开口)"
     r"|(?:你|您)(?:说|点头|发话|确认|批准|同意)[^，。？！?!\n]{0,6}?我(?:就|再|马上|立刻)"
-    r"|(?:(?:如果|若|倘若|假如|要是|一旦|如)(?:你|您)?\s*(?:有需要|需要|想要?|要|希望|打算|愿意|觉得(?:需要|合适|行|可以|有必要)|认为(?:需要|有必要)|允许|同意|许可|吩咐|指示|交代|开口|点头|认可|批准|授权|发话|发指令|说|招呼|一声令下|一句话)(?:的话|一声|一句|一下|下来)?|"
+    r"|(?:(?:如果|倘若|假如|要是|一旦|(?:若|如)(?=[你您]))(?:你|您)?\s*(?:有需要|需要|想要?|要|希望|打算|愿意|觉得(?:需要|合适|行|可以|有必要)|认为(?:需要|有必要)|允许|同意|许可|吩咐|指示|交代|开口|点头|认可|批准|授权|发话|发指令|说|招呼|一声令下|一句话)(?:的话|一声|一句|一下|下来)?|"
     r"只要(?:你|您)?\s*(?:有需要|需要|想要?|要|希望|打算|愿意|允许|同意|许可|吩咐|指示|交代|开口|点头|认可|批准|授权|发话|发指令|说|招呼|一声令下|一句话)(?:的话|一声|一句|一下|下来)?|"
     r"(?:你|您)\s*(?:一声令下|一句话|吩咐一声|发话|点头|同意|批准|授权|认可)|"
     r"(?:如有需要|若有需要|有需要的话|需要的话|想要的话|如果要的话|若要的话|若需|如有需|如需))"
@@ -513,7 +744,7 @@ NAG_WORDS = re.compile(
     r"(?:[^。？！?!\n]{0,10}?)"
     r"(?:改|修|做|干|搞|弄|办|处理|建|加|删除?|去掉|继续|优化|扫|查|拉|跑|写|实现|接线?|接上|重建|清理?|补|换|统一|迁移|部署?|生成|下载?|抓|截断|调整|替换|移除|精简|压缩|重写|拆分|排查|定位|升级|重构|测试?|验证|动手|开工|去办|效劳|"
     r"合并|提交|推送|拉取|发布|打包|构建|编译|运行|执行|接入|对接|集成|配置|适配|调试|整理|格式化|搭|搭建|装|安装|更新)"
-    r"|(?:我|小弟|助手|这边)\s*(?:就|再|来|马上|立刻|立即|即刻|现在|随时|随时可以|随时能|也可以|这就|便|能|可以)?\s*(?:可以|能|去|帮|为您?|为你?|随时|把|替|给|协助|接手)?\s*[^。？！?!\n]{0,15}?(?:改|修|做|干|搞|弄|办|处理|建|加|删除?|去掉|继续|优化|扫|查|拉|跑|写|实现|接线?|接上|重建|清理?|补|换|统一|迁移|部署?|生成|下载?|抓|截断|调整|替换|移除|精简|压缩|重写|拆分|排查|定位|升级|重构|测试?|验证|动手|开工|去办|效劳|合并|提交|推送|拉取|发布|打包|构建|编译|运行|执行|接入|对接|集成|配置|适配|调试|整理|格式化|搭|搭建|装|安装|更新)[^。？！?!\n]{0,15}?(?:[，,]\s*)?(?:(?:如果|若|倘若|假如|要是|一旦|如|只要)\s*(?:你|您)?\s*(?:有需要|需要|想要?|要|希望|打算|愿意|觉得(?:需要|合适|行|可以|有必要)|允许|同意|许可|吩咐|指示|交代|开口|点头|认可|批准|授权|发话|说|招呼|一声令下|一句话|想)(?:的话|一声|一句|一下|下来)?|(?:只要|等)\s*(?:你|您)\s*(?:一声令下|一句话|吩咐一声|发话|点头|同意|批准|授权|认可|开口|说一声|吩咐|批准)|(?:如有需要|若有需要|有需要的话|需要的话|想要的话|如果要的话|若要的话|若需|如有需|如需))"
+    r"|(?:我|小弟|助手|这边)\s*(?:就|再|来|马上|立刻|立即|即刻|现在|随时|随时可以|随时能|也可以|这就|便|能|可以)?\s*(?:可以|能|去|帮|为您?|为你?|随时|把|替|给|协助|接手)?\s*[^。？！?!\n]{0,15}?(?:改|修|做|干|搞|弄|办|处理|建|加|删除?|去掉|继续|优化|扫|查|拉|跑|写|实现|接线?|接上|重建|清理?|补|换|统一|迁移|部署?|生成|下载?|抓|截断|调整|替换|移除|精简|压缩|重写|拆分|排查|定位|升级|重构|测试?|验证|动手|开工|去办|效劳|合并|提交|推送|拉取|发布|打包|构建|编译|运行|执行|接入|对接|集成|配置|适配|调试|整理|格式化|搭|搭建|装|安装|更新)[^。？！?!\n]{0,15}?(?:[，,]\s*)?(?:(?:如果|倘若|假如|要是|一旦|(?:若|如)(?=[你您])|只要)\s*(?:你|您)?\s*(?:有需要|需要|想要?|要|希望|打算|愿意|觉得(?:需要|合适|行|可以|有必要)|允许|同意|许可|吩咐|指示|交代|开口|点头|认可|批准|授权|发话|说|招呼|一声令下|一句话|想)(?:的话|一声|一句|一下|下来)?|(?:只要|等)\s*(?:你|您)\s*(?:一声令下|一句话|吩咐一声|发话|点头|同意|批准|授权|认可|开口|说一声|吩咐|批准)|(?:如有需要|若有需要|有需要的话|需要的话|想要的话|如果要的话|若要的话|若需|如有需|如需))"
     r"|(?:您|你)?\s*看\s*(?:需不需要|要不要|该不该|是否需要|用不用|是否)\s*[^，。？！?!\n]{0,15}?(?:改|修|做|干|搞|弄|办|处理|建|加|删除?|去掉|继续|优化|扫|查|拉|跑|写|实现|接线?|接上|重建|清理?|补|换|统一|迁移|部署?|生成|下载?|抓|截断|调整|替换|移除|精简|压缩|重写|拆分|排查|定位|升级|重构|测试?|验证|动手|开工|去办|效劳|合并|提交|推送|拉取|发布|打包|构建|编译|运行|执行|接入|对接|集成|配置|适配|调试|整理|格式化|搭|搭建|装|安装|更新)"
     r"|(?:听候差遣|听候吩咐|听候指令|听候安排)[^。？！?!\n]{0,15}?(?:由(?:你|您)|看(?:你|您)|等(?:你|您))?"
     r"|(?:由|看)(?:你|您)\s*(?:定夺|决断|安排|裁夺)"
@@ -526,7 +757,14 @@ NAG_WORDS = re.compile(
     r"|just let me know and i (?:can|will|\'ll)"
     r"|ready whenever you are"
     r"|i\s*(?:can|will|\'ll|could)\s*[^.?!]{0,25}?(?:if you (?:would like|want|need|prefer|wish)|whenever you (?:want|wish|say|are ready))"
-    r"|i\s*(?:am|\'m)\s*ready to\s*[^.?!]{0,25}?(?:whenever you|if you)",
+    r"|i\s*(?:am|\'m)\s*ready to\s*[^.?!]{0,25}?(?:whenever you|if you)"
+    # ⛔ 2026-10-11 (Frank:「明明你能自动化帮我打开...留给我我自己手动做，还要我手动？」):
+    #   形状: 把本该自己全自动做完的可逆操作/打开操作/配置还原,以陈述句方式甩锅给用户手动做。
+    #   抓取: "你可以手动..." / "请自行点击..." / "通过该链接打开一次即可..." / "遗留事项供你决定...改回即可"
+    r"|(?:(?:留给|交由?|需要|请|可由)\s*(?:你|您)|你可以?)\s*(?:手动|自己|自行|亲自)?\s*[^，。？！?!\n]{0,15}?(?:点|点击|打开|执行|运行|复制|修改|改回|改|调|弄|搞|处理|操作|访问)"
+    r"|(?:通过|点击|打开)\s*(?:该|此|这个)?\s*(?:链接|url|网址|地址)\s*[^。？！?!\n]{0,25}?(?:即可|自行|手动)"
+    r"|(?:若|如果|要是)\s*(?:你|您)\s*(?:希望|想|要)\s*[^。？！?!\n]{0,35}?(?:自行|手动|自己|改回|下次重启时\s*把[^。？！?!\n]{0,15}?改回)"
+    r"|遗留事项\s*[(（]\s*供(?:你|您)决定\s*[)）]",
     re.I
 )
 
@@ -546,7 +784,7 @@ def _get_no_nag_mod():
         return _CACHED_NO_NAG_MOD
     try:
         candidate_paths = [
-            CLAUDE_DIR / "hooks" / "no-nagging-guard.py",
+            TG_HOOKS / "no-nagging-guard.py",
             SCRIPTS_DIR / "no-nagging-guard.py",
             Path.home() / ".superego" / "superego" / "no-nagging-guard.py",
             Path.home() / ".codex" / "hooks" / "no-nagging-guard.py",
@@ -581,8 +819,11 @@ def check_no_nagging_violation(text, user_prompt=""):
         return None
 
     # 3. 语法结构脱敏：剥离代码块后检测，若仅存在于代码块中直接放行
-    clean_tail = re.sub(r"```[\s\S]*?```", "", tail)
-    clean_tail = re.sub(r"`[^`\n]+`", "", clean_tail)
+    #    2026-09-26 AG 核出(第 7 条):原来先截 tail 再剥代码块,块在 1200 字前开头时只剩闭合围栏、剥不掉 ⇒ 块内请示句被当正文拦。
+    #    改成先在全文剥、再取尾。
+    clean_full = re.sub(r"```[\s\S]*?```", "", text)
+    clean_full = re.sub(r"`[^`\n]+`", "", clean_full)
+    clean_tail = clean_full[-1200:]
     m = NAG_WORDS.search(clean_tail)
     if not m:
         return None
@@ -609,7 +850,7 @@ def check_no_nagging_violation(text, user_prompt=""):
 
     # 5. 离线/模块异常时的确定性兜底
     window = clean_tail[max(0, m.start() - 30): min(len(clean_tail), m.end() + 30)]
-    if not QUOTING_HISTORIC.search(window):
+    if not NAG_QUOTING_HISTORIC.search(window):
         return (
             f"[TruthGate 拦截 - no-nagging-guard] ⛔ 检测到【请示式收尾 / 废话推诿句式】（命中: 「{m.group(0)}」）！\n"
             "按 CLAUDE.md 授权即执行铁律：授权即执行，能 revert 的可逆技术活直接做完，严禁说「如果你需要我就做 / 要不要我做 / 只要你说一声」！\n"
@@ -619,17 +860,55 @@ def check_no_nagging_violation(text, user_prompt=""):
 
     return None
 
-def check_visual_proof_violation(text, assistant_tool_calls, assistant_blob):
+def _fresh_once(tag, conv_id, text):
+    """AG 一轮收尾会调桥接 3 次(全局两组 + 插件一组都接了 Stop):同一会话、同一段回复、同一件事只记一次账。考卷 / 测试不留标记。"""
+    import hashlib
+    if os.environ.get("SUPEREGO_TEST") == "1":
+        return True
+    mark = TG_SEM / f".{tag}_{(conv_id or 'ag')[:8]}"
+    sig = hashlib.md5((text or "").encode("utf-8", "ignore")).hexdigest()[:12]
+    try:
+        if mark.exists() and mark.read_text(encoding="utf-8") == sig:
+            return False
+        mark.write_text(sig, encoding="utf-8")
+    except Exception:
+        pass
+    return True
+
+
+def check_delivery(gate, items, tool_calls, user_prompt="", conv_id="", text=""):
+    """交付自检(2026-09-27,PLAN.md 第 3 步):只看本轮做了什么 —— 改了网页 / 接口代码,改完之后跑没跑浏览器、听没听控制台、
+    看没看截图、发没发请求。判据与 Claude 端 anti-toy-test-gate / visual-proof-gate 同一份(~/.truthgate/delivery_check.py)。"""
+    for p in (str(SCRIPTS_DIR), str(TG_HOOKS)):
+        if p not in sys.path:
+            sys.path.insert(0, p)
+    from delivery_check import missing, message, OBSERVE_ITEMS, SKIP_ASK
+    from evidence_table import actions_from_ag
+    if user_prompt and SKIP_ASK.search(user_prompt):
+        return None
+    ws = re.sub(r"^file:/+", "", _AG_WS or "")
+    gaps = missing(actions_from_ag(tool_calls, cwd=ws), items)
+    watch = [(p, [m for m in miss if m in OBSERVE_ITEMS]) for p, miss in gaps]
+    gaps = [(p, [m for m in miss if m not in OBSERVE_ITEMS]) for p, miss in gaps if any(m not in OBSERVE_ITEMS for m in miss)]
+    if any(miss for _, miss in watch) and _fresh_once("delivery_" + gate, conv_id, text + gate):
+        from guard_common import hook_log
+        for p, miss in watch:
+            if miss:
+                hook_log(gate, "WOULDBLOCK(" + ",".join(miss) + f") ag={(conv_id or '-')[:8]}", p)
+    return f"[TruthGate 拦截 - {gate}] " + message(gate, gaps) if gaps else None
+
+
+def check_visual_proof_violation(text, assistant_tool_calls, assistant_blob, user_prompt="", conv_id=""):
     """Checks if visual-proof-gate should fire.
-    Requires that if assistant makes UI / window / visual claims, assistant MUST have
-    actually viewed a screenshot image (view_file on an image file) in the turn.
-    Also strictly verifies desktop popup assertions against physical WinSta0\\default desktop windows."""
+    ① 桌面弹窗真实性:说「弹出来了 / 已在浏览器打开」⇒ 对照主桌面真实窗口(事实核对,AG 独有)。
+    ② 2026-09-27 第 3 步起「眼见为实」只看动作记录:改了网页文件 ⇒ 改完之后要截图并打开看过(delivery_check.py,与 Claude 端同一份)。
+       原来的措辞路径(「正常 / 健康」挨着「页面 / 浏览器」、「改好了」+ 改过前端)删掉:在解释 / 举例里误拦,见考卷 c041、c045。"""
     if not text:
         return None
 
     # 1. 桌面弹窗真实性检查 (Desktop Window Reality Check)
-    m_desk = DESKTOP_POPUP_CLAIM.search(text)
-    if m_desk and not QUOTING_HISTORIC.search(text):
+    m_desk = desktop_claim(text)
+    if m_desk:
         claim_snippet = m_desk.group(0)
         desk_wins = get_default_desktop_windows()
         has_matched_window = False
@@ -640,12 +919,8 @@ def check_visual_proof_violation(text, assistant_tool_calls, assistant_blob):
                     has_matched_window = True
                     break
         else:
-            target_keys = ["all for one", "dola", "runninghub", "gallery"]
-            for k in target_keys:
-                if k in text.lower():
-                    if any(k in w.lower() for w in desk_wins):
-                        has_matched_window = True
-                        break
+            target_keys = [k for k in ("all for one", "dola", "runninghub", "gallery") if k in text.lower()] + _claimed_page_keys(text)
+            has_matched_window = any(k in w.lower() for k in target_keys for w in desk_wins)
         has_real_screen_shot = False
         for tc in assistant_tool_calls:
             args = str(tc.get("args", {}) or tc.get("arguments", {}))
@@ -665,44 +940,14 @@ def check_visual_proof_violation(text, assistant_tool_calls, assistant_blob):
                 f"必须出示真实物理桌面可见视窗凭据方可放行！"
             )
 
-    # Proximity check: Health / delivery assertion within 80 chars of a screenful target
-    has_visual_claim = bool(m_desk and not QUOTING_HISTORIC.search(text))
-    if not has_visual_claim:
-        for m in HEALTH_ASSERTION.finditer(text):
-            start = max(0, m.start() - 60)
-            end = min(len(text), m.end() + 60)
-            window = text[start:end]
-            if SCREENFUL_TARGET.search(window):
-                if not QUOTING_HISTORIC.search(window):
-                    has_visual_claim = True
-                    break
+    # ② 眼见为实:只看动作记录 —— 改了网页文件 ⇒ 最后一次改完之后要截图并打开看过
+    vio = check_delivery("visual-proof-gate", {"shot"}, assistant_tool_calls, user_prompt, conv_id, text)
+    if vio:
+        return vio
 
-    # Also check frontend code modification + delivered assertion
-    has_frontend_claim = False
-    if not has_visual_claim:
-        if FRONTEND_DELIVERED.search(text) and not QUOTING_HISTORIC.search(text):
-            has_modified_frontend = False
-            for tc in assistant_tool_calls:
-                fn = tc.get("function", {}) if "function" in tc else tc
-                name = fn.get("name", "")
-                if name in ("write_to_file", "replace_file_content", "edit"):
-                    args = fn.get("args", {}) or fn.get("arguments", {})
-                    target = ""
-                    if isinstance(args, dict):
-                        target = str(args.get("TargetFile", "") or args.get("path", "") or "")
-                    elif isinstance(args, str):
-                        target = args
-                    if re.search(r'\.(?:css|html|htm|jsx|tsx|vue)\b', target, re.I):
-                        has_modified_frontend = True
-                        break
-            if has_modified_frontend:
-                has_frontend_claim = True
-
-    if not (has_visual_claim or has_frontend_claim):
+    # ③ 说桌面上弹出来了 / 已在浏览器打开:看过的图得是真桌面截图,不能拿无头浏览器截的局部图冒充
+    if not m_desk:
         return None
-
-    # Verify true visual evidence:
-    # Did the assistant invoke view_file on an actual image file (.png, .jpg, .jpeg, .webp)?
     viewed_images = []
     for tc in assistant_tool_calls:
         fn = tc.get("function", {}) if "function" in tc else tc
@@ -720,39 +965,28 @@ def check_visual_proof_violation(text, assistant_tool_calls, assistant_blob):
                     viewed_images.append(path)
             if name in ("desktop_window_shot", "captureScreenshot", "take_screenshot"):
                 viewed_images.append(name)
-
-    if not viewed_images:
-        for m in re.finditer(r'view_file.*?"AbsolutePath":\s*"([^"]+\.(?:png|jpg|jpeg|webp))"', assistant_blob, re.I):
-            viewed_images.append(m.group(1))
-
     if not viewed_images:
         return (
-            "[TruthGate 拦截 - visual-proof-gate] 检测到对 UI/视窗/看板/渲染状态作出了【升级/就绪/完成/效果呈现】的断言，"
-            "但本轮交互中未曾使用 view_file 查验任何实际画面截图证据（.png/.jpg/screenshot）。"
-            "全局铁律规定「空壳=没做，宣称UI健康必须先看画面」。"
-            "请先进行实际画面/截图取证，使用 view_file 亲眼验证视觉效果无乱码、无错位后再交付！"
+            "[TruthGate 拦截 - visual-proof-gate] 你说桌面上弹出来了 / 已在浏览器打开，但本轮一张画面都没看过。"
+            "先截一张真桌面的图、用 view_file 打开看过再说。"
         )
-
-    # 检查是否以纯无头离线爬虫截图冒充宿主桌面交付
-    if m_desk and not QUOTING_HISTORIC.search(text):
-        has_real_grounding = any(any(k in img.lower() for k in ("real_screen", "desktop", "fullscreen", "screen_bounds")) for img in viewed_images)
-        if not has_real_grounding:
-            return (
-                "[TruthGate 拦截 - visual-proof-gate / headless-mock-fraud] 🚨 触发硬红线拦截：\n"
-                "检测到在声称宿主桌面打开/弹出视窗时，仅查验了后台无头沙盒爬虫生成的局部图片，\n"
-                "而非通过系统 GDI 或窗口捕获的真实物理桌面 (WinSta0\\default) 画面！\n"
-                "严禁用无头浏览器（headless Playwright）自导自演假截图冒充桌面真实弹窗交付！"
-            )
-
+    has_real_grounding = any(any(k in img.lower() for k in ("real_screen", "desktop", "fullscreen", "screen_bounds")) for img in viewed_images)
+    if not has_real_grounding:
+        return (
+            "[TruthGate 拦截 - visual-proof-gate / headless-mock-fraud] 🚨 触发硬红线拦截：\n"
+            "检测到在声称宿主桌面打开/弹出视窗时，仅查验了后台无头沙盒爬虫生成的局部图片，\n"
+            "而非通过系统 GDI 或窗口捕获的真实物理桌面 (WinSta0\\default) 画面！\n"
+            "严禁用无头浏览器（headless Playwright）自导自演假截图冒充桌面真实弹窗交付！"
+        )
     return None
 
 # ── Model Authenticity Gate ──────────────────────────────────────────────────
 # Prevents hallucinating generic cliché models (gpt-4o, claude-3-5-sonnet, etc.)
-# and enforces querying C:\Users\Casp\.cc-switch\cc-switch.db for any model claims.
+# and enforces querying ~/.cc-switch/cc-switch.db for any model claims.
 CC_SWITCH_DB = Path.home() / ".cc-switch" / "cc-switch.db"
 
 CLICHE_FAKE_MODELS = re.compile(
-    r"\b(gpt-4o|gpt-4-turbo|gemini-2\.5-pro|gemini-2\.5-flash|gemini-2\.0-flash|gemini-1\.5-pro|gemini-1\.5-flash|claude-3-5-sonnet|claude-3-opus|claude-2)\b",
+    r"\b(gpt-4o|gpt-4-turbo|gemini-2\.5-pro|gemini-1\.5-pro|claude-3-5-sonnet|claude-3-opus|claude-2)\b",
     re.I
 )
 
@@ -793,25 +1027,12 @@ def check_model_authenticity_violation(text, assistant_tool_calls, assistant_blo
     cliche_match = CLICHE_FAKE_MODELS.search(combined_output)
     if cliche_match:
         bad_model = cliche_match.group(1)
-        # Check if model was explicitly configured by the user via dashboard in ~/.truthgate/config.json
-        is_user_configured = False
-        try:
-            for cfg_cand in [Path.home() / ".truthgate" / "config.json", Path.home() / ".superego" / "config.json"]:
-                if cfg_cand.exists():
-                    cfg_d = json.loads(cfg_cand.read_text(encoding="utf-8"))
-                    c_m = str(cfg_d.get("critic", {}).get("model", "")).lower()
-                    if c_m and bad_model.lower() in c_m:
-                        is_user_configured = True
-                        break
-        except Exception:
-            pass
-
-        if not is_user_configured and not QUOTING_HISTORIC_OR_REFUTING.search(text):
+        if not QUOTING_HISTORIC_OR_REFUTING.search(text):
             return (
                 f"[TruthGate 拦截 - model-authenticity-gate] 检测到在回复或生成资产中出现了公版刻板印象模型名【{bad_model}】！\n"
-                f"本机运行着 CC Switch 代理并存储有真实账本（C:\\Users\\Casp\\.cc-switch\\cc-switch.db）。\n"
+                f"本机运行着 CC Switch 代理并存储有真实账本（~/.cc-switch/cc-switch.db）。\n"
                 f"铁律 2026-09-14-C 规定「严禁凭空捏造公版模型，必须以本地数据库 5 万条记录为唯一基准」。\n"
-                f"请先查询本地真实数据库（`C:\\Users\\Casp\\.cc-switch\\cc-switch.db`），根据真实调用模型进行交付！"
+                f"请先查询本地真实数据库（`~/.cc-switch/cc-switch.db`），根据真实调用模型进行交付！"
             )
 
     # Check 2: Model inquiry by user or assistant asserted model claims
@@ -842,61 +1063,9 @@ def check_model_authenticity_violation(text, assistant_tool_calls, assistant_blo
         if user_prompt and re.search(r"(?:哪个模型|什么模型|ide和模型|全部模型|主力模型|模型列表)", user_prompt):
             return (
                 "[TruthGate 拦截 - model-authenticity-gate] 用户询问了模型/IDE相关账本，"
-                "但本轮交互中未曾查验 CC Switch 真实调用数据库（C:\\Users\\Casp\\.cc-switch\\cc-switch.db）。\n"
+                "但本轮交互中未曾查验 CC Switch 真实调用数据库（~/.cc-switch/cc-switch.db）。\n"
                 "铁律规定：涉及本机模型与路由，必须先查询真实数据库，严禁凭印象脑补！"
             )
-    return None
-
-# ── External Model Freshness & Live Search Gate (Gate 18) ────────────────────
-# Shape 2026-09-24-MF: Enforces zero unverified model claims.
-# When asserting, recommending, or configuring external LLM versions (Gemini/Claude/OpenAI/DeepSeek),
-# assistant MUST have performed live search (search_web / read_url_content / official docs MCP) in this turn.
-EXTERNAL_MODEL_ASSERTION_RE = re.compile(
-    r"(?:推荐|默认|采用|选用|主力|当前|最新|公版|SOTA|版本).*?(?:gemini-[1-9]|gpt-[345]|claude-[234]|deepseek-[a-z0-9]|glm-[0-9])|"
-    r"(?:gemini-[1-9]|gpt-[345]|claude-[234]|deepseek-[a-z0-9]|glm-[0-9])[-\w.]*.*?(?:推荐|默认|最新|主力|首选|发布)|"
-    r"\b(gemini-[12]\.[0-9]|gemini-2\.5|gpt-4o|claude-3-5|glm-4(?!\.5))\b",
-    re.I
-)
-
-def check_external_model_freshness_violation(text, assistant_tool_calls, assistant_blob, user_prompt=""):
-    """Enforces external-model-freshness-gate:
-    Blocks turns that assert or recommend external AI model versions without live search verification."""
-    if not text:
-        return None
-
-    # Exclude historical refutations or postmortems
-    if QUOTING_HISTORIC_OR_REFUTING.search(text) or re.search(r"(?:复盘|教训|案卷|形状 ?20\d\d|错误归纳|历史)", text):
-        return None
-
-    m = EXTERNAL_MODEL_ASSERTION_RE.search(text)
-    if not m:
-        return None
-
-    # Check if this turn executed live search tools
-    has_live_search = False
-    for tc in (assistant_tool_calls or []):
-        fn = tc.get("function", {}) if "function" in tc else tc
-        name = fn.get("name", "")
-        if name in ("search_web", "read_url_content"):
-            has_live_search = True
-            break
-        if "gemini_search_docs" in name or "gemini_get_doc" in name:
-            has_live_search = True
-            break
-
-    blob_lower = (assistant_blob or "").lower()
-    if any(k in blob_lower for k in ("search_web", "read_url_content", "duckduckgo", "google", "bing")):
-        has_live_search = True
-
-    if not has_live_search:
-        matched = m.group(0)[:35]
-        return (
-            f"[TruthGate 拦截 - external-model-freshness-gate] 🚨 触发外部模型时效与真实性铁律（拿过时旧知当最新 / 零搜索凭印象脑补）：\n"
-            f"检测到回复中对外部大模型版本做出了推荐或断言（命中: 「{matched}」），\n"
-            f"但当前回合工具执行流水显示：【零次执行 search_web 或官方最新文档检索】！\n"
-            f"铁律规定：外部 AI 模型迭代极快（当前为 2026 年），严禁凭借大模型预训练静态权重记忆向用户提供过时/虚假版本信息！\n"
-            f"涉及外部大模型推荐与版本判定，必须在当前轮次先执行 search_web 查清最新真实 Roster 取得客观凭据后方可放行！"
-        )
     return None
 
 # ── Honest Scope & Execution Telemetry Gate (Supreme Directive #1) ───────────
@@ -913,13 +1082,18 @@ EXHAUSTIVE_READ_CLAIM_RE = re.compile(
 )
 
 EXHAUSTIVE_TEST_CLAIM_RE = re.compile(
-    r"(?:全部|所有|全量).*?(?:测试|门禁|单测|回归).*?(?:通过|跑通|全绿|完成|跑过)|"
-    r"(?:已全量|全部).*?(?:回归|跑了一遍|测试了一遍)",
+    r"(?:全部|所有|全量|各个).*?(?:测试|门禁|单测|回归|拦截).*?(?:通过|跑通|全绿|完成|跑过|已完成|物理拦截)|"
+    r"(?:已全量|全部).*?(?:回归|跑了一遍|测试了一遍|物理拦截)",
     re.I
 )
 
 HONEST_DISCLOSURE_RE = re.compile(
     r"(?:仅调阅|只调阅|仅阅读|只阅读|只看了|仅看了|抽样调阅|部分调阅|未读清单|尚未调阅|尚有.*?未读|实际调阅了?\s*\d+|实际精读了?\s*\d+)",
+    re.I
+)
+
+HONEST_TEST_DISCLOSURE_RE = re.compile(
+    r"(?:\d+\s*/\s*\d+|仅测试了?\s*\d+|抽样测试|部分测试|实弹打靶\s*\d+\s*道|尚有\s*\d+\s*道未)",
     re.I
 )
 
@@ -996,6 +1170,16 @@ def check_honest_scope_violation(text, assistant_tool_calls, assistant_blob, use
     # 2. Audit testing claims
     m_test = EXHAUSTIVE_TEST_CLAIM_RE.search(text)
     if m_test:
+        # Check honest quantitative disclosure (e.g. 5/115, 仅测试了 5 道)
+        if not HONEST_TEST_DISCLOSURE_RE.search(text):
+            matched = m_test.group(0)[:30]
+            return (
+                f"[TruthGate 拦截 - honest-scope-assertion-gate] 🚨 触发最高第一铁律【严禁用模糊语言宣称全量测试/全量门禁拦截完成】：\n"
+                f"检测到断言了全量测试/门禁拦截（命中:「{matched}」），但未出具精确量化对账单（如 5/115 或 仅测试了 5 道）！\n"
+                f"铁律规定：严禁用「全部门禁完成物理拦截」等模糊断言糊弄用户，必须明示已实测数与总数（如 M/N），"
+                f"或出示物理覆盖率达到 100% 的机器测试报告！"
+            )
+
         has_test_cmd = False
         for tc in assistant_tool_calls:
             fn = tc.get("function", {}) if "function" in tc else tc
@@ -1044,21 +1228,7 @@ USER_VERIFY_QUERY_RE = re.compile(
     re.I
 )
 
-DOMAIN_CLAIM_SRC = (
-    r"没有现成的?|无现成|找不到现成|GitHub 上?没有|开源(?:界|里)?没有|只能自建"
-    r"|零命中|零成果|零收获|都是玩具|全是玩具|没人做过|无人做过"
-    r"|最强的?(?:[^，。！？、\n是]{0,6})?(?:是|就是)|最 ?SOTA|当前最强|头部就是|首选就是"
-    r"|给不了|拿不出|没有更好的"
-    r"|(?:全部|都|一个都|统统|一律|无一)(?:拿不到|下不了|取不到|抓不到|失败|不行|没用|无效)"
-    r"|换(?:什么|哪个|任何)[^，。！？\n]{0,10}都(?:一样|不行|没用|拿不到|无效)"
-    r"|(?:任何|所有|市面上|一整类|这一类|这类)[^，。！？\n]{0,14}(?:都|也)"
-    r"(?:一样|不行|没用|拿不到|做不到|无效|撞)"
-    r"|(?:无限|反复)?(?:压缩|长会话)[^，。！？\n]{0,10}(?:一定|必然|肯定|绝对|就会)(?:变笨|产生幻觉|衰减|失效)"
-    r"|100%|毫无疑问|绝对(?:会|是|不可能|不能|不可行|行不通)|必然(?:导致|会|是)|根本不可能|完全不可行"
-    r"|极易(?:导致|触发|造成)|风险极高|毫无意义|远不及|纯属(?:玩具|徒劳|浪费)|倒亏|假便宜"
-    r"|任何(?:平台|系统|服务|接口)?都(?:是|会|禁止|不允许)|所有(?:平台|模型|系统)?都(?:一样|不行|禁止)"
-)
-DOMAIN_CLAIM_RE = re.compile("(" + DOMAIN_CLAIM_SRC + ")", re.I)
+# (2026-10-02 删:AG 端自己那份「领域级断言」词表 DOMAIN_CLAIM_SRC —— 检索广度检查改用共用判据 six_universes.py)
 
 CLAIM_HIST_RE = re.compile(r"(?:上一轮|之前|昨天|历史上|曾经|原话|引述|复述|教训|lessons|形状 ?20\d\d|这类结论|这种结论|下次(?:要|再|该)|以后(?:要|再|该)|反向指纹)")
 CLAIM_PHYSICAL_RE = re.compile(r"扫码|滑块|验证码|手机(?:在你|上|里)|你的手机|人脸|指纹|插(?:手机|USB)|物理设备|只有你(?:本人)?能(?:点|扫|输|操作)")
@@ -1147,26 +1317,24 @@ def check_no_search_no_claim_violation(text, tool_calls, blob, user_prompt=""):
     return None
 
 def check_search_breadth_violation(text, tool_calls, blob):
-    """Enforces search-breadth-gate: Making domain/absolute claims requires >=2 distinct search channels."""
+    """search-breadth-gate(AG 端):领域级断言要覆盖 ≥3 个宇宙且含①本机。
+    2026-10-02 起判据与 Claude 端 hooks/search-breadth-gate.py 同一份(six_universes.judge)。
+    原来这里自己一份词表 + 「≥2 种通道」:「100%」「绝对不能」也算领域断言,9/29~10/02 只记账里 AG 端的全是这类。
+    AG 这边只数本轮的工具调用(Claude 端数最近 3 轮)、量不到每条结果多大(空管道那条只在 Claude 端生效)。"""
     if not text:
         return None
-    tail = text[-1500:]
-    m = DOMAIN_CLAIM_RE.search(tail)
-    if not m:
+    if str(SCRIPTS_DIR) not in sys.path:
+        sys.path.insert(0, str(SCRIPTS_DIR))
+    try:   # 导入 / 判决出错只丢这一道,别让整个结构闸评估跟着抛(外审 10-02)
+        from six_universes import judge, channels_from_ag, probes_from_ag, probe_verdict, strict_channels_from_ag
+        v = judge(text[-1500:], channels_from_ag(tool_calls))
+        # 2026-10-04:翻过别人软件的安装目录却一次网都没上 ⇒ 拦(只看事实,用严格通道:本机 grep 里出现域名不算联网)。
+        #   AG 只有一把联网工具(search_web 算一个宇宙),所以这边查过一次就放(need=1);Claude 端要两个外部宇宙。
+        if not v:
+            v = probe_verdict(strict_channels_from_ag(tool_calls), probes_from_ag(tool_calls), need=1)
+    except Exception:
         return None
-    if CLAIM_HIST_RE.search(tail):
-        return None
-
-    channels = extract_antigravity_search_channels(tool_calls, blob)
-    if len(channels) < 2:
-        matched = m.group(0)[:30]
-        ch_list = list(channels) if channels else ["无"]
-        return (
-            f"[TruthGate 拦截 - search-breadth-gate] 本轮给出了【领域级定论/全局技术断言】（命中:「{matched}」），"
-            f"但所使用的检索通道仅有 {len(channels)} 种（当前探测: {ch_list}），未满足至少 2 种独立互盲通道的要求！\n"
-            f"全局铁律规定：下定论必须跨多源求证（权威学术源、开源代码库、全球与本土开发者社区等），严禁单一通道武断定调！"
-        )
-    return None
+    return "[TruthGate 拦截 - search-breadth-gate] " + v[1] if v else None
 
 def check_institutionalize_violation(text, tool_calls, blob):
     """Enforces institutionalize-guard: Writing a reusable script must be accompanied by registering into CLI or SKILL."""
@@ -1212,7 +1380,7 @@ def check_institutionalize_violation(text, tool_calls, blob):
 
 def check_process_alias_violation(text, blob):
     """Enforces process-alias-attribution-gate: Scapegoating unrelated processes without PE fingerprint verification is forbidden."""
-    gate_py = CLAUDE_DIR / "hooks" / "process-alias-attribution-gate.py"
+    gate_py = TG_HOOKS / "process-alias-attribution-gate.py"
     if not gate_py.exists():
         return None
     try:
@@ -1335,6 +1503,21 @@ GUI_RESTART_CLAIM_RE = re.compile(
     re.I
 )
 
+def check_stale_process_violation(text, tool_calls):
+    """改了没生效（2026-10-05，和 Claude 端同一条事实检查 stale_process.py）：
+    本轮工具调用里提到的配置 / 代码文件刚改过，读它的程序却还是改之前启动的 ⇒ 拦。
+    回复里写明「<程序> 会自动重读 / 自己写 <文件>」⇒ 放（有的程序会自己改写配置，如 DSH 切模型）。"""
+    if re.search(r"(?:自动|自己|会)重读|自己(?:会)?(?:改)?写", text or ""):
+        return None
+    try:
+        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+        import stale_process
+        v = stale_process.verdict_ag(tool_calls or [])
+    except Exception:
+        return None
+    return ("[TruthGate 拦截 - anti-toy-test-gate] " + v[1]) if v else None
+
+
 def check_gui_process_restart_violation(text, tool_calls, blob):
     """Enforces gui-process-restart-gate (Shape 2026-09-18-I):
     When assistant kills and restarts a desktop GUI application via command line,
@@ -1357,7 +1540,7 @@ def check_gui_process_restart_violation(text, tool_calls, blob):
         return None
     
     # Check if assistant acknowledged background/tray limitations or provided manual/explorer foreground guidance
-    safe_ack = re.search(r"(?:后台子进程|托盘|双击|快捷方式|WinSta0|桌面图标|无法直接弹到前台|请在前台打开|防抢焦点|右下角)", text)
+    safe_ack = re.search(r"(?:后台子进程|托盘|前台|双击|快捷方式|WinSta0|桌面图标|无法直接弹到前台|请在前台打开|防抢焦点|右下角)", text)
     if not safe_ack:
         return (
             "[TruthGate 拦截 - gui-process-restart-gate] 检测到在后台命令行执行了桌面 GUI 应用（如 DSH Desktop）的杀死与重启，"
@@ -1425,7 +1608,7 @@ def check_r5_deferral_violation(text, user_prompt):
 
     # 1. 尝试 Jev 语义降级：若置信判定为复盘/规则说明，直接放行（免伤）
     try:
-        hooks_dir = str(CLAUDE_DIR / "hooks")
+        hooks_dir = str(TG_HOOKS)
         if hooks_dir not in sys.path:
             sys.path.insert(0, hooks_dir)
         from guard_common import jev_should_downgrade, jev_should_escalate
@@ -1589,40 +1772,358 @@ def check_ghost_browser_violation(text, tool_calls, blob):
                 )
     return None
 
-def check_dynamic_claude_gates(text, blob, transcript_path="", conv_id=""):
-    """Dynamically loads and evaluates active gates in ~/.claude/hooks/."""
-    hooks_dir = CLAUDE_DIR / "hooks"
-    if not hooks_dir.exists():
-        return None
-    hook_files = sorted(list(hooks_dir.glob("*-gate.py")) + list(hooks_dir.glob("*-guard.py")))
-    for p in hook_files:
-        gate_name = p.stem
-        # Exclude already hardcoded gates
-        if gate_name in ("visual-proof-gate", "model-authenticity-gate", "no-search-no-claim-gate", "search-breadth-gate", "process-alias-attribution-gate", "semantic-superego-gate", "cross-brain-retrieval-gate", "gui-process-restart-gate", "ghost-browser-gate"):
-            continue
-        if check_is_off(gate_name, sid=conv_id):
-            continue
+def _run_single_claude_gate(p, payload_str, text, blob):
+    gate_name = p.stem
+    try:
+        code_text = p.read_text(encoding="utf-8", errors="ignore")
+        if "def check_text(" in code_text:
+            import importlib.util
+            spec = importlib.util.spec_from_file_location(gate_name.replace("-", "_"), str(p))
+            mod = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(mod)
+            if hasattr(mod, "check_text"):
+                res = mod.check_text(text, blob)
+                if res:
+                    return gate_name, res
+            return gate_name, None
+
+        flags = (0x08000000) if os.name == "nt" else 0
+        proc = subprocess.Popen(
+            [sys.executable, str(p)],
+            stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+            creationflags=flags, text=True
+        )
+        out, err = proc.communicate(input=payload_str, timeout=4.5)
+        if proc.returncode == 2:
+            reason = (err or out).strip() or f"[{gate_name}] 拦截：协议退出码 2"
+            return gate_name, reason
+        combined = (out or "") + "\n" + (err or "")
+        if '"decision": "block"' in combined or '"decision":"block"' in combined:
+            try:
+                data = json.loads(out.strip())
+                reason = data.get("reason") or data.get("permissionDecisionReason") or combined
+                return gate_name, reason
+            except Exception:
+                return gate_name, combined.strip()
+        for line in combined.splitlines():
+            line_s = line.strip()
+            if line_s.startswith("⛔") or line_s.startswith("[TruthGate 拦截") or line_s.startswith("[Superego 拦截"):
+                return gate_name, combined.strip()
+    except subprocess.TimeoutExpired:
+        # 2026-09-27(PLAN 第 5 步):原来超时被下面的 except 吞掉 —— 不留记录(AG 端闸卡死没人知道),子进程也不杀
+        #   (communicate 超时不会自动杀它 ⇒ 卡死的闸一直在后台跑)。现在杀掉、记一笔;开局核对(source_news.alarms)按这份记录报警。
         try:
-            code_text = p.read_text(encoding="utf-8", errors="ignore")
-            if "def check_text(" in code_text:
-                import importlib.util
-                spec = importlib.util.spec_from_file_location(gate_name.replace("-", "_"), str(p))
-                mod = importlib.util.module_from_spec(spec)
-                spec.loader.exec_module(mod)
-                if hasattr(mod, "check_text"):
-                    res = mod.check_text(text, blob)
-                    if res:
-                        return res
+            proc.kill()
+            proc.communicate(timeout=2)
         except Exception:
             pass
+        try:
+            sid = (json.loads(payload_str).get("session_id") or "-")[:8]
+            if _fresh_once("timeout_" + gate_name, sid, payload_str):   # 一轮收尾调 3 次桥接,只记一笔
+                if str(TG_HOOKS) not in sys.path:
+                    sys.path.insert(0, str(TG_HOOKS))
+                from guard_common import hook_log
+                hook_log("ag-gate-timeouts", f"TIMEOUT {gate_name} ag={sid}", "")
+        except Exception:
+            pass
+    except Exception:
+        pass
+    return gate_name, None
+
+def check_dynamic_claude_gates(text, blob, transcript_path="", conv_id=""):
+    """Dynamically loads and evaluates active gates in ~/.claude/hooks/ across all 4 AI engines."""
+    hooks_dir = TG_HOOKS
+    if not hooks_dir.exists():
+        return None
+
+    hardcoded_gates = {
+        "visual-proof-gate", "model-authenticity-gate", "no-search-no-claim-gate",
+        "search-breadth-gate", "process-alias-attribution-gate", "semantic-superego-gate",
+        "cross-brain-retrieval-gate", "gui-process-restart-gate", "ghost-browser-gate",
+        "honest-scope-assertion-gate", "no-nagging-guard", "anti-toy-test-gate",
+        "anti-stale-assertion-gate", "postmortem-guard", "dsh-provider-authenticity-gate",
+        "evidence-table-gate",   # handle_stop 里直接调 check_evidence_table(同一份判据),这里再跑一遍会重复记账
+    }
+
+    # Discover candidate Stop gates from settings.json AND filesystem
+    seen_paths = set()
+    candidate_paths = []
+    not_stop = set()   # Claude 端只挂在调用工具前后 / 提问 / 开局的闸（见下方文件夹合并处）
+    settings_file = CLAUDE_DIR / "settings.json"
+    if settings_file.exists():
+        try:
+            s_data = json.loads(settings_file.read_text(encoding="utf-8"))
+            ev_of = {}
+            for ev, entries in s_data.get("hooks", {}).items():
+                for entry in entries:
+                    for h in entry.get("hooks", []):
+                        m_name = re.search(r"([\w.-]+?)\.(?:py|cjs|js)\b", h.get("command", ""))
+                        if m_name:
+                            ev_of.setdefault(m_name.group(1), set()).add(ev)
+            not_stop = {g for g, evs in ev_of.items() if not evs & {"Stop", "SubagentStop"}}
+            for entry in s_data.get("hooks", {}).get("Stop", []):
+                for h in entry.get("hooks", []):
+                    cmd = h.get("command", "")
+                    m_path = re.search(r'''['"]?([^'"]+?\.(?:py|cjs))['"]?''', cmd)
+                    if m_path:
+                        fpath = Path(os.path.expandvars(m_path.group(1).replace("$HOME", str(Path.home()))))
+                        if fpath.exists() and fpath.suffix == ".py" and fpath not in seen_paths:
+                            seen_paths.add(fpath)
+                            candidate_paths.append(fpath)
+        except Exception:
+            pass
+
+    # Union with filesystem gates in hooks_dir to catch all gates
+    # 2026-10-03:跳过 Claude 端只挂在调用工具前后 / 提问 / 开局的闸(34 道)。收尾时喂给它们的 payload 没有工具输入,
+    #   它们只会空跑:logs/verdicts.jsonl 里 AG 的拦截 622 行(涉及 53 道闸,2026-10-03 数)这 34 道 0 行;
+    #   却占了收尾时三分之一的 python 进程(97 道里 34 道),把 CPU 顶满、害真正的收尾闸超时
+    #   (ag-gate-timeouts.log 7,061 行,其中 1,734 行就是这 34 道自己)。Claude 端没接线的闸(AG 专用,如 jargon-gate)照跑。
+    for p in sorted(list(hooks_dir.glob("*-gate.py")) + list(hooks_dir.glob("*-guard.py"))):
+        if p.stem in not_stop:
+            continue
+        if p not in seen_paths:
+            seen_paths.add(p)
+            candidate_paths.append(p)
+
+    active_candidates = []
+    seen = set()
+    for p in candidate_paths:
+        name = p.stem
+        if name in hardcoded_gates or name in seen:
+            continue
+        seen.add(name)
+        if check_is_off(name, sid=conv_id):
+            continue
+        active_candidates.append(p)
+
+    # Priority order for synchronous enforcement (most impactful gates first)
+    PRIORITY_GATES = [
+        "free-first-gate", "jargon-gate", "strawman-verdict-gate", "checklist-completion-gate",
+        "pipeline-ends-gate", "pipeline-first-gate", "bg-running-claim-gate", "antiscrape-invoke-gate",
+        "money-verdict-gate", "local-first-gate", "idle-ask-gate", "giveup-guard",
+        "dropped-output-guard", "authority-source-gate", "scope-completeness-gate",
+        "spec-coverage-guard", "residue-gate", "multi-option-guard", "not-mine-gate", "excuse-gate"
+    ]
+
+    # Sort active candidates: prioritized ones first
+    def _prio_key(p):
+        stem = p.stem
+        if stem in PRIORITY_GATES:
+            return PRIORITY_GATES.index(stem)
+        return len(PRIORITY_GATES) + 1
+
+    active_candidates.sort(key=_prio_key)
+    # 全量执行所有动态 Stop 门禁，彻底移除人为截断
+    sync_candidates = active_candidates
+
+    # Resolve transcript path
+    tp = transcript_path
+    if not tp or not os.path.exists(tp):
+        if conv_id:
+            cand = Path.home() / ".gemini" / "antigravity" / "brain" / conv_id / ".system_generated" / "logs" / "transcript.jsonl"
+            if cand.exists():
+                tp = str(cand)
+
+    payload_str = json.dumps({
+        "transcript_path": tp,
+        "last_assistant_message": text,
+        "session_id": (conv_id or "ag")[:8],
+        "cwd": os.getcwd()
+    }, ensure_ascii=False)
+
+    from concurrent.futures import ThreadPoolExecutor, as_completed
+    with ThreadPoolExecutor(max_workers=25) as executor:
+        futures = {
+            executor.submit(_run_single_claude_gate, p, payload_str, text, blob): p.stem
+            for p in sync_candidates
+        }
+        for fut in as_completed(futures):
+            try:
+                g_name, violation = fut.result()
+                if violation:
+                    return f"[TruthGate 拦截 - {g_name}] {violation}"
+            except Exception:
+                pass
+
     return None
+
+AG_WRITE_TOOLS = ("write_to_file", "replace_file_content", "multi_replace_file_content", "edit")
+_AG_WS = ""  # 本次调用 AG 会话开在哪(main() 从 workspacePaths 填)
+
+
+def check_single_source(tool_calls):
+    if str(SCRIPTS_DIR) not in sys.path:
+        sys.path.insert(0, str(SCRIPTS_DIR))
+    from single_source import check
+    ws = re.sub(r"^file:/+", "", _AG_WS or "") or os.getcwd()
+    for tc in tool_calls or []:
+        fn = tc.get("function", {}) if "function" in tc else tc
+        if fn.get("name", "") not in AG_WRITE_TOOLS:
+            continue
+        args = fn.get("args", {}) or fn.get("arguments", {})
+        if isinstance(args, str):
+            try:
+                args = json.loads(args)
+            except Exception:
+                args = {"TargetFile": args}
+        target = str(args.get("TargetFile", "") or args.get("path", "") or args.get("file_path", "") or "")
+        why = check(target, ws)
+        if why:
+            return f"[TruthGate 拦截 - single-source-gate] ⛔ {why}（本轮 AG 写了 {target}）"
+    return None
+
+
+def _ag_turn_key(transcript_path):
+    """AG 这一轮的标识 = 最后一条 USER_INPUT 的 step_index / created_at(没有就空串)。"""
+    key = ""
+    try:
+        for l in read_transcript_tail_lines(transcript_path, max_bytes=2 * 1024 * 1024):
+            if '"USER_INPUT"' in l:
+                o = json.loads(l)
+                if o.get("type") == "USER_INPUT":
+                    key = str(o.get("step_index", "")) + "@" + str(o.get("created_at", ""))
+    except Exception:
+        pass
+    return key
+
+
+# 查【事实】的闸(它做了什么:桌面上有没有那个窗口、测试命令退出码是几、浏览器是不是无头的),不是查措辞的。
+# 2026-10-03 Claude 加(Frank:「没有任何的地方可以绕道」):这几道不享受「一轮只拦一次」、不接受自称误报。
+# 病历:AG 会话 cb9b2465 五天里 BLOCK 76 次、REPEAT 放行 210 次;show-open-guard 拦 26 次后放行 146 次 ——
+#   它被拦后原样再收尾一次就过了,事实一点没变。查措辞的闸不在这里,照旧一轮一拦(REQUIREMENTS 第 11 条:不引发一轮接一轮的误拦)。
+FACT_GATES = frozenset((
+    "ledger-claim-gate", "show-open-guard", "visual-proof-gate", "desktop-window-phantom",
+    "headless-mock-fraud", "ghost-browser-gate", "anti-toy-test-gate", "visual-truth-gate",
+    "external-critic-gate", "critic-gate", "evidence-table-gate",
+))
+
+
+def _gate_turn_mark(gate, conv_id, text, transcript_path, strict=False):
+    """同一道闸一轮最多拦一次(2026-09-27,PLAN 第 5 步)。返回 (repeat, dup):
+    repeat = 这道闸本轮已经拦过、这次是【另一次】收尾 ⇒ 放行;
+    dup    = 同一次收尾的第 2、3 次调用(AG 一轮收尾调桥接 3 次:同一段回复、30 秒内)⇒ 照拦,但预算不再扣。
+    strict = 事实类闸(FACT_GATES):另一次收尾不放行,照拦并扣预算(循环上限由 5 次熔断兜住)。
+    标记:TG_SEM/.gateblk_<会话>_<闸>,内容「轮标识|回复指纹|时刻」。测试(SUPEREGO_TEST=1)不留标记。"""
+    if not conv_id or os.environ.get("SUPEREGO_TEST") == "1":
+        return False, False
+    import hashlib
+    key = _ag_turn_key(transcript_path)
+    sig = hashlib.md5((text or "").encode("utf-8", "ignore")).hexdigest()[:12]
+    f = TG_SEM / f".gateblk_{conv_id[:8]}_{gate}"
+    now = time.time()
+    try:
+        old = f.read_text(encoding="utf-8").split("|") if f.exists() else []
+        if len(old) == 3 and old[0] == key:
+            if old[1] == sig and now - float(old[2]) < 30:
+                return False, True
+            if not strict:
+                return True, False
+        f.write_text(f"{key}|{sig}|{now}", encoding="utf-8")
+    except Exception:
+        pass
+    return False, False
+
+
+def check_review_loop(transcript_path, conv_id=""):
+    """外审停止条件(2026-09-27,PLAN 第 5 步):判据与 Claude 端 hooks/review-loop-gate.py 同一份(~/.truthgate/review_loop.py)。
+    AG 没有「调用工具前」,只能收尾时查:本任务(上一条 USER_INPUT 以来)里有一轮外审是在该停的时候发的 ⇒ 拦一次,让它停下来问 Frank。
+    同一个轮数只拦一次(一轮收尾调 3 次桥接、被拦后继续干再收尾,都不重复拦 —— 否则拦截本身又绕成循环)。"""
+    if not transcript_path or not os.path.exists(transcript_path):
+        return None
+    here = str(Path(__file__).resolve().parent)
+    if here not in sys.path:
+        sys.path.insert(0, here)
+    import review_loop as rl
+    objs = []
+    for l in read_transcript_tail_lines(transcript_path, max_bytes=4 * 1024 * 1024):
+        try:
+            objs.append(json.loads(l))
+        except Exception:
+            continue
+    last_user = max((i for i, o in enumerate(objs) if o.get("type") == "USER_INPUT"), default=-1)
+    rounds = rl.rounds_from_ag(objs[last_user + 1:])
+    for k in range(1, len(rounds)):
+        why = rl.judge(rounds[:k], rounds[k][0])
+        if why:
+            if _fresh_once("review_loop", conv_id, str(len(rounds))):
+                return f"[TruthGate 拦截 - review-loop-gate] 本任务第 {k + 1} 轮外审是在该停的时候发的。\n" + rl.message(why)
+            return None
+    return None
+
+
+def check_evidence_table(text, tool_calls, conv_id=""):
+    """证据表核对(2026-09-27,PLAN.md 第 2 步):判据与 Claude 端 hooks/evidence-table-gate.py 同一份(~/.truthgate/evidence_table.py)。
+    ~/.claude/superego-observe.json 的 observe 名单里有它 ⇒ 只记账(WOULDBLOCK)、不拦 —— 两端同一个开关。"""
+    for p in (str(SCRIPTS_DIR), str(TG_HOOKS)):
+        if p not in sys.path:
+            sys.path.insert(0, p)
+    from evidence_table import judge, actions_from_ag, quoted_claims, ESCAPE
+    from guard_common import hook_log
+    verdict, reason, tier = judge(text or "", actions_from_ag(tool_calls))
+    try:
+        obs_file = os.environ.get("SUPEREGO_OBSERVE_FILE") or str(CLAUDE_DIR / "superego-observe.json")   # 与 guard_common 同一个开关
+        observe = "evidence-table-gate" in json.loads(Path(obs_file).read_text(encoding="utf-8")).get("observe", [])
+    except Exception:
+        observe = False
+    # AG 一轮收尾会调桥接 3 次(全局两组 + 插件一组都接了 Stop) ⇒ 同一段回复只记一次账,否则周报数字翻三倍
+    import hashlib
+    who = f"ag={(conv_id or '-')[:8]}"
+    mark = TG_SEM / f".evtable_{(conv_id or 'ag')[:8]}"
+    sig = hashlib.md5((text or "").encode("utf-8", "ignore")).hexdigest()[:12]
+    try:
+        fresh = os.environ.get("SUPEREGO_TEST") == "1" or not (mark.exists() and mark.read_text(encoding="utf-8") == sig)  # 考卷 / 测试不留标记
+        if fresh and os.environ.get("SUPEREGO_TEST") != "1":
+            mark.write_text(sig, encoding="utf-8")
+    except Exception:
+        fresh = True
+    if fresh:
+        q = quoted_claims(text or "") if tier == 0 else []
+        if q:   # 结论躲在引号里:只记账,每周抽查
+            hook_log("evidence-table-gate", f"QUOTED {who}", q[0])
+        if ESCAPE.search(text or ""):
+            hook_log("evidence-table-gate", f"ESCAPE {who}", (text or "")[-140:])
+        if verdict == "block":
+            hook_log("evidence-table-gate", f"{'WOULD' if observe else ''}BLOCK(tier{tier}) {who}", reason)
+    if verdict != "block" or observe:
+        return None
+    return f"[TruthGate 拦截 - evidence-table-gate] ⛔ {reason}"
+
+
+class _ObservedViolations(list):
+    """2026-09-27(PLAN 第 4 步):AG 桥接的内置检查原来不认只记账名单 —— Claude 端已降成只记账的闸(没搜就说没有、检索广度…)
+    在 AG 这边照拦(近 7 天 13 次 + 8 次)。现在同一份名单(~/.claude/superego-observe.json)两端都认:
+    名单里的闸只记一笔 WOULDBLOCK、不进拦截列表;配合 `if stop_on_first and violations` 让后面的检查照跑。"""
+
+    def __init__(self, conv_id=""):
+        super().__init__()
+        self.conv_id = conv_id
+        try:
+            obs_file = os.environ.get("SUPEREGO_OBSERVE_FILE") or str(CLAUDE_DIR / "superego-observe.json")
+            self.observed = set(json.loads(Path(obs_file).read_text(encoding="utf-8")).get("observe", []))
+        except Exception:
+            self.observed = set()
+
+    def append(self, item):
+        name, vio = item
+        if name in self.observed:
+            try:
+                if str(TG_HOOKS) not in sys.path:
+                    sys.path.insert(0, str(TG_HOOKS))
+                from guard_common import hook_log
+                if _fresh_once("obs_" + name, self.conv_id, str(vio)):
+                    hook_log(name, f"WOULDBLOCK(ag) ag={(self.conv_id or '-')[:8]}", str(vio)[:200])
+            except Exception:
+                pass
+            return
+        super().append(item)
+
 
 def evaluate_all_structural_gates(text, tool_calls, blob, user_prompt="", conv_id="", transcript_path="", stop_on_first=False):
     """Evaluates all 15 structural gates and returns list of (gate_name, violation_text).
     If stop_on_first=True, returns immediately upon encountering the first violation.
     If stop_on_first=False, collects all fired violations (used by run_worker & outer audit).
     """
-    violations = []
+    violations = _ObservedViolations(conv_id)   # 名单里只记账的闸:记一笔 WOULDBLOCK、不进拦截,后面的检查照跑
     is_globally_off = check_is_off("*", sid=conv_id)
 
     # 0. Supreme Evolutionary Gate: postmortem-to-guard (Enforce 5-step self-healing when user reprimands)
@@ -1638,40 +2139,73 @@ def evaluate_all_structural_gates(text, tool_calls, blob, user_prompt="", conv_i
                 compliance = audit_postmortem_compliance(text, rep_info)
                 if compliance.get("fired"):
                     violations.append(("postmortem-to-guard-gate", compliance.get("reason", "")))
-                    if stop_on_first:
+                    if stop_on_first and violations:
                         return violations
         except Exception:
             pass
+
+    # 0b. 单源闸(2026-09-27):本轮 AG 写了 TruthGate 的副本 / 不在 ~/.truthgate 开的会话里改了源头 ⇒ 拦。
+    #     判据与 Claude 端 hooks/single-source-gate.py 同一份(~/.truthgate/single_source.py),只看事实(写了哪个文件、会话开在哪)。
+    try:
+        vio = check_single_source(tool_calls)
+        if vio:
+            violations.append(("single-source-gate", vio))
+            if stop_on_first and violations:
+                return violations
+    except Exception:
+        pass
+
+    # 0c. 外审循环(2026-09-27,PLAN 第 5 步):判据与 Claude 端 hooks/review-loop-gate.py 同一份(~/.truthgate/review_loop.py)。
+    try:
+        vio = check_review_loop(transcript_path, conv_id)
+        if vio:
+            violations.append(("review-loop-gate", vio))
+            if stop_on_first and violations:
+                return violations
+    except Exception:
+        pass
 
     # 1. Supreme Red Line #1: honest-scope-assertion-gate (Zero Tolerance for Lying / Bluffing)
     # NEVER bypassed by any toggle, NEVER fused!
     vio = check_honest_scope_violation(text, tool_calls, blob, user_prompt)
     if vio:
         violations.append(("honest-scope-assertion-gate", vio))
-        if stop_on_first:
+        if stop_on_first and violations:
             return violations
 
     # 2. Hard Red Line: dsh-provider-authenticity-gate
     vio = check_dsh_provider_violation(text, tool_calls, blob)
     if vio:
         violations.append(("dsh-provider-authenticity-gate", vio))
-        if stop_on_first:
+        if stop_on_first and violations:
             return violations
 
     # 3. Hard Red Line: ghost-browser-gate
     vio = check_ghost_browser_violation(text, tool_calls, blob)
     if vio:
         violations.append(("ghost-browser-gate", vio))
-        if stop_on_first:
+        if stop_on_first and violations:
             return violations
 
     # 4. Hard Red Line: visual-proof-gate
     if not check_is_off("visual-proof-gate", sid=conv_id):
-        vio = check_visual_proof_violation(text, tool_calls, blob)
+        vio = check_visual_proof_violation(text, tool_calls, blob, user_prompt, conv_id)
         if vio:
             violations.append(("visual-proof-gate", vio))
-            if stop_on_first:
+            if stop_on_first and violations:
                 return violations
+
+    # 4.1 Hard Red Line: anti-toy-test-gate —— 2026-09-27 第 3 步起只看动作记录:改了网页 ⇒ 改完要真浏览器跑 + 听控制台;
+    #     改了接口代码 ⇒ 改完要真发请求(这项先只记账)。判据 delivery_check.py,与 Claude 端同一份。
+    if not check_is_off("anti-toy-test-gate", sid=conv_id):
+        try:
+            vio = check_delivery("anti-toy-test-gate", {"browser", "console", "request"}, tool_calls, user_prompt, conv_id)
+            if vio:
+                violations.append(("anti-toy-test-gate", vio))
+                if stop_on_first and violations:
+                    return violations
+        except Exception:
+            pass
 
     # Remaining soft gates (can be silenced by global off switch)
     if is_globally_off:
@@ -1682,7 +2216,7 @@ def evaluate_all_structural_gates(text, tool_calls, blob, user_prompt="", conv_i
         vio = check_no_nagging_violation(text, user_prompt)
         if vio:
             violations.append(("no-nagging-guard", vio))
-            if stop_on_first:
+            if stop_on_first and violations:
                 return violations
 
     # 6. model-authenticity-gate
@@ -1690,15 +2224,7 @@ def evaluate_all_structural_gates(text, tool_calls, blob, user_prompt="", conv_i
         vio = check_model_authenticity_violation(text, tool_calls, blob, user_prompt)
         if vio:
             violations.append(("model-authenticity-gate", vio))
-            if stop_on_first:
-                return violations
-
-    # 6B. external-model-freshness-gate (Supreme Red Line: No Unverified External Model Claims)
-    if not check_is_off("external-model-freshness-gate", sid=conv_id):
-        vio = check_external_model_freshness_violation(text, tool_calls, blob, user_prompt)
-        if vio:
-            violations.append(("external-model-freshness-gate", vio))
-            if stop_on_first:
+            if stop_on_first and violations:
                 return violations
 
     # 7. r5-commitment-deferral-gate
@@ -1706,7 +2232,7 @@ def evaluate_all_structural_gates(text, tool_calls, blob, user_prompt="", conv_i
         vio = check_r5_deferral_violation(text, user_prompt)
         if vio:
             violations.append(("r5-commitment-deferral-gate", vio))
-            if stop_on_first:
+            if stop_on_first and violations:
                 return violations
 
     # 8. token-thrift-gate
@@ -1714,7 +2240,7 @@ def evaluate_all_structural_gates(text, tool_calls, blob, user_prompt="", conv_i
         vio = check_token_thrift_violation(tool_calls)
         if vio:
             violations.append(("token-thrift-gate", vio))
-            if stop_on_first:
+            if stop_on_first and violations:
                 return violations
 
     # 9. harness-tool-integrity-gate
@@ -1722,7 +2248,7 @@ def evaluate_all_structural_gates(text, tool_calls, blob, user_prompt="", conv_i
         vio = check_harness_tool_integrity_violation(text, tool_calls, blob)
         if vio:
             violations.append(("harness-tool-integrity-gate", vio))
-            if stop_on_first:
+            if stop_on_first and violations:
                 return violations
 
     # 10. no-search-no-claim-gate
@@ -1730,7 +2256,7 @@ def evaluate_all_structural_gates(text, tool_calls, blob, user_prompt="", conv_i
         vio = check_no_search_no_claim_violation(text, tool_calls, blob, user_prompt=user_prompt)
         if vio:
             violations.append(("no-search-no-claim-gate", vio))
-            if stop_on_first:
+            if stop_on_first and violations:
                 return violations
 
     # 11. search-breadth-gate
@@ -1738,15 +2264,27 @@ def evaluate_all_structural_gates(text, tool_calls, blob, user_prompt="", conv_i
         vio = check_search_breadth_violation(text, tool_calls, blob)
         if vio:
             violations.append(("search-breadth-gate", vio))
-            if stop_on_first:
+            if stop_on_first and violations:
                 return violations
+
+    # 11.1 anti-stale-assertion-gate
+    if not check_is_off("anti-stale-assertion-gate", sid=conv_id):
+        try:
+            from anti_stale_assertion_gate import check_anti_stale_assertion_violation
+            vio = check_anti_stale_assertion_violation(text, tool_history=tool_calls, user_prompt=user_prompt)
+            if vio:
+                violations.append(("anti-stale-assertion-gate", vio))
+                if stop_on_first and violations:
+                    return violations
+        except Exception:
+            pass
 
     # 12. institutionalize-guard
     if not check_is_off("institutionalize-guard", sid=conv_id):
         vio = check_institutionalize_violation(text, tool_calls, blob)
         if vio:
             violations.append(("institutionalize-guard", vio))
-            if stop_on_first:
+            if stop_on_first and violations:
                 return violations
 
     # 13. process-alias-attribution-gate
@@ -1754,7 +2292,7 @@ def evaluate_all_structural_gates(text, tool_calls, blob, user_prompt="", conv_i
         vio = check_process_alias_violation(text, blob)
         if vio:
             violations.append(("process-alias-attribution-gate", vio))
-            if stop_on_first:
+            if stop_on_first and violations:
                 return violations
 
     # 14. cross-brain-retrieval-gate
@@ -1762,7 +2300,7 @@ def evaluate_all_structural_gates(text, tool_calls, blob, user_prompt="", conv_i
         vio = check_cross_brain_retrieval_violation(text, tool_calls, blob, user_prompt)
         if vio:
             violations.append(("cross-brain-retrieval-gate", vio))
-            if stop_on_first:
+            if stop_on_first and violations:
                 return violations
 
     # 14b. codegraph-topology-gate
@@ -1770,7 +2308,7 @@ def evaluate_all_structural_gates(text, tool_calls, blob, user_prompt="", conv_i
         vio = check_codegraph_topology_violation(text, tool_calls, blob, user_prompt)
         if vio:
             violations.append(("codegraph-topology-gate", vio))
-            if stop_on_first:
+            if stop_on_first and violations:
                 return violations
 
     # 15. gui-process-restart-gate
@@ -1778,7 +2316,15 @@ def evaluate_all_structural_gates(text, tool_calls, blob, user_prompt="", conv_i
         vio = check_gui_process_restart_violation(text, tool_calls, blob)
         if vio:
             violations.append(("gui-process-restart-gate", vio))
-            if stop_on_first:
+            if stop_on_first and violations:
+                return violations
+
+    # 15.1 改了没生效（事实检查，记在 anti-toy-test-gate 名下，和 Claude 端一致）
+    if not check_is_off("anti-toy-test-gate", sid=conv_id):
+        vio = check_stale_process_violation(text, tool_calls)
+        if vio:
+            violations.append(("anti-toy-test-gate", vio))
+            if stop_on_first and violations:
                 return violations
 
     # 16. Dynamic claude gates in ~/.claude/hooks/*.py
@@ -1788,12 +2334,23 @@ def evaluate_all_structural_gates(text, tool_calls, blob, user_prompt="", conv_i
             m = re.search(r"\[(?:TruthGate|Superego) 拦截 - ([^\]]+)\]", dyn_vio)
             actual_gate = m.group(1) if m else "dynamic-claude-gate"
             violations.append((actual_gate, dyn_vio))
-            if stop_on_first:
+            if stop_on_first and violations:
                 return violations
     except Exception:
         pass
 
     return violations
+
+def check_visual_truth(text, tool_calls):
+    """独立看图(2026-10-03,判据在 ~/.truthgate/vision_proof.py):改了网页、改完看过截图 ⇒ 那张图交给另一个模型盲看,
+    它看到的显示缺陷回复里没写 ⇒ 拦。考卷 / 回放(SUPEREGO_TEST=1)不起后台看图,只用已有结论。"""
+    for p in (str(SCRIPTS_DIR), str(TG_HOOKS)):
+        if p not in sys.path:
+            sys.path.insert(0, p)
+    from vision_proof import check
+    from evidence_table import actions_from_ag
+    return check(text, actions_from_ag(tool_calls), spawn=os.environ.get("SUPEREGO_TEST") != "1")
+
 
 def handle_stop(payload):
     """Stop hook: True gating before returning answer to user."""
@@ -1829,8 +2386,37 @@ def handle_stop(payload):
     if payload.get("user_prompt"):
         user_prompt = payload.get("user_prompt")
 
+    # Tier 0(2026-09-25 Claude 加):事实账本核对 —— 它说测试过了,账本里那条测试命令的退出码是几?
+    # 这是【事实】不是判断:只看账本(PreInvocation 从 transcript 抄的),不看它的措辞。进红线组(5 次熔断)。
+    try:
+        ledger_append_from_transcript(transcript_path, conv_id)   # 先把本轮最新步骤记进账本
+    except Exception:
+        pass
+    ledger_vio = ledger_claim_check(text, conv_id, transcript_path)
+    if ledger_vio:
+        violations_pre = [("ledger-claim-gate", ledger_vio)]
+    else:
+        violations_pre = []
+    # 证据表核对(2026-09-27,PLAN 第 2 步)放在这里、不放进 evaluate_all_structural_gates:后台 worker 也调那个函数,会重复记账
+    if not violations_pre:
+        try:
+            ev_vio = check_evidence_table(text, tool_calls, conv_id)
+            if ev_vio:
+                violations_pre = [("evidence-table-gate", ev_vio)]
+        except Exception:
+            pass
+
+    # 独立看图(2026-10-03):流程全做了、图里却是坏的 —— 流程类的闸看不出来,只有真的看图才看得出
+    if not violations_pre and not check_is_off("visual-truth-gate", sid=conv_id):
+        try:
+            vt_vio = check_visual_truth(text, tool_calls)
+            if vt_vio:
+                violations_pre = [("visual-truth-gate", vt_vio)]
+        except Exception:
+            pass
+
     # Evaluate structural gates with stop_on_first=True
-    violations = evaluate_all_structural_gates(
+    violations = violations_pre or evaluate_all_structural_gates(
         text, tool_calls, blob,
         user_prompt=user_prompt,
         conv_id=conv_id,
@@ -1843,19 +2429,97 @@ def handle_stop(payload):
     if not violation and not check_is_off("jev", sid=conv_id):
         if text and len(text.strip()) >= 15:
             try:
-                if str(CLAUDE_DIR / "hooks") not in sys.path:
-                    sys.path.insert(0, str(CLAUDE_DIR / "hooks"))
+                if str(TG_HOOKS) not in sys.path:
+                    sys.path.insert(0, str(TG_HOOKS))
                 from superego_jev_engine import judge_assistant_text
                 jev_res = judge_assistant_text(text, sid=conv_id)
                 jev_fired = list(jev_res.get("fired") or [])
                 if jev_fired:
                     fired_str = ",".join(jev_fired)
-                    violation = f"[TruthGate 拦截 - jev-system-one] 命中了外审规则【{fired_str}】（推诿/未查证/虚报完成/飙黑话），强制打回整改！"
+                    jev_vio = f"[TruthGate 拦截 - jev-system-one] 命中了外审规则【{fired_str}】（推诿/未查证/虚报完成/飙黑话），强制打回整改！"
+                    # 2026-09-27 第 4 步:只记账名单里有它 ⇒ 记一笔、不拦(与内置检查同一个开关,见 _ObservedViolations)
+                    obs = _ObservedViolations(conv_id)
+                    obs.append(("jev-system-one", jev_vio))
+                    violation = obs[0][1] if obs else None
+            except Exception:
+                pass
+
+    # Tier 3: 真实独立外审模型 (External Reviewer) 实时物理审判
+    if not violation and not check_is_off("critic-gate", sid=conv_id):
+        _claim_done = bool(re.search(r"修好|跑通|搞定|上线|部署|已完成|done|fixed|已解决|已优化|全部通过|生效", text or "", re.I))
+        _has_code_mod = any(
+            tc.get("name") in ("write_to_file", "replace_file_content", "Write", "Edit", "multi_replace_file_content")
+            for tc in tool_calls
+        ) if isinstance(tool_calls, list) else False
+        # 2026-10-12 Frank 修正:选型、推荐、架构方案、否定断言全部纳入外审实时物理审判，绝不漏网
+        _has_claim_or_decision = bool(re.search(r"推荐|应该用|方案|架构|必须用|重构|做不到|全网没有|只能|不支持|不可行|最好|当前现状|最新", text or ""))
+        if (_claim_done or _has_code_mod or _has_claim_or_decision) and len((text or "").strip()) >= 10:
+            try:
+                if str(TG_HOOKS) not in sys.path:
+                    sys.path.insert(0, str(TG_HOOKS))
+                import external_critic_engine as _ece
+                _acts = []
+                for tc in (tool_calls or []):
+                    nm = tc.get("name") or (tc.get("function") or {}).get("name") or "tool"
+                    inp = tc.get("args") or tc.get("arguments") or tc.get("input") or {}
+                    summ = str(inp.get("command") or inp.get("CommandLine") or inp.get("TargetFile") or inp.get("file_path") or "")[:100]
+                    _acts.append(f"{nm}: {summ}")
+                
+                c_res = _ece.review_turn(user_prompt, text, _acts)
+                if c_res and c_res.get("verdict") == "block":
+                    violation = (
+                        f"[TruthGate 拦截 - external-critic-gate] ⛔ 独立外审模型({c_res.get('backend')})判定【不合格，强制打回】！\n"
+                        f"【挑刺原因】: {c_res.get('reason')}\n"
+                        f"【要求下一步动作】: {c_res.get('next')}\n\n"
+                        "按 TruthGate 1.0 外审铁律：严禁在缺乏真实动作支撑时拍脑袋宣布完成！\n"
+                        "请立即按照外审要求执行实测验证动作后再收尾。"
+                    )
             except Exception:
                 pass
 
     if violation:
-        budget_file = Path.home() / ".claude" / "superego-semantic" / f".turn_blocks_{conv_id[:8]}" if conv_id else None
+        # ── 2026-09-25 Claude 加·两件让 AG「分得出误报」的事 ──
+        # (a) 误报合法路:它在收尾里写「误报：<闸名> — <理由>」,闸名对得上本次拦的闸 ⇒ 放行,声明记账,考卷事后判。
+        #     事实类(ledger-claim-gate)不接受;一轮同一闸只免一次。
+        g_now = _gate_name_of(violation)
+        claim = _misfire_claim(text, g_now)
+        if claim and g_now not in FACT_GATES:
+            used_f = TG_SEM / f".misfire_{conv_id[:8]}_{g_now}" if conv_id else None
+            if not (used_f and used_f.exists()):
+                try:
+                    if used_f:
+                        used_f.write_text("1", encoding="utf-8")
+                    LEDGER_DIR.mkdir(parents=True, exist_ok=True)
+                    with open(LEDGER_DIR / ((conv_id or "unknown")[:36] + ".misfire.jsonl"), "a", encoding="utf-8") as f:
+                        f.write(json.dumps({"ts": time.strftime("%Y-%m-%d %H:%M:%S"), "gate": g_now, "claim": claim[:300],
+                                            "text": (text or "")[-400:], "violation": violation[:300]}, ensure_ascii=False) + "\n")
+                    with open(TG_HOOKS / "semantic-superego-gate.log", "a", encoding="utf-8") as f:
+                        f.write(f"{time.strftime('%Y-%m-%d %H:%M:%S')} [antigravity|{(conv_id or 'ag')[:8]}] trig='{g_now}' MISFIRE-CLAIMED(pass,ledgered)\n")
+                except Exception:
+                    pass
+                print(json.dumps({}))
+                return
+        # (b) 理由里附上【触发它的原句】:11 道硬编码闸的文案不带,AG 看不到是哪句就只能当真去补。
+        if "触发处" not in violation:
+            violation = violation.rstrip() + "\n触发处(你上一段里最可能的那句): " + _likely_trigger(text, g_now)
+            if g_now in FACT_GATES:
+                violation += "\n⇒ 这道闸查的是事实,不接受「误报」声明,原样再收尾一次也不会放行。只有把事实补上(真打开 / 真跑 / 真截桌面)才过。"
+            else:
+                violation += "\n⇒ 如果这句是引用/否定/在讨论闸本身,在收尾里写一行「误报：" + g_now + " — 理由」即可放行(会记账,考卷事后判对错)。"
+
+        # (c) 2026-09-27(PLAN 第 5 步):同一道闸一轮最多拦一次;AG 一次收尾调桥接 3 次,预算只扣一次(见 _gate_turn_mark)。
+        #     2026-10-03:事实类闸(FACT_GATES)除外 —— 事实没变就一直拦,到 5 次熔断为止。
+        repeat, dup = _gate_turn_mark(g_now, conv_id, text, transcript_path, strict=g_now in FACT_GATES)
+        if repeat:
+            try:
+                with open(TG_HOOKS / "semantic-superego-gate.log", "a", encoding="utf-8") as f:
+                    f.write(f"{time.strftime('%Y-%m-%d %H:%M:%S')} [antigravity|{(conv_id or 'ag')[:8]}] trig='{g_now}' REPEAT(本轮已拦过一次,放行)\n")
+            except Exception:
+                pass
+            print(json.dumps({}))
+            return
+
+        budget_file = TG_SEM / f".turn_blocks_{conv_id[:8]}" if conv_id else None
         turn_blocks = 0
         if budget_file and budget_file.exists():
             try:
@@ -1866,6 +2530,7 @@ def handle_stop(payload):
         # Core Red Line Gates: NEVER silently fuse to allow!
         # If it's a lie, fake test, fake model, nagging deferral, or unauthorized card, it MUST block!
         is_hard_redline = any(k in violation for k in (
+            "ledger-claim-gate",
             "postmortem-to-guard",
             "honest-scope-assertion-gate",
             "no-nagging-guard",
@@ -1877,25 +2542,47 @@ def handle_stop(payload):
             "dsh-provider-authenticity-gate",
             "ghost-browser-gate",
             "audit-source-integrity-gate",
-            "jev-system-one"
-        ))
+            "anti-toy-test-gate",
+            "jev-system-one",
+            "external-critic-gate",
+            "critic-gate"
+        )) or g_now in FACT_GATES
 
-        # Hard red lines get up to 5 strict blocks, and never silently pass without an error.
-        max_blocks = 5 if is_hard_redline else 2
-        if turn_blocks >= max_blocks and not is_hard_redline:
-            # Fuse tripped! Downgrade to advisory warning to prevent think-twice infinite loop
+        # Hard red lines get up to 5 strict blocks; ordinary gates 2.
+        # 2026-09-25 Claude 改:原来 `and not is_hard_redline` 让红线闸【永远不熔断】——
+        # 实测一句 `echo` 的探针会话被 Stop 打回 20 次、跑 43 分钟 497 步、改了 29 个文件(Frank 手动按停)。
+        # 现在两类都熔断,但熔断【不再静默】:日志记 BUDGET_FUSED,红线熔断时留一个 .fused 标记,
+        # 下一轮 PreInvocation 把「拦了 N 次没过,以下未经验证」注给 AG,它必须在收尾里向 Frank 明说。
+        # 2026-10-12 Frank 修正:严禁连试 5 次烧 token 内耗！统一改为最多 1 次纠偏(累计 2 次)，未过立即短路熔断并桌面报警
+        max_blocks = 2
+        if turn_blocks >= max_blocks:
             try:
-                log_path = CLAUDE_DIR / "hooks" / "semantic-superego-gate.log"
+                log_path = TG_HOOKS / "semantic-superego-gate.log"
                 sid_short = conv_id[:8] if conv_id else "ag"
                 ts_str = time.strftime("%Y-%m-%d %H:%M:%S")
                 with open(log_path, "a", encoding="utf-8") as f:
-                    f.write(f"{ts_str} [antigravity|{sid_short}] trig='BUDGET_FUSED' NUDGE(prev-turn)\n")
+                    f.write(f"{ts_str} [antigravity|{sid_short}] trig='BUDGET_FUSED' {'REDLINE' if is_hard_redline else 'NUDGE'}(prev-turn) blocks={turn_blocks}\n")
             except Exception:
                 pass
+            if is_hard_redline and conv_id:
+                try:
+                    (TG_SEM / f".fused_{conv_id[:8]}").write_text(
+                        f"[TruthGate] 本轮红线闸已连拦 {turn_blocks} 次仍未过,系统放行。你必须在给 Frank 的收尾第一句写明:"
+                        f"「TruthGate 拦了 {turn_blocks} 次没过,以下未经验证:」并逐条列出闸指出的问题。不许假装没拦过。",
+                        encoding="utf-8")
+                except Exception:
+                    pass
+            # 2026-10-03:事实类闸熔断时直接在 Frank 桌面弹通知 —— 不靠 AG 自己坦白(一轮只弹一次)。
+            if g_now in FACT_GATES and os.environ.get("SUPEREGO_TEST") != "1" \
+                    and _fresh_once("fuse_alert_" + g_now, conv_id, _ag_turn_key(transcript_path)):
+                try:
+                    trigger_active_alert(conv_id, [f"{g_now} 拦了 {turn_blocks} 次没改就交付了,这轮说的做好了别信"], text or "")
+                except Exception:
+                    pass
             print(json.dumps({}))
             return
 
-        if budget_file:
+        if budget_file and not dup:
             try:
                 budget_file.write_text(str(turn_blocks + 1), encoding="utf-8")
             except Exception:
@@ -1903,7 +2590,7 @@ def handle_stop(payload):
 
         # Log the block so dashboard.py and watcher record Antigravity gate interceptions in real time!
         try:
-            log_path = CLAUDE_DIR / "hooks" / "semantic-superego-gate.log"
+            log_path = TG_HOOKS / "semantic-superego-gate.log"
             sid_short = conv_id[:8] if conv_id else "ag"
             ts_str = time.strftime("%Y-%m-%d %H:%M:%S")
             m = re.search(r"\[(?:TruthGate|Superego) 拦截 - ([^\]]+)\]", violation)
@@ -2005,7 +2692,7 @@ def run_worker(transcript_path, conv_id=""):
             break
         time.sleep(0.2)
 
-    log_path = CLAUDE_DIR / "hooks" / "semantic-superego-gate.log"
+    log_path = TG_HOOKS / "semantic-superego-gate.log"
     sid_short = conv_id[:8] if conv_id else "ag"
     ts_str = time.strftime("%Y-%m-%d %H:%M:%S")
 
@@ -2018,7 +2705,7 @@ def run_worker(transcript_path, conv_id=""):
             pass
         return
 
-    sem_dir = CLAUDE_DIR / "superego-semantic"
+    sem_dir = TG_SEM
     # Deduplicate: Skip re-auditing identical turn text (prevents duplicate stream events)
     fp = hashlib.md5(text.encode('utf-8')).hexdigest()[:10]
     fp_file = sem_dir / f".last_fp_{conv_id[:8]}" if conv_id else sem_dir / ".last_fp_ag"
@@ -2048,8 +2735,8 @@ def run_worker(transcript_path, conv_id=""):
     jev_fired = []
     try:
         if not check_is_off("jev", sid=conv_id):
-            if str(CLAUDE_DIR / "hooks") not in sys.path:
-                sys.path.insert(0, str(CLAUDE_DIR / "hooks"))
+            if str(TG_HOOKS) not in sys.path:
+                sys.path.insert(0, str(TG_HOOKS))
             from superego_jev_engine import judge_assistant_text
             jev_res = judge_assistant_text(text, sid=conv_id)
             jev_fired = list(jev_res.get("fired") or [])
@@ -2108,7 +2795,7 @@ def run_worker(transcript_path, conv_id=""):
         pass
 
     # Centralized log shared with Claude: ~/.claude/hooks/semantic-superego-gate.log
-    log_path = CLAUDE_DIR / "hooks" / "semantic-superego-gate.log"
+    log_path = TG_HOOKS / "semantic-superego-gate.log"
     sid_short = conv_id[:8] if conv_id else "ag"
     ts_str = time.strftime("%Y-%m-%d %H:%M:%S")
     trig_str = f"trig='{','.join(all_fired)}' " if all_fired else ""
@@ -2218,13 +2905,13 @@ def handle_status():
     # 2. Port 17911 (Fallback & Recall)
     port = get_superego_port()
     h = is_service_healthy(port)
-    print(f"2. 本地兜底服务 : 端口 {port} -> {'✅ 正常在线 (bge-small / Qwen recall)' if h else '❌ 未响应 (待自愈)'}")
+    print(f"2. 本地兜底服务 : 端口 {port} -> {'✅ 正常在线 (bge-small / Qwen recall)' if h else '⏸ 没在跑(语义服务 9/25 按 Frank 下线令关着;不会自动拉起)'}")
     
     # 3. Universal External Audit Model (Gemini / DeepSeek / OpenAI / Agnes / Ollama)
     print("3. 外审模型连接 : ", end="", flush=True)
     try:
-        if str(CLAUDE_DIR / "superego-semantic") not in sys.path:
-            sys.path.insert(0, str(CLAUDE_DIR / "superego-semantic"))
+        if str(TG_SEM) not in sys.path:
+            sys.path.insert(0, str(TG_SEM))
         try:
             import semantic_judge
         except ImportError:
@@ -2238,7 +2925,7 @@ def handle_status():
         print(f"❌ 异常: {e}")
 
     # 4. Centralized audit log tail
-    log_path = CLAUDE_DIR / "hooks" / "semantic-superego-gate.log"
+    log_path = TG_HOOKS / "semantic-superego-gate.log"
     print("4. 统一外审日志 (semantic-superego-gate.log 最新 5 条):")
     if log_path.exists():
         try:
@@ -2251,6 +2938,91 @@ def handle_status():
         print("   （日志暂未生成）")
         
     print("═══════════════════════════════════════════════════════════════════════════════")
+
+def handle_pre_tool(payload):
+    """
+    Antigravity PreToolUse hook handler (2026-10-11 物理补齐):
+    Intercepts dangerous commands / destructive operations / single-source violations
+    BEFORE the tool actually executes.
+    Output: {"decision": "deny", "reason": "..."} or {"decision": "allow"}
+    """
+    if not isinstance(payload, dict):
+        print(json.dumps({"decision": "allow"}))
+        return
+
+    tool_call = payload.get("toolCall") or {}
+    t_name = tool_call.get("name") or ""
+    t_args = tool_call.get("args") or {}
+
+    claude_payload = None
+    if t_name == "run_command":
+        claude_payload = {
+            "tool_name": "Bash",
+            "tool_input": {
+                "command": t_args.get("CommandLine", "")
+            },
+            "cwd": t_args.get("Cwd", os.getcwd())
+        }
+    elif t_name == "write_to_file":
+        claude_payload = {
+            "tool_name": "Write",
+            "tool_input": {
+                "file_path": t_args.get("TargetFile", ""),
+                "content": t_args.get("CodeContent", "")
+            },
+            "cwd": os.getcwd()
+        }
+    elif t_name == "replace_file_content":
+        claude_payload = {
+            "tool_name": "Edit",
+            "tool_input": {
+                "file_path": t_args.get("TargetFile", ""),
+                "old_string": t_args.get("TargetContent", ""),
+                "new_string": t_args.get("ReplacementContent", "")
+            },
+            "cwd": os.getcwd()
+        }
+
+    if not claude_payload:
+        print(json.dumps({"decision": "allow"}))
+        return
+
+    claude_payload_str = json.dumps(claude_payload, ensure_ascii=False)
+    priority_gates = ["guard-destructive.py", "single-source-gate.py", "data-overwrite-guard.py"]
+    hooks_dir = Path.home() / ".truthgate" / "hooks"
+
+    for g_file in priority_gates:
+        p = hooks_dir / g_file
+        if not p.exists():
+            continue
+        flags = (0x08000000) if os.name == "nt" else 0
+        try:
+            proc = subprocess.Popen(
+                [sys.executable, str(p)],
+                stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                creationflags=flags, text=True
+            )
+            out, err = proc.communicate(input=claude_payload_str, timeout=3.0)
+            if proc.returncode == 2:
+                reason = (err or out).strip() or f"[{p.stem}] 拦截：协议退出码 2"
+                print(json.dumps({"decision": "deny", "reason": reason}, ensure_ascii=False))
+                return
+            combined = (out or "") + "\n" + (err or "")
+            if '"decision": "block"' in combined or '"decision":"block"' in combined:
+                try:
+                    data = json.loads(out.strip())
+                    reason = data.get("reason") or data.get("permissionDecisionReason") or combined
+                    print(json.dumps({"decision": "deny", "reason": reason}, ensure_ascii=False))
+                    return
+                except Exception:
+                    print(json.dumps({"decision": "deny", "reason": combined.strip()}, ensure_ascii=False))
+                    return
+        except subprocess.TimeoutExpired:
+            pass
+        except Exception:
+            pass
+
+    print(json.dumps({"decision": "allow"}))
 
 def main():
     if len(sys.argv) > 2 and sys.argv[1] == "--worker":
@@ -2266,7 +3038,7 @@ def main():
         print(json.dumps({}))
         sys.exit(0)
 
-    action = sys.argv[1].lower()
+    action = sys.argv[1].lower().lstrip("-")
     raw_in = sys.stdin.read().strip()
     payload = {}
     if raw_in:
@@ -2274,6 +3046,8 @@ def main():
             payload = json.loads(raw_in)
         except Exception:
             pass
+    global _AG_WS
+    _AG_WS = ((payload.get("workspacePaths") or [""])[0] or "") if isinstance(payload, dict) else ""
 
     # Persistent debug logging to track every live Antigravity hook invocation
     try:
@@ -2288,6 +3062,8 @@ def main():
             handle_pre(payload)
         elif action == "stop":
             handle_stop(payload)
+        elif action in ("pre_tool", "pretool", "pretooluse"):
+            handle_pre_tool(payload)
         else:
             print(json.dumps({}))
     except Exception as e:

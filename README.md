@@ -591,6 +591,14 @@ TruthGate 的核心哲学是 **元框架 (Meta-Harness)**，而非将创始人�
 
 ---
 
+## 🌐 通用外审路由器与 429 限流自愈通道 (Universal Critic Router & Dual Resilience)
+
+TruthGate 1.0 引入了**外审双通道自动容灾与自愈引擎 (Dual Reviewer Resilience)**：
+1. **云端高阶外审通道 (Primary Reviewer)**：首选接入 Agnes / 云端智能评审模型，对长文交付和高风险操作进行深思熟虑的客观司法裁决。
+2. **本地 OmniRoute 零延迟备用通道 (Seamless Fallback on 429)**：当云端遇到 HTTP 429 限流、Quota 耗尽或网络超时时，系统**完全无缝透明降级**至本地常驻网关 OmniRoute (`http://127.0.0.1:20128/v1`) 的免费高性能模型（如 `opencode-go/deepseek-v4.1-flash`），0 额外开销，保障门禁审查永远不宕机！
+3. **2-Strike 连续两击熔断与自愈机制 (2-Strike Circuit Breaker)**：在同一轮（Turn）对话中，如果某一类门禁连续拦截触发 2 次，系统自动启动两击熔断与防御日志沉淀，避免 AI 陷入“被拦 -> 乱改 -> 再被拦”的恶性死循环，直接出具真实失败归因并移交复核。
+4. **四列物理证据表格门禁 (`evidence_table.py`)**：任何宣称“已修复”、“已完成”、“测试通过”的交付汇报，末尾必须包含司法级四列凭证表（`| 结论 | 置信度 | 来源一 | 来源二 |`），空口无凭直接亮红牌！
+
 ## 🌐 通用外审路由器 (Universal Critic Router · 类似 CC-Switch)
 
 外审是行为治理的灵魂。TruthGate **绝不绑定单一商业服务**，内置了工业级通用多模型外审路由器，兼容所有标准接口：

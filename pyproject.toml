@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "truthgate"
-version = "1.0.0"
-description = "Deterministic Physical Gatekeeper & Jev System-1 Fast Intent Guard for AI Coding Agents."
+version = "1.0.1"
+description = "Deterministic Physical Gatekeeper, Dual External Reviewer (Agnes + OmniRoute DeepSeek-V4.1-Flash Fallback), and 4-Platform Alignment Guard for AI Coding Agents."
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }
@@ -66,5 +66,5 @@ where = ["."]
 include = ["truthgate*", "superego*"]
 
 [tool.setuptools.package-data]
-truthgate = ["*.html", "*.md", "rulepacks/*.json", "mcp/*"]
+truthgate = ["*.html", "*.md", "rulepacks/*.json", "mcp/*", "hooks/*.py", "exam/**/*", "harness/*"]
 superego = ["*.html", "*.md", "rulepacks/*.json", "mcp/*"]

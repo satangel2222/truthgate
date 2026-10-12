@@ -255,7 +255,7 @@ def run_exhaustive_browser_qa():
             print("  ✅ 全局 0 运行时报错，0 控制台异常")
 
             # 截取全景最终完成截图
-            screenshot_path = Path(r"C:\Users\Casp\.gemini\antigravity\brain\a02a741f-4f6a-423f-92d3-8976979451cd\dashboard_exhaustive_qa_pass.png")
+            screenshot_path = Path(r"~/.gemini/antigravity\brain\a02a741f-4f6a-423f-92d3-8976979451cd\dashboard_exhaustive_qa_pass.png")
             page.screenshot(path=str(screenshot_path), full_page=True)
             print(f"  📸 全景真机测试通过截图已落盘: {screenshot_path}")
 

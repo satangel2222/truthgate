@@ -1,0 +1,6560 @@
+{
+ "built": "2026-09-18 18:18",
+ "stats": {
+  "rules": 53,
+  "gates": 98,
+  "groups": 11,
+  "gate_edges": 245,
+  "causal_edges": 38,
+  "rules_with_provenance": 53,
+  "gates_grouped": 98
+ },
+ "rules": {
+  "R1": {
+   "id": "R1",
+   "kind": "rule",
+   "text": "未经查证的否定/边界断言:说『没有/不存在/查不到/只有你能给/只有他能做/我够不到/需要他手动』,却没有证据表明真的查过、搜过、试过。",
+   "group": "证据链",
+   "timing": "收尾",
+   "active": true,
+   "origin": "gate注释归纳",
+   "provenance": [
+    {
+     "title": "判据(比原 I 条更硬的一条)",
+     "source": "lessons",
+     "date": "",
+     "score": 0.633
+    },
+    {
+     "title": "形状 2026-09-06-K:【我用【猜的路径】查了一下没找到,就宣布\"这东西根本",
+     "source": "lessons",
+     "date": "2026-09-06",
+     "score": 0.587
+    },
+    {
+     "title": "形状 2026-09-06-J：【说\"只有你能做\"—— 而我根本没查手上还有什么】",
+     "source": "lessons",
+     "date": "2026-09-06",
+     "score": 0.593
+    },
+    {
+     "title": "形状 2026-08-18-H:【筛子只扫了一小块,就把「我没搜到」讲成「你没有」】",
+     "source": "lessons",
+     "date": "2026-08-18",
+     "score": 0.606
+    },
+    {
+     "title": "通用判据（换任何项目都成立）",
+     "source": "lessons",
+     "date": "",
+     "score": 0.61
+    },
+    {
+     "title": "通用判据(换任何项目都成立)",
+     "source": "lessons",
+     "date": "",
+     "score": 0.606
+    },
+    {
+     "title": "形状 2026-08-18-A：我的证据能同时解释【两种相反机制】，我却只挑了顺眼的",
+     "source": "lessons",
+     "date": "2026-08-18",
+     "score": 0.569
+    }
+   ],
+   "enforced_by": [
+    "archive-recall-gate",
+    "authority-source-gate",
+    "collect-list-evidence-gate",
+    "evidence-gate",
+    "evidence-in-log-gate",
+    "injection-claim-guard",
+    "model-authenticity-gate",
+    "negative-claim-gate",
+    "no-search-no-claim-gate",
+    "prior-art-gate",
+    "process-alias-attribution-gate",
+    "reference-diff-guard",
+    "rootcause-gate",
+    "scenario-fit-gate",
+    "search-breadth-gate",
+    "search-layer-gate",
+    "strawman-verdict-gate",
+    "unread-evidence-guard",
+    "visual-detail-gate",
+    "visual-proof-gate"
+   ]
+  },
+  "R2": {
+   "id": "R2",
+   "kind": "rule",
+   "text": "甩锅外部:把失败归给『平台间歇/网络抖动/外部/环境』,说『等等就好/不用改代码』,没看第一手证据。",
+   "group": "证据链",
+   "timing": "收尾",
+   "active": true,
+   "origin": "gate注释归纳",
+   "provenance": [
+    {
+     "title": "⛔ 收敛铁律：下结论 / 说\"做完了\"前必过 5 关（防过早收敛 = 马虎/遗漏）",
+     "source": "CLAUDE铁律",
+     "date": "2026-07-11",
+     "score": 0.657
+    },
+    {
+     "title": "2026-07-28 形状W:把【降维后的表示】当成【现场】—— 同一天第 2 次报",
+     "source": "lessons",
+     "date": "2026-07-28",
+     "score": 0.6
+    },
+    {
+     "title": "形状 2026-08-27-A:【猜一个原因就动手改,改完没好转 = 我猜的不是真因",
+     "source": "lessons",
+     "date": "2026-08-27",
+     "score": 0.623
+    },
+    {
+     "title": "2026-07-25 形状复发#9(甩锅外部/用户):把一个 API 报错升级成\"外",
+     "source": "lessons",
+     "date": "2026-07-25",
+     "score": 0.572
+    },
+    {
+     "title": "2026-08-11 形状复发#10(甩锅硬件):「多个不相干的东西同时坏」被我一律",
+     "source": "lessons",
+     "date": "2026-08-11",
+     "score": 0.578
+    },
+    {
+     "title": "形状 2026-09-09-AQ：【我刚加的修复 + 症状消失了 ＝ 我的修复起作用",
+     "source": "lessons",
+     "date": "2026-09-09",
+     "score": 0.58
+    },
+    {
+     "title": "⭐ 形状统计(2026-07-16 起改记【形状+次数】,不记故事 —— 细节没有复",
+     "source": "lessons",
+     "date": "2026-07-16",
+     "score": 0.58
+    }
+   ],
+   "enforced_by": [
+    "archive-recall-gate",
+    "authority-source-gate",
+    "collect-list-evidence-gate",
+    "evidence-gate",
+    "evidence-in-log-gate",
+    "injection-claim-guard",
+    "model-authenticity-gate",
+    "negative-claim-gate",
+    "no-search-no-claim-gate",
+    "prior-art-gate",
+    "process-alias-attribution-gate",
+    "reference-diff-guard",
+    "rootcause-gate",
+    "scenario-fit-gate",
+    "search-breadth-gate",
+    "search-layer-gate",
+    "strawman-verdict-gate",
+    "unread-evidence-guard",
+    "visual-detail-gate",
+    "visual-proof-gate"
+   ]
+  },
+  "R3": {
+   "id": "R3",
+   "kind": "rule",
+   "text": "虚报完成:说『改好了/生效/上线/搞定/跑通』,但没有证据表明重启了进程、真跑过、贴了实测。",
+   "group": "证据链",
+   "timing": "收尾",
+   "active": true,
+   "origin": "gate注释归纳",
+   "provenance": [
+    {
+     "title": "形状E:虚报「已焊好/已生效/完成」在没测/浅做的工件上 —— CLAUDE.md ",
+     "source": "lessons",
+     "date": "2026-07-19",
+     "score": 0.657
+    },
+    {
+     "title": "形状 2026-08-21-D：**【没跑就说\"跑不起来\"**—— 把\"没验证\"包装",
+     "source": "lessons",
+     "date": "2026-08-21",
+     "score": 0.646
+    },
+    {
+     "title": "⛔ 验证铁律",
+     "source": "CLAUDE铁律",
+     "date": "2026-08-20",
+     "score": 0.625
+    },
+    {
+     "title": "形状 2026-08-20-E(airbnb·改完没推送)：【我修好了错的结论，却没",
+     "source": "lessons",
+     "date": "2026-08-20",
+     "score": 0.598
+    },
+    {
+     "title": "形状 2026-08-20-A：【我改了长驻进程的代码，却拿一个新起的进程去\"验证\"",
+     "source": "lessons",
+     "date": "2026-08-20",
+     "score": 0.594
+    },
+    {
+     "title": "形状N:诚实说「我没验证」，反而成了免检通行证（2026-07-27，Claude ",
+     "source": "lessons",
+     "date": "2026-07-27",
+     "score": 0.576
+    },
+    {
+     "title": "进程 / 操作安全",
+     "source": "lessons",
+     "date": "2026-06-05",
+     "score": 0.689
+    }
+   ],
+   "enforced_by": [
+    "archive-recall-gate",
+    "authority-source-gate",
+    "collect-list-evidence-gate",
+    "evidence-gate",
+    "evidence-in-log-gate",
+    "injection-claim-guard",
+    "model-authenticity-gate",
+    "negative-claim-gate",
+    "no-search-no-claim-gate",
+    "prior-art-gate",
+    "process-alias-attribution-gate",
+    "reference-diff-guard",
+    "rootcause-gate",
+    "scenario-fit-gate",
+    "search-breadth-gate",
+    "search-layer-gate",
+    "strawman-verdict-gate",
+    "unread-evidence-guard",
+    "visual-detail-gate",
+    "visual-proof-gate"
+   ]
+  },
+  "R4": {
+   "id": "R4",
+   "kind": "rule",
+   "text": "过早收敛:用一两个样本或『全部/都能了/全覆盖』宣布整体完成,没逐个验证。",
+   "group": "证据链",
+   "timing": "收尾",
+   "active": true,
+   "origin": "gate注释归纳",
+   "provenance": [
+    {
+     "title": "⛔ 收敛铁律：下结论 / 说\"做完了\"前必过 5 关（防过早收敛 = 马虎/遗漏）",
+     "source": "CLAUDE铁律",
+     "date": "2026-07-02",
+     "score": 0.62
+    },
+    {
+     "title": "2026-07-24 形状:第二次宣布\"完整/穷尽\",被一次对抗自审打脸(24个真缺",
+     "source": "lessons",
+     "date": "2026-07-24",
+     "score": 0.646
+    },
+    {
+     "title": "病根一：抽样验证冒充全量验证",
+     "source": "lessons",
+     "date": "",
+     "score": 0.588
+    },
+    {
+     "title": "2026-08-08 形状 AI：**用一次时点取样，宣布一个累积量已经收敛**",
+     "source": "lessons",
+     "date": "2026-08-08",
+     "score": 0.56
+    },
+    {
+     "title": "通用判据（换任何项目都成立）",
+     "source": "lessons",
+     "date": "",
+     "score": 0.571
+    },
+    {
+     "title": "2026-07-29 形状Z(新):抽样一两个 → 概括整体,而抽中的恰好是最不像有",
+     "source": "lessons",
+     "date": "2026-07-29",
+     "score": 0.536
+    },
+    {
+     "title": "三次实录（2026-08-26，同一个问题里）",
+     "source": "lessons",
+     "date": "2026-08-26",
+     "score": 0.572
+    }
+   ],
+   "enforced_by": [
+    "archive-recall-gate",
+    "authority-source-gate",
+    "collect-list-evidence-gate",
+    "evidence-gate",
+    "evidence-in-log-gate",
+    "injection-claim-guard",
+    "model-authenticity-gate",
+    "negative-claim-gate",
+    "no-search-no-claim-gate",
+    "prior-art-gate",
+    "process-alias-attribution-gate",
+    "reference-diff-guard",
+    "rootcause-gate",
+    "scenario-fit-gate",
+    "search-breadth-gate",
+    "search-layer-gate",
+    "strawman-verdict-gate",
+    "unread-evidence-guard",
+    "visual-detail-gate",
+    "visual-proof-gate"
+   ]
+  },
+  "R5": {
+   "id": "R5",
+   "kind": "rule",
+   "text": "请示式收尾:问『要不要我去做…/需要我继续吗』,或抛一堆选项让他选,而不是自己定 —— 这些是他早授权、你自己能做的活。⛔「不可逆」看后果不看操作(2026-09-16 他定):删你自己本会话造的一次性产物/测试/临时版本/脏部署,问他『要不要删 / 你回一句删我再动手』也算;只有写出了对他的具体坏处(他的数据、唯一副本、线上正在用、别人的、花过钱)或对外发布、花钱时,问才是对的。",
+   "group": "承诺链",
+   "timing": "收尾",
+   "active": true,
+   "origin": "gate注释归纳",
+   "provenance": [
+    {
+     "title": "⛔ 授权即执行铁律（2026-07-02 用户爆发后钉死，优先级最高）",
+     "source": "CLAUDE铁律",
+     "date": "2026-07-02",
+     "score": 0.647
+    },
+    {
+     "title": "2026-07-28 形状T:【承诺不兑现】—— 说「我接着做,不用你回话」然后停手",
+     "source": "lessons",
+     "date": "2026-07-28",
+     "score": 0.634
+    },
+    {
+     "title": "形状 2026-08-20-D：【换工具代替诊断】＋【拿我自己刚写的教训当放弃的理由",
+     "source": "lessons",
+     "date": "2026-08-20",
+     "score": 0.633
+    },
+    {
+     "title": "2026-07-25 形状复发(授权即执行/Vibe Coder铁律):问零编程用户",
+     "source": "lessons",
+     "date": "2026-07-25",
+     "score": 0.583
+    },
+    {
+     "title": "附:空转请示闸的一次【误伤】(2026-08-19,形状 B 当轮)",
+     "source": "lessons",
+     "date": "2026-08-19",
+     "score": 0.579
+    },
+    {
+     "title": "形状 2026-08-27-G：【把「建议」当成「交付」——我说了「可以扔了」，然后",
+     "source": "lessons",
+     "date": "2026-08-27",
+     "score": 0.59
+    },
+    {
+     "title": "2026-07-17 sd-webui 形状B再犯(推论当事实)+新子形状(读串工具",
+     "source": "lessons",
+     "date": "2026-07-17",
+     "score": 0.625
+    }
+   ],
+   "enforced_by": [
+    "bg-running-claim-gate",
+    "checklist-completion-gate",
+    "commitment-execution-gate",
+    "dropped-output-guard",
+    "empty-promise-gate",
+    "false-done-gate",
+    "giveup-guard",
+    "institutionalize-guard",
+    "multi-option-guard",
+    "nudge-escalation-gate",
+    "promise-carryover-gate",
+    "promise-gate",
+    "residue-gate",
+    "show-open-guard"
+   ]
+  },
+  "R6": {
+   "id": "R6",
+   "kind": "rule",
+   "text": "硬件甩锅:断言某盘/硬件『坏了/该换』,没跑过探测(smartctl 等)。",
+   "group": "证据链",
+   "timing": "收尾",
+   "active": true,
+   "origin": "gate注释归纳",
+   "provenance": [
+    {
+     "title": "机器能不能防",
+     "source": "lessons",
+     "date": "2026-09-05",
+     "score": 0.656
+    },
+    {
+     "title": "2026-08-11 形状复发#10(甩锅硬件):「多个不相干的东西同时坏」被我一律",
+     "source": "lessons",
+     "date": "2026-08-11",
+     "score": 0.635
+    },
+    {
+     "title": "2026-08-12 · 形状:【「我拿不到那个数字」= 停止调查信号,先问\"有没有",
+     "source": "lessons",
+     "date": "2026-08-12",
+     "score": 0.592
+    },
+    {
+     "title": "形状N:诚实说「我没验证」，反而成了免检通行证（2026-07-27，Claude ",
+     "source": "lessons",
+     "date": "2026-07-27",
+     "score": 0.592
+    },
+    {
+     "title": "形状 2026-09-09-AS：【把「我这次的调用方式错了」误判成「这是权限边界，",
+     "source": "lessons",
+     "date": "2026-09-09",
+     "score": 0.537
+    },
+    {
+     "title": "形状 2026-09-07-B:【专治某一族的闸,自己只有关键词一个入口 —— 于是",
+     "source": "lessons",
+     "date": "2026-09-07",
+     "score": 0.562
+    }
+   ],
+   "enforced_by": [
+    "archive-recall-gate",
+    "authority-source-gate",
+    "collect-list-evidence-gate",
+    "evidence-gate",
+    "evidence-in-log-gate",
+    "injection-claim-guard",
+    "model-authenticity-gate",
+    "negative-claim-gate",
+    "no-search-no-claim-gate",
+    "prior-art-gate",
+    "process-alias-attribution-gate",
+    "reference-diff-guard",
+    "rootcause-gate",
+    "scenario-fit-gate",
+    "search-breadth-gate",
+    "search-layer-gate",
+    "strawman-verdict-gate",
+    "unread-evidence-guard",
+    "visual-detail-gate",
+    "visual-proof-gate"
+   ]
+  },
+  "R7": {
+   "id": "R7",
+   "kind": "rule",
+   "text": "建议当交付:把『可以扔了/该有人修/建议…/你有空处理下』当成结果,自己没动手做。",
+   "group": "输出质",
+   "timing": "收尾",
+   "active": true,
+   "origin": "gate注释归纳",
+   "provenance": [
+    {
+     "title": "形状 2026-08-27-G：【把「建议」当成「交付」——我说了「可以扔了」，然后",
+     "source": "lessons",
+     "date": "2026-08-27",
+     "score": 0.654
+    },
+    {
+     "title": "交付",
+     "source": "lessons",
+     "date": "2026-08-25",
+     "score": 0.613
+    },
+    {
+     "title": "⛔ 授权即执行铁律（2026-07-02 用户爆发后钉死，优先级最高）",
+     "source": "CLAUDE铁律",
+     "date": "2026-07-02",
+     "score": 0.57
+    },
+    {
+     "title": "形状 2026-09-08-H:【交付\"我这边的过程\",不是\"他要的结果\";还把要他",
+     "source": "lessons",
+     "date": "2026-09-08",
+     "score": 0.545
+    },
+    {
+     "title": "形状 2026-08-20-C(backup-guard·把做完的事当待办)：【我把",
+     "source": "lessons",
+     "date": "2026-08-20",
+     "score": 0.572
+    },
+    {
+     "title": "第二条（同样值钱）：有些事对他【本来就没有价值】，该老实说\"你不用管\"",
+     "source": "lessons",
+     "date": "",
+     "score": 0.562
+    },
+    {
+     "title": "2026-07-24 形状复发(功能缺口/静默丢弃当外部):视频模式静默扔掉用户参考",
+     "source": "lessons",
+     "date": "2026-07-24",
+     "score": 0.612
+    }
+   ],
+   "enforced_by": [
+    "answer-relevancy-gate",
+    "concise-answer-gate",
+    "flat-table-gate",
+    "jargon-gate",
+    "media-regression-gate",
+    "stagnation-gate",
+    "ui-edit-guard",
+    "video-audio-gate"
+   ]
+  },
+  "R8": {
+   "id": "R8",
+   "kind": "rule",
+   "text": "付费优先:推『充值/付费/花钱买』方案,却没先搜免费替代。",
+   "group": "能力界",
+   "timing": "收尾",
+   "active": true,
+   "origin": "gate注释归纳",
+   "provenance": [
+    {
+     "title": "④ 免费/白嫖 + 破限优先",
+     "source": "CLAUDE铁律",
+     "date": "",
+     "score": 0.574
+    },
+    {
+     "title": "方案 · 交付 · 工具 · 隐私",
+     "source": "CLAUDE铁律",
+     "date": "2026-08-14",
+     "score": 0.521
+    },
+    {
+     "title": "⛔⛔⛔ 至高铁律 · SOTA + 别人工具优先 + 逆向包壳（2026-09-08",
+     "source": "CLAUDE铁律",
+     "date": "2026-09-08",
+     "score": 0.479
+    },
+    {
+     "title": "我这次的「省」是什么",
+     "source": "lessons",
+     "date": "",
+     "score": 0.51
+    },
+    {
+     "title": "形状 2026-08-25-A：【「装得上、跑得起来」冒充「你能用」】—— 我把商业",
+     "source": "lessons",
+     "date": "2026-08-25",
+     "score": 0.599
+    },
+    {
+     "title": "形状 2026-08-18-A：我的证据能同时解释【两种相反机制】，我却只挑了顺眼的",
+     "source": "lessons",
+     "date": "2026-08-18",
+     "score": 0.481
+    },
+    {
+     "title": "代价（量化，这才是这条教训的分量）",
+     "source": "lessons",
+     "date": "",
+     "score": 0.635
+    }
+   ],
+   "enforced_by": [
+    "ask-coverage-gate",
+    "backslash-eater-gate",
+    "capability-boundary-gate",
+    "cross-scope-guard",
+    "fault-injection-gate",
+    "scope-completeness-gate",
+    "skill-discovery-gate",
+    "tool-roster-gate",
+    "unknowing-pretending-gate"
+   ]
+  },
+  "R9": {
+   "id": "R9",
+   "kind": "rule",
+   "text": "飙术语:对零编程的 Frank,句子里出现代码变量名/参数名/英文缩写/技术标识符(如 max_seq_length、fraction、CDP、recall)或自造比喻,却没紧跟一句大白话解释 —— 哪怕整句都是技术叙述也算。",
+   "group": "输出质",
+   "timing": "收尾",
+   "active": true,
+   "origin": "gate注释归纳",
+   "provenance": [
+    {
+     "title": "2026-07-27 形状R:按【我觉得完整】交付,不按【他能拿来做决定】交付 ——",
+     "source": "lessons",
+     "date": "2026-07-27",
+     "score": 0.665
+    },
+    {
+     "title": "形状 2026-09-09-A：【刚用完 /renhua（人话 skill），下一条",
+     "source": "lessons",
+     "date": "2026-09-09",
+     "score": 0.645
+    },
+    {
+     "title": "形状D:甩术语不翻人话(ls+wc/MCP/vault…)—— CLAUDE.md ",
+     "source": "lessons",
+     "date": "2026-07-20",
+     "score": 0.657
+    },
+    {
+     "title": "⛔ Vibe Coder 铁律（跨所有项目，无例外）",
+     "source": "CLAUDE铁律",
+     "date": "",
+     "score": 0.646
+    },
+    {
+     "title": "形状 2026-09-09-D：【把一个技术决策抛给零编程的 Frank 让他选,却",
+     "source": "lessons",
+     "date": "2026-09-09",
+     "score": 0.61
+    },
+    {
+     "title": "形状 2026-09-09-G：【他说\"听不懂\"，我用更多黑话去解释为什么他听不懂】",
+     "source": "lessons",
+     "date": "2026-09-09",
+     "score": 0.598
+    }
+   ],
+   "enforced_by": [
+    "answer-relevancy-gate",
+    "concise-answer-gate",
+    "flat-table-gate",
+    "jargon-gate",
+    "media-regression-gate",
+    "stagnation-gate",
+    "ui-edit-guard",
+    "video-audio-gate"
+   ]
+  },
+  "R10": {
+   "id": "R10",
+   "kind": "rule",
+   "text": "能力边界当借口:说『这是模型能力边界/只能这样/改不掉/是死的』来停止调查。",
+   "group": "能力界",
+   "timing": "收尾",
+   "active": true,
+   "origin": "gate注释归纳",
+   "provenance": [
+    {
+     "title": "① 生成类任务出不来想要的结果 → 先换模型/工作流，不是先下\"能力边界\"结论",
+     "source": "CLAUDE铁律",
+     "date": "2026-07-30",
+     "score": 0.597
+    },
+    {
+     "title": "⛔ 验证铁律",
+     "source": "CLAUDE铁律",
+     "date": "",
+     "score": 0.522
+    },
+    {
+     "title": "形状 2026-08-20-D：【换工具代替诊断】＋【拿我自己刚写的教训当放弃的理由",
+     "source": "lessons",
+     "date": "2026-08-20",
+     "score": 0.46
+    },
+    {
+     "title": "⛔ 「结果不符 ≠ 能力边界」+ 网站自动化铁律（2026-07-30 Frank ",
+     "source": "CLAUDE铁律",
+     "date": "2026-07-30",
+     "score": 0.547
+    },
+    {
+     "title": "2026-07-27 形状L:在一个【自己从没质疑过的约束】里做优化,还主动给那个约",
+     "source": "lessons",
+     "date": "2026-07-27",
+     "score": 0.493
+    },
+    {
+     "title": "形状 2026-09-06-B：【遇阻就宣布能力边界，而调查顺序整个是反的】",
+     "source": "lessons",
+     "date": "2026-09-06",
+     "score": 0.547
+    }
+   ],
+   "enforced_by": [
+    "ask-coverage-gate",
+    "backslash-eater-gate",
+    "capability-boundary-gate",
+    "cross-scope-guard",
+    "fault-injection-gate",
+    "scope-completeness-gate",
+    "skill-discovery-gate",
+    "tool-roster-gate",
+    "unknowing-pretending-gate"
+   ]
+  },
+  "R11": {
+   "id": "R11",
+   "kind": "rule",
+   "text": "遮羞词:交付里用『尽力而为/理论上/应该没问题/大概率/差不多』这种能实测却没实测的含糊话。",
+   "group": "证据链",
+   "timing": "收尾",
+   "active": true,
+   "origin": "gate注释归纳",
+   "provenance": [
+    {
+     "title": "2026-07-27 形状R:按【我觉得完整】交付,不按【他能拿来做决定】交付 ——",
+     "source": "lessons",
+     "date": "2026-07-27",
+     "score": 0.594
+    },
+    {
+     "title": "2026-07-24 双错:①\"重试大概率就过\"没亲测就交付(遮羞词复发) ②把功能",
+     "source": "lessons",
+     "date": "2026-07-24",
+     "score": 0.617
+    },
+    {
+     "title": "2026-07-28 纸老虎全表(回答 Frank「整套系统还有什么是纸老虎、导致你",
+     "source": "lessons",
+     "date": "2026-07-28",
+     "score": 0.446
+    },
+    {
+     "title": "反向指纹",
+     "source": "lessons",
+     "date": "",
+     "score": 0.531
+    },
+    {
+     "title": "形状 2026-09-08-H:【交付\"我这边的过程\",不是\"他要的结果\";还把要他",
+     "source": "lessons",
+     "date": "2026-09-08",
+     "score": 0.505
+    },
+    {
+     "title": "通用判据(换任何项目都成立)",
+     "source": "lessons",
+     "date": "",
+     "score": 0.498
+    },
+    {
+     "title": "进程 / 操作安全",
+     "source": "lessons",
+     "date": "2026-06-05",
+     "score": 0.581
+    }
+   ],
+   "enforced_by": [
+    "archive-recall-gate",
+    "authority-source-gate",
+    "collect-list-evidence-gate",
+    "evidence-gate",
+    "evidence-in-log-gate",
+    "injection-claim-guard",
+    "model-authenticity-gate",
+    "negative-claim-gate",
+    "no-search-no-claim-gate",
+    "prior-art-gate",
+    "process-alias-attribution-gate",
+    "reference-diff-guard",
+    "rootcause-gate",
+    "scenario-fit-gate",
+    "search-breadth-gate",
+    "search-layer-gate",
+    "strawman-verdict-gate",
+    "unread-evidence-guard",
+    "visual-detail-gate",
+    "visual-proof-gate"
+   ]
+  },
+  "R12": {
+   "id": "R12",
+   "kind": "rule",
+   "text": "说要做却没做:承诺『我改/我修/我加/我换』某样东西,但这一轮没有任何真正动手改文件的痕迹,只是查和说。",
+   "group": "承诺链",
+   "timing": "收尾",
+   "active": true,
+   "origin": "gate注释归纳",
+   "provenance": [
+    {
+     "title": "形状 2026-08-18-E:【我改了钱的数字,却没想到「已经发出去的那份东西」因",
+     "source": "lessons",
+     "date": "2026-08-18",
+     "score": 0.643
+    },
+    {
+     "title": "2026-07-28 形状T:【承诺不兑现】—— 说「我接着做,不用你回话」然后停手",
+     "source": "lessons",
+     "date": "2026-07-28",
+     "score": 0.655
+    },
+    {
+     "title": "形状 2026-08-31-F：【列\"承诺清单\"收尾 = 借条不是交付】——形状 I",
+     "source": "lessons",
+     "date": "2026-08-31",
+     "score": 0.613
+    },
+    {
+     "title": "形状 2026-08-26-E:【`acted` 只知道\"我动了\",不知道\"动的是不",
+     "source": "lessons",
+     "date": "2026-08-26",
+     "score": 0.594
+    },
+    {
+     "title": "形状 2026-08-20-D：【换工具代替诊断】＋【拿我自己刚写的教训当放弃的理由",
+     "source": "lessons",
+     "date": "2026-08-20",
+     "score": 0.611
+    },
+    {
+     "title": "形状 2026-08-14-A:【为 A 动了手,把 B/C/D 列成清单说\"接下来",
+     "source": "lessons",
+     "date": "2026-08-14",
+     "score": 0.643
+    },
+    {
+     "title": "形状 2026-08-26-B：【测试命令自己传错参，我差点判\"改动没生效\"】—— ",
+     "source": "lessons",
+     "date": "2026-08-26",
+     "score": 0.623
+    }
+   ],
+   "enforced_by": [
+    "bg-running-claim-gate",
+    "checklist-completion-gate",
+    "commitment-execution-gate",
+    "dropped-output-guard",
+    "empty-promise-gate",
+    "false-done-gate",
+    "giveup-guard",
+    "institutionalize-guard",
+    "multi-option-guard",
+    "nudge-escalation-gate",
+    "promise-carryover-gate",
+    "promise-gate",
+    "residue-gate",
+    "show-open-guard"
+   ]
+  },
+  "R13": {
+   "id": "R13",
+   "kind": "rule",
+   "text": "答非所问:没有直接回答 Frank 问的那一句,或把他的问题原样反弹回去(『你觉得呢』)。",
+   "group": "输出质",
+   "timing": "收尾",
+   "active": true,
+   "origin": "gate注释归纳",
+   "provenance": [
+    {
+     "title": "⛔⛔ 收尾铁律 · 先回答他，再交代我自己（2026-08-25 他连问两次「你有回",
+     "source": "CLAUDE铁律",
+     "date": "2026-08-25",
+     "score": 0.607
+    },
+    {
+     "title": "形状 2026-08-25-T:【闸把我的注意力从「他的问题」劫持走了 —— 我全绿",
+     "source": "lessons",
+     "date": "2026-08-25",
+     "score": 0.626
+    },
+    {
+     "title": "形状 2026-09-06-F：【拿零件代表整体下判决】—— 同一天犯 3 次，每次",
+     "source": "lessons",
+     "date": "2026-09-06",
+     "score": 0.568
+    },
+    {
+     "title": "形状 2026-08-31-C：【用印象构前提，用前提推结论，用结论代替验证——直到",
+     "source": "lessons",
+     "date": "2026-08-31",
+     "score": 0.554
+    },
+    {
+     "title": "2026-07-19 形状K:以「分析/反思/请示确认」表演工作,实际零行动零交付 ",
+     "source": "lessons",
+     "date": "2026-07-19",
+     "score": 0.542
+    },
+    {
+     "title": "2026-08-21-D ⛔ 形状：**只读【他说的话】，然后用他的问题倒推我做过什",
+     "source": "lessons",
+     "date": "2026-08-21",
+     "score": 0.567
+    },
+    {
+     "title": "形状 2026-08-13-J:**答案就在我的上下文里(开局注入的那份),我却当它",
+     "source": "lessons",
+     "date": "2026-08-13",
+     "score": 0.563
+    }
+   ],
+   "enforced_by": [
+    "answer-relevancy-gate",
+    "concise-answer-gate",
+    "flat-table-gate",
+    "jargon-gate",
+    "media-regression-gate",
+    "stagnation-gate",
+    "ui-edit-guard",
+    "video-audio-gate"
+   ]
+  },
+  "R14": {
+   "id": "R14",
+   "kind": "rule",
+   "text": "只修实例不修一类:只补了他点名的那一处,没扫同模块/同模式的同类问题。",
+   "group": "输出质",
+   "timing": "收尾",
+   "active": true,
+   "origin": "gate注释归纳",
+   "provenance": [
+    {
+     "title": "2026-08-21-E ⛔ 形状：**他指出一处浪费，我只修被点名那一处，不扫同类",
+     "source": "lessons",
+     "date": "2026-08-21",
+     "score": 0.673
+    },
+    {
+     "title": "形状 2026-09-07-H：【补了被点名的那一个，从没数过还剩多少个】—— 缺分",
+     "source": "lessons",
+     "date": "2026-09-07",
+     "score": 0.591
+    },
+    {
+     "title": "形状 2026-08-14-C:【改掉被点名的那一句,没改产生那句话的习惯】—— 同",
+     "source": "lessons",
+     "date": "2026-08-14",
+     "score": 0.607
+    },
+    {
+     "title": "形状 2026-09-06-H：【找到 bug 就记下来不修，以为\"记了\"就等于\"处",
+     "source": "lessons",
+     "date": "2026-09-06",
+     "score": 0.593
+    },
+    {
+     "title": "复发 2026-09-08：换了个面孔 —— 不是\"漏验调用方\"，是**漏改同类位置",
+     "source": "lessons",
+     "date": "2026-09-08",
+     "score": 0.593
+    },
+    {
+     "title": "形状 2026-08-26-E:【`acted` 只知道\"我动了\",不知道\"动的是不",
+     "source": "lessons",
+     "date": "2026-08-26",
+     "score": 0.551
+    },
+    {
+     "title": "⭐⭐ 元根因 2026-08-20：【实例思维】——我只处理\"眼前这一个\"，而我建的",
+     "source": "lessons",
+     "date": "2026-08-20",
+     "score": 0.571
+    }
+   ],
+   "enforced_by": [
+    "answer-relevancy-gate",
+    "concise-answer-gate",
+    "flat-table-gate",
+    "jargon-gate",
+    "media-regression-gate",
+    "stagnation-gate",
+    "ui-edit-guard",
+    "video-audio-gate"
+   ]
+  },
+  "R15": {
+   "id": "R15",
+   "kind": "rule",
+   "text": "头疼医头:修的是症状不是根因,问题会换个形式再回来。",
+   "group": "输出质",
+   "timing": "收尾",
+   "active": true,
+   "origin": "gate注释归纳",
+   "provenance": [
+    {
+     "title": "⛔ 收敛铁律：下结论 / 说\"做完了\"前必过 5 关（防过早收敛 = 马虎/遗漏）",
+     "source": "CLAUDE铁律",
+     "date": "2026-07-02",
+     "score": 0.569
+    },
+    {
+     "title": "⭐⭐ 元根因 2026-08-20：【实例思维】——我只处理\"眼前这一个\"，而我建的",
+     "source": "lessons",
+     "date": "2026-08-20",
+     "score": 0.518
+    },
+    {
+     "title": "形状 2026-08-26-Q：【规则写了 + 工具有 + 没有闸 = 等于没有】—",
+     "source": "lessons",
+     "date": "2026-08-26",
+     "score": 0.58
+    },
+    {
+     "title": "形状 2026-09-09-S：【元根因·三个月复发】superego 87% 是关",
+     "source": "lessons",
+     "date": "2026-09-09",
+     "score": 0.529
+    },
+    {
+     "title": "2026-07-27 架构级：Superego 的真正病根不是\"词表不够全\"，是【语",
+     "source": "lessons",
+     "date": "2026-07-27",
+     "score": 0.467
+    },
+    {
+     "title": "调试 & 排查",
+     "source": "lessons",
+     "date": "2026-09-01",
+     "score": 0.606
+    },
+    {
+     "title": "形状 2026-09-06-L【元形状·系统级】：【我把\"只修眼前那一个\"写进了 l",
+     "source": "lessons",
+     "date": "2026-09-06",
+     "score": 0.521
+    }
+   ],
+   "enforced_by": [
+    "answer-relevancy-gate",
+    "concise-answer-gate",
+    "flat-table-gate",
+    "jargon-gate",
+    "media-regression-gate",
+    "stagnation-gate",
+    "ui-edit-guard",
+    "video-audio-gate"
+   ]
+  },
+  "R16": {
+   "id": "R16",
+   "kind": "rule",
+   "text": "抽样冒充全量:拿几条截断/摘要片段当成『全都查过了』下整体结论。",
+   "group": "证据链",
+   "timing": "收尾",
+   "active": true,
+   "origin": "gate注释归纳",
+   "provenance": [
+    {
+     "title": "病根一：抽样验证冒充全量验证",
+     "source": "lessons",
+     "date": "",
+     "score": 0.699
+    },
+    {
+     "title": "2026-07-29 形状Z(新):抽样一两个 → 概括整体,而抽中的恰好是最不像有",
+     "source": "lessons",
+     "date": "2026-07-29",
+     "score": 0.661
+    },
+    {
+     "title": "通用判据（换任何项目都成立）",
+     "source": "lessons",
+     "date": "",
+     "score": 0.584
+    },
+    {
+     "title": "判据(比原 I 条更硬的一条)",
+     "source": "lessons",
+     "date": "",
+     "score": 0.609
+    },
+    {
+     "title": "2026-07-24 形状:第二次宣布\"完整/穷尽\",被一次对抗自审打脸(24个真缺",
+     "source": "lessons",
+     "date": "2026-07-24",
+     "score": 0.6
+    },
+    {
+     "title": "通用判据(换任何项目都成立)",
+     "source": "lessons",
+     "date": "",
+     "score": 0.575
+    },
+    {
+     "title": "形状 2026-08-26-F：【我正要改一条生产启动链，而退路一行都没写】—— 是",
+     "source": "lessons",
+     "date": "2026-08-26",
+     "score": 0.572
+    }
+   ],
+   "enforced_by": [
+    "archive-recall-gate",
+    "authority-source-gate",
+    "collect-list-evidence-gate",
+    "evidence-gate",
+    "evidence-in-log-gate",
+    "injection-claim-guard",
+    "model-authenticity-gate",
+    "negative-claim-gate",
+    "no-search-no-claim-gate",
+    "prior-art-gate",
+    "process-alias-attribution-gate",
+    "reference-diff-guard",
+    "rootcause-gate",
+    "scenario-fit-gate",
+    "search-breadth-gate",
+    "search-layer-gate",
+    "strawman-verdict-gate",
+    "unread-evidence-guard",
+    "visual-detail-gate",
+    "visual-proof-gate"
+   ]
+  },
+  "R17": {
+   "id": "R17",
+   "kind": "rule",
+   "text": "用错场景的最强:选了最新最强的工具,却没先确认这个场景要的是不是它(强的前提是场景对)。",
+   "group": "能力界",
+   "timing": "收尾",
+   "active": true,
+   "origin": "gate注释归纳",
+   "provenance": [
+    {
+     "title": "形状 2026-09-08-H：【第 53 次「最强的是 X」没搜就出口 —— 这次",
+     "source": "lessons",
+     "date": "2026-09-08",
+     "score": 0.678
+    },
+    {
+     "title": "⛔ 最值钱的一条：我差点把【损坏的症状】当成【结论】直接用",
+     "source": "lessons",
+     "date": "2026-09-06",
+     "score": 0.566
+    },
+    {
+     "title": "形状 2026-08-25-O:【我用错了工具,却报成「这工具不行」】—— 一天三次",
+     "source": "lessons",
+     "date": "2026-08-25",
+     "score": 0.543
+    },
+    {
+     "title": "⛔ 工具去重铁律（2026-09-09 Frank 亲口定，紧接「先查现成」之后执行",
+     "source": "CLAUDE铁律",
+     "date": "2026-09-09",
+     "score": 0.529
+    },
+    {
+     "title": "通用判据（换任何项目都成立）",
+     "source": "lessons",
+     "date": "",
+     "score": 0.537
+    },
+    {
+     "title": "2026-08-12 形状I 再犯:【拿自己的问题框架当筛子,漏掉星数最高的候选】",
+     "source": "lessons",
+     "date": "2026-08-12",
+     "score": 0.639
+    },
+    {
+     "title": "2026-07-23 不满检测从关键字升级成语义分类器(Frank「我要几乎98%召",
+     "source": "lessons",
+     "date": "2026-07-23",
+     "score": 0.553
+    }
+   ],
+   "enforced_by": [
+    "ask-coverage-gate",
+    "backslash-eater-gate",
+    "capability-boundary-gate",
+    "cross-scope-guard",
+    "fault-injection-gate",
+    "scope-completeness-gate",
+    "skill-discovery-gate",
+    "tool-roster-gate",
+    "unknowing-pretending-gate"
+   ]
+  },
+  "R18": {
+   "id": "R18",
+   "kind": "rule",
+   "text": "闭门造车:动手造/逆一个非 trivial 的东西,没先查『六宇宙』有没有现成的可复用。",
+   "group": "能力界",
+   "timing": "收尾",
+   "active": true,
+   "origin": "gate注释归纳",
+   "provenance": [
+    {
+     "title": "① 工具/方案第一步永远是【找别人的】，不是自己造",
+     "source": "CLAUDE铁律",
+     "date": "",
+     "score": 0.543
+    },
+    {
+     "title": "⛔ 先查现成铁律（2026-07-10 钉死｜**2026-08-14 大改：「现成",
+     "source": "CLAUDE铁律",
+     "date": "2026-07-10",
+     "score": 0.513
+    },
+    {
+     "title": "形状 2026-09-06-R：【我拿\"闭门造车\"的成果当结论 —— 而这个领域早就",
+     "source": "lessons",
+     "date": "2026-09-06",
+     "score": 0.569
+    },
+    {
+     "title": "⛔ 2026-08-20 同形状再犯，而且这次拿到了**闸失效的确凿证据**（man",
+     "source": "lessons",
+     "date": "2026-08-20",
+     "score": 0.541
+    },
+    {
+     "title": "⛔ 四条【横切】自检 —— 七步管顺序，这四条管【每步做得对不对】",
+     "source": "CLAUDE铁律",
+     "date": "2026-08-20",
+     "score": 0.525
+    },
+    {
+     "title": "六个宇宙（缺一个都可能漏掉第一名｜按\"先看家里\"排序）",
+     "source": "CLAUDE铁律",
+     "date": "2026-08-14",
+     "score": 0.558
+    }
+   ],
+   "enforced_by": [
+    "ask-coverage-gate",
+    "backslash-eater-gate",
+    "capability-boundary-gate",
+    "cross-scope-guard",
+    "fault-injection-gate",
+    "scope-completeness-gate",
+    "skill-discovery-gate",
+    "tool-roster-gate",
+    "unknowing-pretending-gate"
+   ]
+  },
+  "R19": {
+   "id": "R19",
+   "kind": "rule",
+   "text": "空泛好处:说『对你有帮助/你会感觉到』却没具体到他能感知的事(等多久/花不花钱/要不要他动手)。",
+   "group": "输出质",
+   "timing": "收尾",
+   "active": true,
+   "origin": "gate注释归纳",
+   "provenance": [
+    {
+     "title": "形状 2026-09-09-D：【把一个技术决策抛给零编程的 Frank 让他选,却",
+     "source": "lessons",
+     "date": "2026-09-09",
+     "score": 0.481
+    },
+    {
+     "title": "形状 2026-09-08-H:【交付\"我这边的过程\",不是\"他要的结果\";还把要他",
+     "source": "lessons",
+     "date": "2026-09-08",
+     "score": 0.451
+    },
+    {
+     "title": "形状 2026-09-06-J：【说\"只有你能做\"—— 而我根本没查手上还有什么】",
+     "source": "lessons",
+     "date": "2026-09-06",
+     "score": 0.473
+    },
+    {
+     "title": "形状 2026-08-18-H:【筛子只扫了一小块,就把「我没搜到」讲成「你没有」】",
+     "source": "lessons",
+     "date": "2026-08-18",
+     "score": 0.517
+    },
+    {
+     "title": "反向指纹（下次一眼认出）",
+     "source": "lessons",
+     "date": "",
+     "score": 0.459
+    },
+    {
+     "title": "形状 A:没验证数据覆盖,就说\"不存在\"  —— **2026-07-15/16 一",
+     "source": "lessons",
+     "date": "2026-07-15",
+     "score": 0.45
+    }
+   ],
+   "enforced_by": [
+    "answer-relevancy-gate",
+    "concise-answer-gate",
+    "flat-table-gate",
+    "jargon-gate",
+    "media-regression-gate",
+    "stagnation-gate",
+    "ui-edit-guard",
+    "video-audio-gate"
+   ]
+  },
+  "R20": {
+   "id": "R20",
+   "kind": "rule",
+   "text": "盲信自己的输出:把自己工具/日志/数据库/退出码的记录当地面真相,没去核第一手(截图/原始数据/真实文件)。",
+   "group": "证据链",
+   "timing": "收尾",
+   "active": true,
+   "origin": "lessons 979 形状归纳",
+   "provenance": [
+    {
+     "title": "形状 2026-08-25-Q:【我报\"某系统现在坏着\",读的却是我自己几小时前写的",
+     "source": "lessons",
+     "date": "2026-08-25",
+     "score": 0.617
+    },
+    {
+     "title": "2026-07-25 形状复发#10(拿自己工具的记录当真相,不跟第一手比对就动手,",
+     "source": "lessons",
+     "date": "2026-07-25",
+     "score": 0.537
+    },
+    {
+     "title": "形状 2026-08-14-D:【为了\"看一眼渲染\"，调了带副作用的真函数,把假数据",
+     "source": "lessons",
+     "date": "2026-08-14",
+     "score": 0.571
+    },
+    {
+     "title": "形状 2026-08-13-A:【用户早就给了我为这件事写的工具,我却从没跑过它】",
+     "source": "lessons",
+     "date": "2026-08-13",
+     "score": 0.572
+    },
+    {
+     "title": "⛔ 收敛铁律：下结论 / 说\"做完了\"前必过 5 关（防过早收敛 = 马虎/遗漏）",
+     "source": "CLAUDE铁律",
+     "date": "2026-07-11",
+     "score": 0.545
+    },
+    {
+     "title": "形状 2026-08-30-C:用「历史均值」当「当月真成本」—— 拿编的数当真数据",
+     "source": "lessons",
+     "date": "2026-08-30",
+     "score": 0.563
+    }
+   ],
+   "enforced_by": [
+    "archive-recall-gate",
+    "authority-source-gate",
+    "collect-list-evidence-gate",
+    "evidence-gate",
+    "evidence-in-log-gate",
+    "injection-claim-guard",
+    "model-authenticity-gate",
+    "negative-claim-gate",
+    "no-search-no-claim-gate",
+    "prior-art-gate",
+    "process-alias-attribution-gate",
+    "reference-diff-guard",
+    "rootcause-gate",
+    "scenario-fit-gate",
+    "search-breadth-gate",
+    "search-layer-gate",
+    "strawman-verdict-gate",
+    "unread-evidence-guard",
+    "visual-detail-gate",
+    "visual-proof-gate"
+   ]
+  },
+  "R21": {
+   "id": "R21",
+   "kind": "rule",
+   "text": "历史冒充现状:拿累积日志、旧计数、旧状态当此刻的事实,没看时间戳、没确认现在还成立。",
+   "group": "证据链",
+   "timing": "收尾",
+   "active": true,
+   "origin": "lessons 979 形状归纳",
+   "provenance": [
+    {
+     "title": "同轮两条【复发】(不新开形状,挂到既有条目上计数)",
+     "source": "lessons",
+     "date": "2026-07-27",
+     "score": 0.669
+    },
+    {
+     "title": "2026-07-25 形状:体检数【陈旧日志报错】当【活bug】报 = 我自己制造\"",
+     "source": "lessons",
+     "date": "2026-07-25",
+     "score": 0.621
+    },
+    {
+     "title": "形状 2026-08-25-Q:【我报\"某系统现在坏着\",读的却是我自己几小时前写的",
+     "source": "lessons",
+     "date": "2026-08-25",
+     "score": 0.649
+    },
+    {
+     "title": "通用判据（换任何项目、任何数值都成立）",
+     "source": "lessons",
+     "date": "",
+     "score": 0.616
+    },
+    {
+     "title": "通用判据",
+     "source": "lessons",
+     "date": "",
+     "score": 0.631
+    },
+    {
+     "title": "形状 2026-09-01-A",
+     "source": "lessons",
+     "date": "2026-09-01",
+     "score": 0.583
+    },
+    {
+     "title": "形状 2026-09-07-N：【并行 session 正在重构共享资产，我把对方的",
+     "source": "lessons",
+     "date": "2026-09-07",
+     "score": 0.593
+    }
+   ],
+   "enforced_by": [
+    "archive-recall-gate",
+    "authority-source-gate",
+    "collect-list-evidence-gate",
+    "evidence-gate",
+    "evidence-in-log-gate",
+    "injection-claim-guard",
+    "model-authenticity-gate",
+    "negative-claim-gate",
+    "no-search-no-claim-gate",
+    "prior-art-gate",
+    "process-alias-attribution-gate",
+    "reference-diff-guard",
+    "rootcause-gate",
+    "scenario-fit-gate",
+    "search-breadth-gate",
+    "search-layer-gate",
+    "strawman-verdict-gate",
+    "unread-evidence-guard",
+    "visual-detail-gate",
+    "visual-proof-gate"
+   ]
+  },
+  "R22": {
+   "id": "R22",
+   "kind": "rule",
+   "text": "只验调通没验链路:界面渲染出来了/接口 200 了就算完,没验点下去真发生什么、端到端走通没。",
+   "group": "审查学",
+   "timing": "动手后",
+   "active": true,
+   "origin": "lessons 979 形状归纳",
+   "provenance": [
+    {
+     "title": "2026-08-21 形状 2026-08-21-C：【只验第一帧】—— 多步交互只",
+     "source": "lessons",
+     "date": "2026-08-21",
+     "score": 0.628
+    },
+    {
+     "title": "2026-07-25 形状O:改了【交互】只验【长什么样】,没验【点下去发生什么】—",
+     "source": "lessons",
+     "date": "2026-07-25",
+     "score": 0.627
+    },
+    {
+     "title": "反向指纹",
+     "source": "lessons",
+     "date": "",
+     "score": 0.662
+    },
+    {
+     "title": "形状 2026-09-09-K：【拿\"旁路探针\"的成功，宣布\"生产链路\"已恢复】——",
+     "source": "lessons",
+     "date": "2026-09-09",
+     "score": 0.649
+    },
+    {
+     "title": "通用判据（换任何项目都成立）",
+     "source": "lessons",
+     "date": "",
+     "score": 0.625
+    },
+    {
+     "title": "⛔ 附：同一轮里我做了 4 次【假的端到端验证】，每次都得出\"通过\"",
+     "source": "lessons",
+     "date": "2026-09-09",
+     "score": 0.651
+    },
+    {
+     "title": "与形状 C 的关系：同一天、同一个病、第二次",
+     "source": "lessons",
+     "date": "",
+     "score": 0.632
+    }
+   ],
+   "enforced_by": [
+    "coherence-guard",
+    "critic-gate",
+    "excuse-gate",
+    "feature-regress-guard",
+    "gate-generality-gate",
+    "lesson-anchor-gate",
+    "lessons-write-gate",
+    "lint-fatal-guard",
+    "plan-before-act-gate",
+    "rule-dup-guard",
+    "semantic-superego-gate",
+    "spec-coverage-guard",
+    "spec-first-gate"
+   ]
+  },
+  "R23": {
+   "id": "R23",
+   "kind": "rule",
+   "text": "代码分支冒充事实:诊断时看到代码里有个失败分支,就断定它真发生了,没跑一次复现。",
+   "group": "证据链",
+   "timing": "收尾",
+   "active": true,
+   "origin": "lessons 979 形状归纳",
+   "provenance": [
+    {
+     "title": "形状 2026-09-09-AQ：【我刚加的修复 + 症状消失了 ＝ 我的修复起作用",
+     "source": "lessons",
+     "date": "2026-09-09",
+     "score": 0.693
+    },
+    {
+     "title": "通用判据(换任何项目都成立)",
+     "source": "lessons",
+     "date": "",
+     "score": 0.665
+    },
+    {
+     "title": "形状 2026-09-07-O：【用例根本走不到那条分支 —— 于是\"测过了\"是假的",
+     "source": "lessons",
+     "date": "2026-09-07",
+     "score": 0.66
+    },
+    {
+     "title": "形状 2026-09-09-AO:【静默的兜底】—— 失败不留痕的代码,等于我给自己",
+     "source": "lessons",
+     "date": "2026-09-09",
+     "score": 0.636
+    },
+    {
+     "title": "形状 2026-08-15-D:【我自己写在注释里的\"不做\"，被我当成用户的决定回给",
+     "source": "lessons",
+     "date": "2026-08-15",
+     "score": 0.567
+    },
+    {
+     "title": "形状 2026-09-09-AU：【我写的容错，把我自己的 bug 吃掉了】—— `",
+     "source": "lessons",
+     "date": "2026-09-09",
+     "score": 0.648
+    },
+    {
+     "title": "形状 2026-08-21-D：**【没跑就说\"跑不起来\"**—— 把\"没验证\"包装",
+     "source": "lessons",
+     "date": "2026-08-21",
+     "score": 0.645
+    }
+   ],
+   "enforced_by": [
+    "archive-recall-gate",
+    "authority-source-gate",
+    "collect-list-evidence-gate",
+    "evidence-gate",
+    "evidence-in-log-gate",
+    "injection-claim-guard",
+    "model-authenticity-gate",
+    "negative-claim-gate",
+    "no-search-no-claim-gate",
+    "prior-art-gate",
+    "process-alias-attribution-gate",
+    "reference-diff-guard",
+    "rootcause-gate",
+    "scenario-fit-gate",
+    "search-breadth-gate",
+    "search-layer-gate",
+    "strawman-verdict-gate",
+    "unread-evidence-guard",
+    "visual-detail-gate",
+    "visual-proof-gate"
+   ]
+  },
+  "R24": {
+   "id": "R24",
+   "kind": "rule",
+   "text": "计数冒充证据:用进程数/文件数/端口通不通推断『在运行/健康/干完了』,没看它真的产出了什么。",
+   "group": "证据链",
+   "timing": "收尾",
+   "active": true,
+   "origin": "lessons 979 形状归纳",
+   "provenance": [
+    {
+     "title": "2026-07-27 形状Q(新):拿【对我的假设没有区分力】的计数当证据,就下结论",
+     "source": "lessons",
+     "date": "2026-07-27",
+     "score": 0.671
+    },
+    {
+     "title": "通用判据（换任何项目都成立）",
+     "source": "lessons",
+     "date": "",
+     "score": 0.668
+    },
+    {
+     "title": "通用判据(换任何项目都成立)",
+     "source": "lessons",
+     "date": "",
+     "score": 0.632
+    },
+    {
+     "title": "形状 2026-08-25-J:【我用一把没校过的自制尺子量,得出的假数字比\"没量\"",
+     "source": "lessons",
+     "date": "2026-08-25",
+     "score": 0.635
+    },
+    {
+     "title": "形状 2026-08-19-A:【我把共享资源抢光,饿死了别人的服务,然后判定\"不是",
+     "source": "lessons",
+     "date": "2026-08-19",
+     "score": 0.621
+    },
+    {
+     "title": "形状 2026-08-19-A：【拿\"旁边那个能看见的数\"当证据，而不是去测要验的那",
+     "source": "lessons",
+     "date": "2026-08-19",
+     "score": 0.62
+    },
+    {
+     "title": "2026-07-24 形状:把 Frank 8G机器搞到几小时不可用 + 元形状:固",
+     "source": "lessons",
+     "date": "2026-07-24",
+     "score": 0.552
+    }
+   ],
+   "enforced_by": [
+    "archive-recall-gate",
+    "authority-source-gate",
+    "collect-list-evidence-gate",
+    "evidence-gate",
+    "evidence-in-log-gate",
+    "injection-claim-guard",
+    "model-authenticity-gate",
+    "negative-claim-gate",
+    "no-search-no-claim-gate",
+    "prior-art-gate",
+    "process-alias-attribution-gate",
+    "reference-diff-guard",
+    "rootcause-gate",
+    "scenario-fit-gate",
+    "search-breadth-gate",
+    "search-layer-gate",
+    "strawman-verdict-gate",
+    "unread-evidence-guard",
+    "visual-detail-gate",
+    "visual-proof-gate"
+   ]
+  },
+  "R25": {
+   "id": "R25",
+   "kind": "rule",
+   "text": "测试路径≠生产路径:用自己的体检/测试路子下结论,而用户真实走的是另一条,那条没验。",
+   "group": "审查学",
+   "timing": "动手后",
+   "active": true,
+   "origin": "lessons 979 形状归纳",
+   "provenance": [
+    {
+     "title": "调试 & 排查",
+     "source": "lessons",
+     "date": "2026-08-25",
+     "score": 0.581
+    },
+    {
+     "title": "2026-08-09 形状 AH:【我按\"我修的那条路\"宣布健康,而用户实际收到的东",
+     "source": "lessons",
+     "date": "2026-08-09",
+     "score": 0.569
+    },
+    {
+     "title": "形状 2026-09-09-AN:【决定性测试就在手边、我自己刚引用过它,却拿一个统",
+     "source": "lessons",
+     "date": "2026-09-09",
+     "score": 0.554
+    },
+    {
+     "title": "形状 2026-09-06-K:【我用【猜的路径】查了一下没找到,就宣布\"这东西根本",
+     "source": "lessons",
+     "date": "2026-09-06",
+     "score": 0.582
+    },
+    {
+     "title": "形状 2026-08-18-F:【我临时写的验证探针被【缓存】骗了,给出\"没问题\"的",
+     "source": "lessons",
+     "date": "2026-08-18",
+     "score": 0.578
+    },
+    {
+     "title": "形状 2026-09-09-AG:【我的验证路径,从来不是他真实走的那条】—— 一轮",
+     "source": "lessons",
+     "date": "2026-09-09",
+     "score": 0.536
+    },
+    {
+     "title": "⛔ 两层错，第二层更贵",
+     "source": "lessons",
+     "date": "",
+     "score": 0.577
+    }
+   ],
+   "enforced_by": [
+    "coherence-guard",
+    "critic-gate",
+    "excuse-gate",
+    "feature-regress-guard",
+    "gate-generality-gate",
+    "lesson-anchor-gate",
+    "lessons-write-gate",
+    "lint-fatal-guard",
+    "plan-before-act-gate",
+    "rule-dup-guard",
+    "semantic-superego-gate",
+    "spec-coverage-guard",
+    "spec-first-gate"
+   ]
+  },
+  "R26": {
+   "id": "R26",
+   "kind": "rule",
+   "text": "报比例不看分母:报覆盖率/命中率/误伤率,没确认真实总基数,分母错了整个结论就错。",
+   "group": "证据链",
+   "timing": "收尾",
+   "active": true,
+   "origin": "lessons 979 形状归纳",
+   "provenance": [
+    {
+     "title": "形状 2026-09-07-J：【分母还没穷尽，我就把百分比报出去了】—— 而且偏差",
+     "source": "lessons",
+     "date": "2026-09-07",
+     "score": 0.693
+    },
+    {
+     "title": "通用判据(和民宿无关,可迁移)",
+     "source": "lessons",
+     "date": "",
+     "score": 0.633
+    },
+    {
+     "title": "通用判据（换任何项目、任何数据源都成立）",
+     "source": "lessons",
+     "date": "",
+     "score": 0.629
+    },
+    {
+     "title": "形状 2026-08-25-J:【我用一把没校过的自制尺子量,得出的假数字比\"没量\"",
+     "source": "lessons",
+     "date": "2026-08-25",
+     "score": 0.601
+    },
+    {
+     "title": "形状 2026-08-13-H:【大分子当结论,从没量分母】—— 一个吓人的绝对数字",
+     "source": "lessons",
+     "date": "2026-08-13",
+     "score": 0.592
+    },
+    {
+     "title": "形状 2026-08-13-A:**分子和分母不对应** —— 一天发作 5 次,每",
+     "source": "lessons",
+     "date": "2026-08-13",
+     "score": 0.644
+    },
+    {
+     "title": "调试 & 排查",
+     "source": "lessons",
+     "date": "2026-09-01",
+     "score": 0.603
+    }
+   ],
+   "enforced_by": [
+    "archive-recall-gate",
+    "authority-source-gate",
+    "collect-list-evidence-gate",
+    "evidence-gate",
+    "evidence-in-log-gate",
+    "injection-claim-guard",
+    "model-authenticity-gate",
+    "negative-claim-gate",
+    "no-search-no-claim-gate",
+    "prior-art-gate",
+    "process-alias-attribution-gate",
+    "reference-diff-guard",
+    "rootcause-gate",
+    "scenario-fit-gate",
+    "search-breadth-gate",
+    "search-layer-gate",
+    "strawman-verdict-gate",
+    "unread-evidence-guard",
+    "visual-detail-gate",
+    "visual-proof-gate"
+   ]
+  },
+  "R27": {
+   "id": "R27",
+   "kind": "rule",
+   "text": "无声停手:说『我接着做/不用你回话』然后就停了,让用户误以为在做或已完成。",
+   "group": "Idle态",
+   "timing": "收尾",
+   "active": true,
+   "origin": "lessons 979 形状归纳",
+   "provenance": [
+    {
+     "title": "2026-07-28 形状T:【承诺不兑现】—— 说「我接着做,不用你回话」然后停手",
+     "source": "lessons",
+     "date": "2026-07-28",
+     "score": 0.686
+    },
+    {
+     "title": "2026-09-06 追加：形状T(承诺不兑现)第 16 次复发",
+     "source": "lessons",
+     "date": "2026-09-06",
+     "score": 0.546
+    },
+    {
+     "title": "形状 2026-08-14-A:【为 A 动了手,把 B/C/D 列成清单说\"接下来",
+     "source": "lessons",
+     "date": "2026-08-14",
+     "score": 0.553
+    },
+    {
+     "title": "形状 2026-09-07-L：【做完一小块就停下来汇报 —— 把\"报告\"当成了收工",
+     "source": "lessons",
+     "date": "2026-09-07",
+     "score": 0.628
+    },
+    {
+     "title": "形状 2026-08-19-O：【「只提醒一次」= 把执行权交还给被约束的那一方】",
+     "source": "lessons",
+     "date": "2026-08-19",
+     "score": 0.618
+    },
+    {
+     "title": "进程 / 操作安全",
+     "source": "lessons",
+     "date": "2026-06-05",
+     "score": 0.56
+    },
+    {
+     "title": "通用判据（换任何项目都成立）",
+     "source": "lessons",
+     "date": "",
+     "score": 0.494
+    }
+   ],
+   "enforced_by": [
+    "idle-ask-gate",
+    "idle-confess-gate",
+    "question-boomerang-gate"
+   ]
+  },
+  "R28": {
+   "id": "R28",
+   "kind": "rule",
+   "text": "动共享数据不核结构:改他人/共享的数据或资产前,没核底层结构(主键/schema/权限)就直接动手。",
+   "group": "安全权",
+   "timing": "收尾",
+   "active": true,
+   "origin": "lessons 979 形状归纳",
+   "provenance": [
+    {
+     "title": "2026-07-28 形状T(新):改【别人的数据库】时按【单列】定位,没查主键是不",
+     "source": "lessons",
+     "date": "2026-07-28",
+     "score": 0.533
+    },
+    {
+     "title": "形状 2026-09-07-N：【并行 session 正在重构共享资产，我把对方的",
+     "source": "lessons",
+     "date": "2026-09-07",
+     "score": 0.536
+    },
+    {
+     "title": "形状 2026-08-19-F：【我 clone 了 15 个正好做这件事的项目，一",
+     "source": "lessons",
+     "date": "2026-08-19",
+     "score": 0.542
+    },
+    {
+     "title": "通用判据（换任何项目都成立）",
+     "source": "lessons",
+     "date": "",
+     "score": 0.537
+    },
+    {
+     "title": "形状 2026-09-10-L：【\"改一处、全部生效\"的共享机制，它的覆盖面 = 碰",
+     "source": "lessons",
+     "date": "2026-09-10",
+     "score": 0.523
+    },
+    {
+     "title": "形状 2026-09-09-B：【断言\"我没有<用户的数据/链接/例子>\"，而根本没",
+     "source": "lessons",
+     "date": "2026-09-09",
+     "score": 0.516
+    }
+   ],
+   "enforced_by": [
+    "antiscrape-invoke-gate",
+    "browser-routing-gate",
+    "data-overwrite-guard",
+    "deploy-dirty-tree-gate",
+    "ephemeral-process-leak-gate",
+    "hook-noise-not-authorization-gate",
+    "launch-bound-guard",
+    "no-user-data-gate",
+    "pkg-install-guard",
+    "port-precheck-gate",
+    "ps-bom-guard",
+    "shell-writes-code-gate"
+   ]
+  },
+  "R29": {
+   "id": "R29",
+   "kind": "rule",
+   "text": "把 hook/系统提示当授权:拿闸的提醒、系统注入当成用户的指令,去越权改用户资产。",
+   "group": "安全权",
+   "timing": "收尾",
+   "active": true,
+   "origin": "lessons 979 形状归纳",
+   "provenance": [
+    {
+     "title": "2026-07-28 形状U(新·危险):把【hook/闸的提示】当成【用户的授权】",
+     "source": "lessons",
+     "date": "2026-07-28",
+     "score": 0.787
+    },
+    {
+     "title": "⛔ 授权来源铁律（2026-07-28 越权改 235 个 agent 后钉死，优先",
+     "source": "CLAUDE铁律",
+     "date": "2026-07-28",
+     "score": 0.737
+    },
+    {
+     "title": "形状 2026-09-03: 严禁碰触私人自动化 CDP 端口 (9226 / 95",
+     "source": "lessons",
+     "date": "2026-09-03",
+     "score": 0.682
+    },
+    {
+     "title": "附:空转请示闸的一次【误伤】(2026-08-19,形状 B 当轮)",
+     "source": "lessons",
+     "date": "2026-08-19",
+     "score": 0.628
+    },
+    {
+     "title": "形状 2026-08-31-I:【hook/闸循环没收敛机制——同一道闸每轮都开火但",
+     "source": "lessons",
+     "date": "2026-08-31",
+     "score": 0.615
+    },
+    {
+     "title": "2026-07-29 形状 Z：**元工作吞噬交付** —— 1 小时的活干了 7 ",
+     "source": "lessons",
+     "date": "2026-07-29",
+     "score": 0.587
+    },
+    {
+     "title": "调试 & 排查",
+     "source": "lessons",
+     "date": "",
+     "score": 0.626
+    }
+   ],
+   "enforced_by": [
+    "antiscrape-invoke-gate",
+    "browser-routing-gate",
+    "data-overwrite-guard",
+    "deploy-dirty-tree-gate",
+    "ephemeral-process-leak-gate",
+    "hook-noise-not-authorization-gate",
+    "launch-bound-guard",
+    "no-user-data-gate",
+    "pkg-install-guard",
+    "port-precheck-gate",
+    "ps-bom-guard",
+    "shell-writes-code-gate"
+   ]
+  },
+  "R30": {
+   "id": "R30",
+   "kind": "rule",
+   "text": "测量扰动被测:测量工具本身违反协议/污染了被测对象,却把读数当事实报出去。",
+   "group": "审查学",
+   "timing": "动手后",
+   "active": true,
+   "origin": "lessons 979 形状归纳",
+   "provenance": [
+    {
+     "title": "2026-07-28 形状V(新):我造的【测量工具】违反协议,扰动了被测对象,却把",
+     "source": "lessons",
+     "date": "2026-07-28",
+     "score": 0.596
+    },
+    {
+     "title": "2026-07-29 形状 AB 续：**我造的度量工具，第一版本身就是误导的**（",
+     "source": "lessons",
+     "date": "2026-07-29",
+     "score": 0.571
+    },
+    {
+     "title": "形状U:【尺子坏了】比【被测物坏了】更常见 —— 一天内 5 次(2026-07-2",
+     "source": "lessons",
+     "date": "2026-07-28",
+     "score": 0.528
+    },
+    {
+     "title": "形状 2026-09-09-AN:【决定性测试就在手边、我自己刚引用过它,却拿一个统",
+     "source": "lessons",
+     "date": "2026-09-09",
+     "score": 0.501
+    },
+    {
+     "title": "形状 2026-09-07-T：【尺子根本不会响 —— 而它的输出看起来比什么都权威",
+     "source": "lessons",
+     "date": "2026-09-07",
+     "score": 0.506
+    },
+    {
+     "title": "形状 2026-09-06-C：【坏尺子第 13 次】——三次被自己的观测手段骗，而",
+     "source": "lessons",
+     "date": "2026-09-06",
+     "score": 0.512
+    }
+   ],
+   "enforced_by": [
+    "coherence-guard",
+    "critic-gate",
+    "excuse-gate",
+    "feature-regress-guard",
+    "gate-generality-gate",
+    "lesson-anchor-gate",
+    "lessons-write-gate",
+    "lint-fatal-guard",
+    "plan-before-act-gate",
+    "rule-dup-guard",
+    "semantic-superego-gate",
+    "spec-coverage-guard",
+    "spec-first-gate"
+   ]
+  },
+  "R31": {
+   "id": "R31",
+   "kind": "rule",
+   "text": "无视眼前证据去盲猜:错误正文/上下文里已写着根因,没看,转头去二分或换理论猜。",
+   "group": "证据链",
+   "timing": "收尾",
+   "active": true,
+   "origin": "lessons 979 形状归纳",
+   "provenance": [
+    {
+     "title": "形状 2026-09-06-H：【找到 bug 就记下来不修，以为\"记了\"就等于\"处",
+     "source": "lessons",
+     "date": "2026-09-06",
+     "score": 0.641
+    },
+    {
+     "title": "⭐⭐ 元根因 2026-08-20：【实例思维】——我只处理\"眼前这一个\"，而我建的",
+     "source": "lessons",
+     "date": "2026-08-20",
+     "score": 0.614
+    },
+    {
+     "title": "通用判据(换任何项目都成立)",
+     "source": "lessons",
+     "date": "",
+     "score": 0.623
+    },
+    {
+     "title": "形状 2026-09-09-AN:【决定性测试就在手边、我自己刚引用过它,却拿一个统",
+     "source": "lessons",
+     "date": "2026-09-09",
+     "score": 0.618
+    },
+    {
+     "title": "形状 2026-08-13-I:【闸逼我取了证,我却把证据解释掉了】—— 反证在手,",
+     "source": "lessons",
+     "date": "2026-08-13",
+     "score": 0.608
+    },
+    {
+     "title": "⛔ 收敛铁律：下结论 / 说\"做完了\"前必过 5 关（防过早收敛 = 马虎/遗漏）",
+     "source": "CLAUDE铁律",
+     "date": "2026-07-02",
+     "score": 0.59
+    },
+    {
+     "title": "形状 2026-09-07-I：【两道闸互相锁死时，我去跟闸缠斗，而绕过它的正门一直",
+     "source": "lessons",
+     "date": "2026-09-07",
+     "score": 0.585
+    }
+   ],
+   "enforced_by": [
+    "archive-recall-gate",
+    "authority-source-gate",
+    "collect-list-evidence-gate",
+    "evidence-gate",
+    "evidence-in-log-gate",
+    "injection-claim-guard",
+    "model-authenticity-gate",
+    "negative-claim-gate",
+    "no-search-no-claim-gate",
+    "prior-art-gate",
+    "process-alias-attribution-gate",
+    "reference-diff-guard",
+    "rootcause-gate",
+    "scenario-fit-gate",
+    "search-breadth-gate",
+    "search-layer-gate",
+    "strawman-verdict-gate",
+    "unread-evidence-guard",
+    "visual-detail-gate",
+    "visual-proof-gate"
+   ]
+  },
+  "R32": {
+   "id": "R32",
+   "kind": "rule",
+   "text": "只验顺利路径:主链路跑通就交付,失败路径三无(没提示、没重试、没得取消)。",
+   "group": "审查学",
+   "timing": "动手后",
+   "active": true,
+   "origin": "lessons 979 形状归纳",
+   "provenance": [
+    {
+     "title": "2026-07-24 形状复发:happy path交付、sad path裸奔(分镜",
+     "source": "lessons",
+     "date": "2026-07-24",
+     "score": 0.739
+    },
+    {
+     "title": "形状 2026-09-09-K：【拿\"旁路探针\"的成功，宣布\"生产链路\"已恢复】——",
+     "source": "lessons",
+     "date": "2026-09-09",
+     "score": 0.634
+    },
+    {
+     "title": "形状 2026-09-09-AG:【我的验证路径,从来不是他真实走的那条】—— 一轮",
+     "source": "lessons",
+     "date": "2026-09-09",
+     "score": 0.591
+    },
+    {
+     "title": "2026-08-09 形状 AH:【我按\"我修的那条路\"宣布健康,而用户实际收到的东",
+     "source": "lessons",
+     "date": "2026-08-09",
+     "score": 0.57
+    },
+    {
+     "title": "2026-07-24 双错:①\"重试大概率就过\"没亲测就交付(遮羞词复发) ②把功能",
+     "source": "lessons",
+     "date": "2026-07-24",
+     "score": 0.612
+    },
+    {
+     "title": "附带（同一轮的另一处，形状不同但同源）",
+     "source": "lessons",
+     "date": "",
+     "score": 0.578
+    },
+    {
+     "title": "⛔ 验证铁律",
+     "source": "CLAUDE铁律",
+     "date": "2026-07-02",
+     "score": 0.573
+    }
+   ],
+   "enforced_by": [
+    "coherence-guard",
+    "critic-gate",
+    "excuse-gate",
+    "feature-regress-guard",
+    "gate-generality-gate",
+    "lesson-anchor-gate",
+    "lessons-write-gate",
+    "lint-fatal-guard",
+    "plan-before-act-gate",
+    "rule-dup-guard",
+    "semantic-superego-gate",
+    "spec-coverage-guard",
+    "spec-first-gate"
+   ]
+  },
+  "R33": {
+   "id": "R33",
+   "kind": "rule",
+   "text": "换后端不重校准:换了模型/环境/后端,超时/并发/批量参数沿用旧值,没拿新后端实测重调。",
+   "group": "管道流",
+   "timing": "收尾",
+   "active": true,
+   "origin": "lessons 979 形状归纳",
+   "provenance": [
+    {
+     "title": "2026-07-24 形状复发:换后端只改路由,超时/并发参数没按新后端真实节奏重校",
+     "source": "lessons",
+     "date": "2026-07-24",
+     "score": 0.78
+    },
+    {
+     "title": "形状 2026-09-08-B：【派并行前没核实\"缺口\"是不是真的，补了已满的字段 ",
+     "source": "lessons",
+     "date": "2026-09-08",
+     "score": 0.571
+    },
+    {
+     "title": "三条可迁移判据（跟端口无关，任何\"换一个能用的\"都适用）",
+     "source": "lessons",
+     "date": "",
+     "score": 0.57
+    },
+    {
+     "title": "形状 2026-08-27-F:【我起的后台重活没有进度、没有上限 —— 卡了半小时",
+     "source": "lessons",
+     "date": "2026-08-27",
+     "score": 0.549
+    },
+    {
+     "title": "⛔ 附：同一轮里我做了 4 次【假的端到端验证】，每次都得出\"通过\"",
+     "source": "lessons",
+     "date": "2026-09-09",
+     "score": 0.598
+    },
+    {
+     "title": "形状 2026-08-25-B：【issue 里带文件名行号 = 已定位的 bug，",
+     "source": "lessons",
+     "date": "2026-08-25",
+     "score": 0.542
+    },
+    {
+     "title": "与已有形状的关系",
+     "source": "lessons",
+     "date": "",
+     "score": 0.658
+    }
+   ],
+   "enforced_by": [
+    "already-known-guard",
+    "churn-guard",
+    "keep-going-gate",
+    "no-nagging-guard",
+    "pipe-truncation-guard",
+    "pipeline-ends-gate",
+    "pipeline-first-gate",
+    "progress-gate",
+    "recursive-scan-gate",
+    "remote-poll-guard",
+    "self-loop-gate",
+    "time-sanity-guard",
+    "tool-dedup-gate"
+   ]
+  },
+  "R34": {
+   "id": "R34",
+   "kind": "rule",
+   "text": "只有干活层没守卫层:常驻系统只有处理链,没有监控/告警/自愈,人成了唯一的故障探测器。",
+   "group": "管道流",
+   "timing": "收尾",
+   "active": true,
+   "origin": "lessons 979 形状归纳",
+   "provenance": [
+    {
+     "title": "形状M:常驻系统只有\"干活层\"没有\"守卫层\",人是唯一探测器(2026-07-24 ",
+     "source": "lessons",
+     "date": "2026-07-24",
+     "score": 0.706
+    },
+    {
+     "title": "核心判据一：**自愈会把病藏起来，所以自愈必须报数**",
+     "source": "lessons",
+     "date": "2026-08-26",
+     "score": 0.538
+    },
+    {
+     "title": "2026-08-19-F ⛔ 形状:**「搭便车的活」把正事饿死** + **「验证",
+     "source": "lessons",
+     "date": "2026-08-19",
+     "score": 0.559
+    },
+    {
+     "title": "形状 2026-09-06-Q【元根因·比 L 更上游】：【Superego 只有 ",
+     "source": "lessons",
+     "date": "2026-09-06",
+     "score": 0.543
+    },
+    {
+     "title": "形状 2026-09-08-Q：【我的日常扫描在他机器上有个【看不见的副作用】—— ",
+     "source": "lessons",
+     "date": "2026-09-08",
+     "score": 0.539
+    },
+    {
+     "title": "复发 2026-09-08（第 3 次）：连我为它写的【自愈工具】本身都栽在同一个坑",
+     "source": "lessons",
+     "date": "2026-09-08",
+     "score": 0.502
+    }
+   ],
+   "enforced_by": [
+    "already-known-guard",
+    "churn-guard",
+    "keep-going-gate",
+    "no-nagging-guard",
+    "pipe-truncation-guard",
+    "pipeline-ends-gate",
+    "pipeline-first-gate",
+    "progress-gate",
+    "recursive-scan-gate",
+    "remote-poll-guard",
+    "self-loop-gate",
+    "time-sanity-guard",
+    "tool-dedup-gate"
+   ]
+  },
+  "R35": {
+   "id": "R35",
+   "kind": "rule",
+   "text": "把发现固化成单点补丁:复盘/防复发只写了眼前这一个场景,没写覆盖同类的通用规则。",
+   "group": "输出质",
+   "timing": "收尾",
+   "active": true,
+   "origin": "lessons 979 形状归纳",
+   "provenance": [
+    {
+     "title": "形状 2026-09-10-Q：【\"记下了\" ≠ \"修了\"】复发 + 【修误伤时把绝",
+     "source": "lessons",
+     "date": "2026-09-10",
+     "score": 0.62
+    },
+    {
+     "title": "形状 2026-09-06-L【元形状·系统级】：【我把\"只修眼前那一个\"写进了 l",
+     "source": "lessons",
+     "date": "2026-09-06",
+     "score": 0.593
+    },
+    {
+     "title": "形状 2026-08-31-I:【hook/闸循环没收敛机制——同一道闸每轮都开火但",
+     "source": "lessons",
+     "date": "2026-08-31",
+     "score": 0.594
+    },
+    {
+     "title": "形状 2026-08-20-N：【给共用代码打补丁，只在\"我撞见的那两个\"调用方上验",
+     "source": "lessons",
+     "date": "2026-08-20",
+     "score": 0.611
+    },
+    {
+     "title": "形状 2026-09-09-S：【元根因·三个月复发】superego 87% 是关",
+     "source": "lessons",
+     "date": "2026-09-09",
+     "score": 0.577
+    },
+    {
+     "title": "形状 2026-09-06-H：【找到 bug 就记下来不修，以为\"记了\"就等于\"处",
+     "source": "lessons",
+     "date": "2026-09-06",
+     "score": 0.606
+    }
+   ],
+   "enforced_by": [
+    "answer-relevancy-gate",
+    "concise-answer-gate",
+    "flat-table-gate",
+    "jargon-gate",
+    "media-regression-gate",
+    "stagnation-gate",
+    "ui-edit-guard",
+    "video-audio-gate"
+   ]
+  },
+  "R36": {
+   "id": "R36",
+   "kind": "rule",
+   "text": "补丁打不停:同一处打到第 3 个补丁还没停下来质疑『方向是不是错了』。",
+   "group": "能力界",
+   "timing": "收尾",
+   "active": true,
+   "origin": "lessons 979 形状归纳",
+   "provenance": [
+    {
+     "title": "反向指纹",
+     "source": "lessons",
+     "date": "",
+     "score": 0.592
+    },
+    {
+     "title": "形状 2026-09-09-Q：【自动改代码时给替换处加\"标记注释\"，而命中点在多行",
+     "source": "lessons",
+     "date": "2026-09-09",
+     "score": 0.652
+    },
+    {
+     "title": "复发 2026-09-08：换了个面孔 —— 不是\"漏验调用方\"，是**漏改同类位置",
+     "source": "lessons",
+     "date": "2026-09-08",
+     "score": 0.575
+    },
+    {
+     "title": "形状N 续篇（同日）：给形状N 打的补丁，被外部 critic 三条高危打穿 —— ",
+     "source": "lessons",
+     "date": "",
+     "score": 0.577
+    },
+    {
+     "title": "复发 2026-09-08（第 3 次）：连我为它写的【自愈工具】本身都栽在同一个坑",
+     "source": "lessons",
+     "date": "2026-09-08",
+     "score": 0.637
+    },
+    {
+     "title": "形状:model_ref=null/\"上游默认\"当答案搪塞用户,不去读那个默认值(源",
+     "source": "lessons",
+     "date": "2026-07-25",
+     "score": 0.639
+    },
+    {
+     "title": "形状 2026-08-20-N：【给共用代码打补丁，只在\"我撞见的那两个\"调用方上验",
+     "source": "lessons",
+     "date": "2026-08-20",
+     "score": 0.624
+    }
+   ],
+   "enforced_by": [
+    "ask-coverage-gate",
+    "backslash-eater-gate",
+    "capability-boundary-gate",
+    "cross-scope-guard",
+    "fault-injection-gate",
+    "scope-completeness-gate",
+    "skill-discovery-gate",
+    "tool-roster-gate",
+    "unknowing-pretending-gate"
+   ]
+  },
+  "R37": {
+   "id": "R37",
+   "kind": "rule",
+   "text": "纸老虎:建的规则/闸只有文字提醒、没有能真拦住的后果,跑了等于没跑。",
+   "group": "管道流",
+   "timing": "收尾",
+   "active": true,
+   "origin": "lessons 979 形状归纳",
+   "provenance": [
+    {
+     "title": "2026-07-28 纸老虎全表(回答 Frank「整套系统还有什么是纸老虎、导致你",
+     "source": "lessons",
+     "date": "2026-07-28",
+     "score": 0.659
+    },
+    {
+     "title": "⛔⛔ 关于 Superego 本身(这条比上面更重要)",
+     "source": "lessons",
+     "date": "",
+     "score": 0.536
+    },
+    {
+     "title": "2026-07-29 纸老虎穷尽普查(Frank goal:「不能遗漏一个纸老虎,必",
+     "source": "lessons",
+     "date": "2026-07-29",
+     "score": 0.609
+    },
+    {
+     "title": "形状 2026-08-25-V:【我在【专门用来防纸老虎的闸】里,又造了一只纸老虎】",
+     "source": "lessons",
+     "date": "2026-08-25",
+     "score": 0.553
+    },
+    {
+     "title": "同日续:纸老虎普查被外部 critic 打回 —— 我宣布的五个 0 是【判据划的圈",
+     "source": "lessons",
+     "date": "",
+     "score": 0.545
+    },
+    {
+     "title": "形状 2026-09-09-C：【我建的闸永远是\"头疼医头\"针对单一事件,不是全局通",
+     "source": "lessons",
+     "date": "2026-09-09",
+     "score": 0.535
+    }
+   ],
+   "enforced_by": [
+    "already-known-guard",
+    "churn-guard",
+    "keep-going-gate",
+    "no-nagging-guard",
+    "pipe-truncation-guard",
+    "pipeline-ends-gate",
+    "pipeline-first-gate",
+    "progress-gate",
+    "recursive-scan-gate",
+    "remote-poll-guard",
+    "self-loop-gate",
+    "time-sanity-guard",
+    "tool-dedup-gate"
+   ]
+  },
+  "R38": {
+   "id": "R38",
+   "kind": "rule",
+   "text": "外部依赖只验调通:接了 API/免费额度/第三方,当时通了就不管,没验它会不会断/额度会不会耗尽。",
+   "group": "管道流",
+   "timing": "收尾",
+   "active": true,
+   "origin": "lessons 979 形状归纳",
+   "provenance": [
+    {
+     "title": "2026-07-27 形状R(新):引入外部/免费依赖时只验「此刻能调通」,不验「配",
+     "source": "lessons",
+     "date": "2026-07-27",
+     "score": 0.632
+    },
+    {
+     "title": "一般形状(跨项目)",
+     "source": "lessons",
+     "date": "",
+     "score": 0.515
+    },
+    {
+     "title": "反向指纹",
+     "source": "lessons",
+     "date": "",
+     "score": 0.505
+    },
+    {
+     "title": "⛔ 资源边界铁律（2026-07-24 钉死：我把 Frank 的 8G 机器搞到几",
+     "source": "CLAUDE铁律",
+     "date": "2026-07-24",
+     "score": 0.471
+    },
+    {
+     "title": "这一轮真正的收获:**外部审查抓到的三条,我的回归一条都测不到**",
+     "source": "lessons",
+     "date": "",
+     "score": 0.505
+    },
+    {
+     "title": "形状 2026-08-20-R：【观察者效应 —— 我用消耗 X 的动作去测量 X ",
+     "source": "lessons",
+     "date": "2026-08-20",
+     "score": 0.605
+    },
+    {
+     "title": "形状Q:【免死金牌漏洞】—— 整轮跑过任一验证工具 = 这一整轮所有断言免检(202",
+     "source": "lessons",
+     "date": "2026-07-27",
+     "score": 0.53
+    }
+   ],
+   "enforced_by": [
+    "already-known-guard",
+    "churn-guard",
+    "keep-going-gate",
+    "no-nagging-guard",
+    "pipe-truncation-guard",
+    "pipeline-ends-gate",
+    "pipeline-first-gate",
+    "progress-gate",
+    "recursive-scan-gate",
+    "remote-poll-guard",
+    "self-loop-gate",
+    "time-sanity-guard",
+    "tool-dedup-gate"
+   ]
+  },
+  "R39": {
+   "id": "R39",
+   "kind": "rule",
+   "text": "诊断当交付:给一堆根因分析/排查结论就收工,而用户要的是动手把它修好。",
+   "group": "承诺链",
+   "timing": "收尾",
+   "active": true,
+   "origin": "lessons 979 形状归纳",
+   "provenance": [
+    {
+     "title": "⛔ 收敛铁律：下结论 / 说\"做完了\"前必过 5 关（防过早收敛 = 马虎/遗漏）",
+     "source": "CLAUDE铁律",
+     "date": "2026-07-02",
+     "score": 0.67
+    },
+    {
+     "title": "形状 2026-08-18-J:【只交付「发生了什么」,不交付「所以我该做什么」】—",
+     "source": "lessons",
+     "date": "2026-08-18",
+     "score": 0.54
+    },
+    {
+     "title": "形状 2026-08-19-M：【我把「缺口」当成「结论」交付，而那个缺口本来就是我",
+     "source": "lessons",
+     "date": "2026-08-19",
+     "score": 0.559
+    },
+    {
+     "title": "形状O:发现问题的【事实】,只做【表面标注】就走人 —— 诊断当交付(2026-07",
+     "source": "lessons",
+     "date": "2026-07-27",
+     "score": 0.539
+    },
+    {
+     "title": "形状 2026-09-07-L：【做完一小块就停下来汇报 —— 把\"报告\"当成了收工",
+     "source": "lessons",
+     "date": "2026-09-07",
+     "score": 0.53
+    },
+    {
+     "title": "2026-08-09 形状 AH:【我按\"我修的那条路\"宣布健康,而用户实际收到的东",
+     "source": "lessons",
+     "date": "2026-08-09",
+     "score": 0.532
+    },
+    {
+     "title": "2026-07-24 形状:把 Frank 8G机器搞到几小时不可用 + 元形状:固",
+     "source": "lessons",
+     "date": "2026-07-24",
+     "score": 0.558
+    }
+   ],
+   "enforced_by": [
+    "bg-running-claim-gate",
+    "checklist-completion-gate",
+    "commitment-execution-gate",
+    "dropped-output-guard",
+    "empty-promise-gate",
+    "false-done-gate",
+    "giveup-guard",
+    "institutionalize-guard",
+    "multi-option-guard",
+    "nudge-escalation-gate",
+    "promise-carryover-gate",
+    "promise-gate",
+    "residue-gate",
+    "show-open-guard"
+   ]
+  },
+  "R40": {
+   "id": "R40",
+   "kind": "rule",
+   "text": "交付停在自己眼里:东西做出来了却没送到他手上(链接/文件/结果),我看到了不等于他拿到了。",
+   "group": "承诺链",
+   "timing": "收尾",
+   "active": true,
+   "origin": "lessons 979 形状归纳",
+   "provenance": [
+    {
+     "title": "2026-07-29 形状X:【我看到了,但他没看到】—— 交付停在我自己的眼睛里",
+     "source": "lessons",
+     "date": "2026-07-29",
+     "score": 0.614
+    },
+    {
+     "title": "2026-07-29 形状R 第 14 次:交付物里没有【他能直接拿去用的那样东西】",
+     "source": "lessons",
+     "date": "2026-07-29",
+     "score": 0.574
+    },
+    {
+     "title": "形状 2026-08-18-E:【我改了钱的数字,却没想到「已经发出去的那份东西」因",
+     "source": "lessons",
+     "date": "2026-08-18",
+     "score": 0.575
+    },
+    {
+     "title": "形状 2026-08-20-E(airbnb·改完没推送)：【我修好了错的结论，却没",
+     "source": "lessons",
+     "date": "2026-08-20",
+     "score": 0.543
+    },
+    {
+     "title": "2026-08-20 形状：【为修 A 装的验证，制造了反方向的错 B】—— 送达验",
+     "source": "lessons",
+     "date": "2026-08-20",
+     "score": 0.579
+    },
+    {
+     "title": "2026-08-09 形状 AH:【我按\"我修的那条路\"宣布健康,而用户实际收到的东",
+     "source": "lessons",
+     "date": "2026-08-09",
+     "score": 0.554
+    },
+    {
+     "title": "形状 2026-09-06-P：【同一个\"词汇撞车\"一天撞三次 —— 而第三次我用错",
+     "source": "lessons",
+     "date": "2026-09-06",
+     "score": 0.619
+    }
+   ],
+   "enforced_by": [
+    "bg-running-claim-gate",
+    "checklist-completion-gate",
+    "commitment-execution-gate",
+    "dropped-output-guard",
+    "empty-promise-gate",
+    "false-done-gate",
+    "giveup-guard",
+    "institutionalize-guard",
+    "multi-option-guard",
+    "nudge-escalation-gate",
+    "promise-carryover-gate",
+    "promise-gate",
+    "residue-gate",
+    "show-open-guard"
+   ]
+  },
+  "R41": {
+   "id": "R41",
+   "kind": "rule",
+   "text": "归属权错位:动了不是自己起的进程/窗口/资产(他已登录的浏览器、别的 session 的服务、他的文件、他的凭据),没先确认【是不是我这轮起的】就当孤儿去清/去杀/去改。",
+   "group": "归属权",
+   "timing": "收尾",
+   "active": true,
+   "origin": "lessons 979 形状归纳",
+   "provenance": [
+    {
+     "title": "形状 2026-09-07-N：【并行 session 正在重构共享资产，我把对方的",
+     "source": "lessons",
+     "date": "2026-09-07",
+     "score": 0.612
+    },
+    {
+     "title": "通用判据（换任何项目都成立）",
+     "source": "lessons",
+     "date": "",
+     "score": 0.571
+    },
+    {
+     "title": "形状 2026-08-18-D:【每次给他看东西都开一个新窗口,从不复用、从不关 —",
+     "source": "lessons",
+     "date": "2026-08-18",
+     "score": 0.6
+    },
+    {
+     "title": "形状 2026-08-18-K:【拿错误的标识符去管资源 —— 既找不到自己的,又会",
+     "source": "lessons",
+     "date": "2026-08-18",
+     "score": 0.58
+    },
+    {
+     "title": "形状 2026-08-25-U:【看到「不该存在」的状态,默认「是我留下的」,于是动",
+     "source": "lessons",
+     "date": "2026-08-25",
+     "score": 0.587
+    },
+    {
+     "title": "2026-08-19-I ⛔ 形状:**我改的那一份,和他打开的那一份,是两个文件*",
+     "source": "lessons",
+     "date": "2026-08-19",
+     "score": 0.583
+    }
+   ],
+   "enforced_by": [
+    "free-first-gate",
+    "local-first-gate",
+    "money-verdict-gate",
+    "not-mine-gate",
+    "orphan-asset-gate",
+    "resource-echo-gate"
+   ]
+  },
+  "R42": {
+   "id": "R42",
+   "kind": "rule",
+   "text": "全宇宙语义/模糊搜索后再筛，不是只查GitHub",
+   "group": "铁律",
+   "timing": "收尾",
+   "active": true,
+   "origin": "CLAUDE.md 铁律提炼(2026-09-10)",
+   "provenance": [
+    {
+     "title": "① 工具/方案第一步永远是【找别人的】，不是自己造",
+     "source": "CLAUDE铁律",
+     "date": "",
+     "score": 0.681
+    },
+    {
+     "title": "形状 2026-09-07-R：【他报了一个名字，我拿它去做「精确字面匹配」，没命中",
+     "source": "lessons",
+     "date": "2026-09-07",
+     "score": 0.702
+    },
+    {
+     "title": "六个宇宙（缺一个都可能漏掉第一名｜按\"先看家里\"排序）",
+     "source": "CLAUDE铁律",
+     "date": "2026-08-14",
+     "score": 0.685
+    },
+    {
+     "title": "通用判据（换任何项目、任何技术栈都成立）",
+     "source": "lessons",
+     "date": "",
+     "score": 0.632
+    },
+    {
+     "title": "出结论前三个必答（防\"筛子即偏见\"）",
+     "source": "CLAUDE铁律",
+     "date": "",
+     "score": 0.637
+    },
+    {
+     "title": "形状 2026-09-09-AR:【闸的词表是我建闸那天凭想象写的,不是从真实语料长",
+     "source": "lessons",
+     "date": "2026-09-09",
+     "score": 0.576
+    },
+    {
+     "title": "2026-07-19 形状J:对强登录墙/命脉平台,一次故障信号就慌→反复程序化硬怼",
+     "source": "lessons",
+     "date": "2026-07-19",
+     "score": 0.649
+    }
+   ],
+   "enforced_by": [],
+   "law_hint": "全宇宙【语义/模糊搜索】"
+  },
+  "R43": {
+   "id": "R43",
+   "kind": "rule",
+   "text": "SOTA必须每周用工具检测是否过期，上周第一这周可能已出局",
+   "group": "铁律",
+   "timing": "收尾",
+   "active": true,
+   "origin": "CLAUDE.md 铁律提炼(2026-09-10)",
+   "provenance": [
+    {
+     "title": "② 找到候选后：SOTA + 淘汰赛",
+     "source": "CLAUDE铁律",
+     "date": "",
+     "score": 0.571
+    },
+    {
+     "title": "⛔⛔⛔ 至高铁律 · SOTA + 别人工具优先 + 逆向包壳（2026-09-08",
+     "source": "CLAUDE铁律",
+     "date": "2026-09-08",
+     "score": 0.537
+    },
+    {
+     "title": "⛔ Frank 质量·体验·成本铁律（跨所有项目，无例外｜2026-07-17 从项",
+     "source": "CLAUDE铁律",
+     "date": "2026-07-17",
+     "score": 0.476
+    },
+    {
+     "title": "⑤ superego 必须是【真 hook】，不是空拦",
+     "source": "CLAUDE铁律",
+     "date": "2026-09-08",
+     "score": 0.43
+    },
+    {
+     "title": "⛔ 四条【横切】自检 —— 七步管顺序，这四条管【每步做得对不对】",
+     "source": "CLAUDE铁律",
+     "date": "2026-08-20",
+     "score": 0.458
+    },
+    {
+     "title": "他当天顺手定的两条新铁律（已写进全局 CLAUDE.md）",
+     "source": "lessons",
+     "date": "",
+     "score": 0.429
+    },
+    {
+     "title": "形状 2026-09-06-C：【修好判据后不回头重跑全量 —— 漏网的要等他追问才",
+     "source": "lessons",
+     "date": "2026-09-06",
+     "score": 0.619
+    }
+   ],
+   "enforced_by": [],
+   "law_hint": "SOTA会过期·sota-check"
+  },
+  "R44": {
+   "id": "R44",
+   "kind": "rule",
+   "text": "云端方案能包壳就别本地跑，把别人API逆成自己的CLI/API优先",
+   "group": "铁律",
+   "timing": "收尾",
+   "active": true,
+   "origin": "CLAUDE.md 铁律提炼(2026-09-10)",
+   "provenance": [
+    {
+     "title": "③ 落地优先级顺序（严格按这个顺序，前一档不通才降级）",
+     "source": "CLAUDE铁律",
+     "date": "",
+     "score": 0.671
+    },
+    {
+     "title": "他当天顺手定的两条新铁律（已写进全局 CLAUDE.md）",
+     "source": "lessons",
+     "date": "",
+     "score": 0.63
+    },
+    {
+     "title": "形状 2026-08-18-B:【需要一个能力时,我默认往\"本机跑一个\"想,而不是先",
+     "source": "lessons",
+     "date": "2026-08-18",
+     "score": 0.601
+    },
+    {
+     "title": "⛔ Frank 质量·体验·成本铁律（跨所有项目，无例外｜2026-07-17 从项",
+     "source": "CLAUDE铁律",
+     "date": "2026-07-17",
+     "score": 0.566
+    },
+    {
+     "title": "形状 2026-08-21-N：**【让 Studio 用户自己配 API，而不是我",
+     "source": "lessons",
+     "date": "2026-08-21",
+     "score": 0.537
+    },
+    {
+     "title": "形状 2026-08-14-H:【数据已经全在我手里，展示层却还去读上游】—— 于是",
+     "source": "lessons",
+     "date": "2026-08-14",
+     "score": 0.624
+    },
+    {
+     "title": "形状M:常驻系统只有\"干活层\"没有\"守卫层\",人是唯一探测器(2026-07-24 ",
+     "source": "lessons",
+     "date": "2026-07-24",
+     "score": 0.638
+    }
+   ],
+   "enforced_by": [],
+   "law_hint": "别人工具的【云端服务版】→逆向/顺序包壳"
+  },
+  "R45": {
+   "id": "R45",
+   "kind": "rule",
+   "text": "对零编程用户不做技术决策不问技术选项，只用产品语言交流",
+   "group": "铁律",
+   "timing": "收尾",
+   "active": true,
+   "origin": "CLAUDE.md 铁律提炼(2026-09-10)",
+   "provenance": [
+    {
+     "title": "形状 2026-09-09-D：【把一个技术决策抛给零编程的 Frank 让他选,却",
+     "source": "lessons",
+     "date": "2026-09-09",
+     "score": 0.697
+    },
+    {
+     "title": "⛔ Vibe Coder 铁律（跨所有项目，无例外）",
+     "source": "CLAUDE铁律",
+     "date": "",
+     "score": 0.636
+    },
+    {
+     "title": "形状 2026-09-09-I：【该我拍板的技术方案，我用\"给他看数据/让他选\"把决",
+     "source": "lessons",
+     "date": "2026-09-09",
+     "score": 0.624
+    },
+    {
+     "title": "2026-07-25 形状复发(授权即执行/Vibe Coder铁律):问零编程用户",
+     "source": "lessons",
+     "date": "2026-07-25",
+     "score": 0.559
+    },
+    {
+     "title": "形状I 第 12 次（2026-07-27）：把我【自己能做】的活列成\"未做清单\"丢",
+     "source": "lessons",
+     "date": "2026-07-27",
+     "score": 0.509
+    },
+    {
+     "title": "调试 & 排查",
+     "source": "lessons",
+     "date": "2026-09-01",
+     "score": 0.573
+    },
+    {
+     "title": "形状H:把用户的【刻意取舍】当成【缺陷/遗漏】,然后热心去「补全」(「更多/更全=更",
+     "source": "lessons",
+     "date": "",
+     "score": 0.516
+    }
+   ],
+   "enforced_by": [],
+   "law_hint": "Frank是零编程基础的vibe coder"
+  },
+  "R46": {
+   "id": "R46",
+   "kind": "rule",
+   "text": "超2个候选必须深度对比淘汰只留主用+fallback，不能全塞给用户",
+   "group": "铁律",
+   "timing": "收尾",
+   "active": true,
+   "origin": "CLAUDE.md 铁律提炼(2026-09-10)",
+   "provenance": [
+    {
+     "title": "② 找到候选后：SOTA + 淘汰赛",
+     "source": "CLAUDE铁律",
+     "date": "",
+     "score": 0.656
+    },
+    {
+     "title": "形状 2026-08-14-C:【筛子即偏见】—— 搜得再宽,只要用我自己写的正则去",
+     "source": "lessons",
+     "date": "2026-08-14",
+     "score": 0.558
+    },
+    {
+     "title": "形状 2026-09-09-AE:【我已经知道答案了,还把它摆成选择题】—— 假二选",
+     "source": "lessons",
+     "date": "2026-09-09",
+     "score": 0.537
+    },
+    {
+     "title": "通用判据(换任何项目都成立)",
+     "source": "lessons",
+     "date": "",
+     "score": 0.466
+    },
+    {
+     "title": "形状 2026-09-09-J：【建新能力前没走\"工具去重/先查现成\"，没把它和本机",
+     "source": "lessons",
+     "date": "2026-09-09",
+     "score": 0.465
+    },
+    {
+     "title": "反向指纹（下次一眼认出）",
+     "source": "lessons",
+     "date": "",
+     "score": 0.464
+    },
+    {
+     "title": "形状 2026-08-19-D:【我连修三版都在给同一个错误判据打补丁,而正确的判据",
+     "source": "lessons",
+     "date": "2026-08-19",
+     "score": 0.636
+    }
+   ],
+   "enforced_by": [],
+   "law_hint": "超过 2 个候选 → 深度对比淘汰，只留 2 个"
+  },
+  "R47": {
+   "id": "R47",
+   "kind": "rule",
+   "text": "交付不接受\"够用就好\"，功能只能比别人多不能少",
+   "group": "铁律",
+   "timing": "收尾",
+   "active": true,
+   "origin": "CLAUDE.md 铁律提炼(2026-09-10)",
+   "provenance": [
+    {
+     "title": "⛔ Frank 质量·体验·成本铁律（跨所有项目，无例外｜2026-07-17 从项",
+     "source": "CLAUDE铁律",
+     "date": "2026-07-17",
+     "score": 0.542
+    },
+    {
+     "title": "通用判据（换任何项目都适用）",
+     "source": "lessons",
+     "date": "",
+     "score": 0.549
+    },
+    {
+     "title": "2026-07-29 形状 Z：**元工作吞噬交付** —— 1 小时的活干了 7 ",
+     "source": "lessons",
+     "date": "2026-07-29",
+     "score": 0.539
+    },
+    {
+     "title": "形状 2026-09-08-H:【交付\"我这边的过程\",不是\"他要的结果\";还把要他",
+     "source": "lessons",
+     "date": "2026-09-08",
+     "score": 0.546
+    },
+    {
+     "title": "交付",
+     "source": "lessons",
+     "date": "2026-08-25",
+     "score": 0.577
+    },
+    {
+     "title": "⭐⭐ 元根因 2026-08-20：【实例思维】——我只处理\"眼前这一个\"，而我建的",
+     "source": "lessons",
+     "date": "2026-08-20",
+     "score": 0.622
+    },
+    {
+     "title": "形状 2026-08-21-C：【我交付功能，但从不交付\"怎么用\"】—— 跨 7 个",
+     "source": "lessons",
+     "date": "2026-08-21",
+     "score": 0.525
+    }
+   ],
+   "enforced_by": [],
+   "law_hint": "质量拉满：功能**只能比别人更多、不能更少**"
+  },
+  "R48": {
+   "id": "R48",
+   "kind": "rule",
+   "text": "回复第一段必须直接回答他问的那一句，复盘/闸/验证一律放后面",
+   "group": "铁律",
+   "timing": "收尾",
+   "active": true,
+   "origin": "CLAUDE.md 铁律提炼(2026-09-10)",
+   "provenance": [
+    {
+     "title": "⛔⛔ 收尾铁律 · 先回答他，再交代我自己（2026-08-25 他连问两次「你有回",
+     "source": "CLAUDE铁律",
+     "date": "2026-08-25",
+     "score": 0.784
+    },
+    {
+     "title": "形状 2026-08-25-T:【闸把我的注意力从「他的问题」劫持走了 —— 我全绿",
+     "source": "lessons",
+     "date": "2026-08-25",
+     "score": 0.708
+    },
+    {
+     "title": "形状 2026-08-30-C:用「历史均值」当「当月真成本」—— 拿编的数当真数据",
+     "source": "lessons",
+     "date": "2026-08-30",
+     "score": 0.688
+    },
+    {
+     "title": "形状 2026-08-14-C:【改掉被点名的那一句,没改产生那句话的习惯】—— 同",
+     "source": "lessons",
+     "date": "2026-08-14",
+     "score": 0.589
+    },
+    {
+     "title": "⛔⛔ 同日追加(查 chat-archive 才挖到,比上面那条深一层):他 12 ",
+     "source": "lessons",
+     "date": "",
+     "score": 0.596
+    },
+    {
+     "title": "2026-07-17 sd-webui 形状B再犯(推论当事实)+新子形状(读串工具",
+     "source": "lessons",
+     "date": "2026-07-17",
+     "score": 0.56
+    },
+    {
+     "title": "元教训（对\"我为什么老是修不到点上\"的回答）",
+     "source": "lessons",
+     "date": "",
+     "score": 0.586
+    }
+   ],
+   "enforced_by": [],
+   "law_hint": "先回答他，再交代我自己"
+  },
+  "R49": {
+   "id": "R49",
+   "kind": "rule",
+   "text": "推荐工具必须从实测清单里选，不能凭记忆回忆列工具",
+   "group": "铁律",
+   "timing": "收尾",
+   "active": true,
+   "origin": "CLAUDE.md 铁律提炼(2026-09-10)",
+   "provenance": [
+    {
+     "title": "⛔⛔ 真根因（同一轮后半段才挖到，比\"我没想起来用工具\"深一层）：**全局 CLAU",
+     "source": "lessons",
+     "date": "",
+     "score": 0.557
+    },
+    {
+     "title": "⛔ Frank 质量·体验·成本铁律（跨所有项目，无例外｜2026-07-17 从项",
+     "source": "CLAUDE铁律",
+     "date": "2026-07-17",
+     "score": 0.523
+    },
+    {
+     "title": "2026-07-29 形状Z(新):抽样一两个 → 概括整体,而抽中的恰好是最不像有",
+     "source": "lessons",
+     "date": "2026-07-29",
+     "score": 0.581
+    },
+    {
+     "title": "通用判据(换任何项目都成立)",
+     "source": "lessons",
+     "date": "",
+     "score": 0.529
+    },
+    {
+     "title": "通用判据（换任何项目都成立）",
+     "source": "lessons",
+     "date": "",
+     "score": 0.525
+    },
+    {
+     "title": "反向指纹（下次一眼认出）",
+     "source": "lessons",
+     "date": "",
+     "score": 0.543
+    },
+    {
+     "title": "调试 & 排查",
+     "source": "lessons",
+     "date": "2026-09-01",
+     "score": 0.616
+    }
+   ],
+   "enforced_by": [],
+   "law_hint": "工具列表凭\"刚才用过什么\"回忆→工具化"
+  },
+  "R50": {
+   "id": "R50",
+   "kind": "rule",
+   "text": "免费档降级：选LLM/工具时，没优先用本机已打通的最强免费档就退回弱档，却没证明确实用不上",
+   "group": "铁律",
+   "timing": "收尾",
+   "active": true,
+   "origin": "CLAUDE.md 铁律提炼(2026-09-10)",
+   "provenance": [
+    {
+     "title": "④ 免费/白嫖 + 破限优先",
+     "source": "CLAUDE铁律",
+     "date": "",
+     "score": 0.692
+    },
+    {
+     "title": "③ 落地优先级顺序（严格按这个顺序，前一档不通才降级）",
+     "source": "CLAUDE铁律",
+     "date": "",
+     "score": 0.631
+    },
+    {
+     "title": "2026-07-28 形状I+H 复发#2（模型/资源选择版）：自我强加一个他没要求",
+     "source": "lessons",
+     "date": "2026-07-28",
+     "score": 0.662
+    },
+    {
+     "title": "方案 · 交付 · 工具 · 隐私",
+     "source": "CLAUDE铁律",
+     "date": "",
+     "score": 0.495
+    },
+    {
+     "title": "形状 2026-08-25-V:【我在【专门用来防纸老虎的闸】里,又造了一只纸老虎】",
+     "source": "lessons",
+     "date": "2026-08-25",
+     "score": 0.567
+    },
+    {
+     "title": "2026-07-27 形状R(新):引入外部/免费依赖时只验「此刻能调通」,不验「配",
+     "source": "lessons",
+     "date": "2026-07-27",
+     "score": 0.544
+    }
+   ],
+   "enforced_by": [],
+   "law_hint": "免费档【内部】按能力排序，「最强的那个免费」才是终点"
+  },
+  "R51": {
+   "id": "R51",
+   "kind": "rule",
+   "text": "过度读取：按目的选读取粒度，没评估最小必要范围就全文拉取，且说不清为什么非全文不可",
+   "group": "铁律",
+   "timing": "收尾",
+   "active": true,
+   "origin": "CLAUDE.md 铁律提炼(2026-09-10)",
+   "provenance": [
+    {
+     "title": "方案 · 交付 · 工具 · 隐私",
+     "source": "CLAUDE铁律",
+     "date": "2026-08-21",
+     "score": 0.646
+    },
+    {
+     "title": "形状 2026-08-18-A:【我手上有全部原始数据,却只 grep 了关键词那一",
+     "source": "lessons",
+     "date": "2026-08-18",
+     "score": 0.568
+    },
+    {
+     "title": "通用判据（换任何项目、任何数据源都成立）",
+     "source": "lessons",
+     "date": "",
+     "score": 0.563
+    },
+    {
+     "title": "反向指纹（下次一眼认出）",
+     "source": "lessons",
+     "date": "",
+     "score": 0.54
+    },
+    {
+     "title": "复发 2026-09-08:同一形状,换成了【体积】(原条只覆盖\"时长\",范围太窄)",
+     "source": "lessons",
+     "date": "2026-09-08",
+     "score": 0.511
+    },
+    {
+     "title": "形状 2026-09-10-G：【为了\"测它能不能读\"，把 1.45GB 从坏盘全量",
+     "source": "lessons",
+     "date": "2026-09-10",
+     "score": 0.567
+    },
+    {
+     "title": "2026-08-24 形状：【我的测试输入,恰好绕开了真实用法里的关键变量】",
+     "source": "lessons",
+     "date": "2026-08-24",
+     "score": 0.557
+    }
+   ],
+   "enforced_by": [],
+   "law_hint": "\"我要先读完才知道要什么\"是最常见的自我豁免，几乎总是假的"
+  },
+  "R52": {
+   "id": "R52",
+   "kind": "rule",
+   "text": "交付形态偏差：承诺给工具/能力，交付的却是需手动点/跑的一次性形式，而非skill/CLI/API/定时任务等可自动化形态",
+   "group": "铁律",
+   "timing": "收尾",
+   "active": true,
+   "origin": "CLAUDE.md 铁律提炼(2026-09-10)",
+   "provenance": [
+    {
+     "title": "⛔ 交付形态铁律（2026-07-21 Frank「我让你做成 api/cli 注册",
+     "source": "CLAUDE铁律",
+     "date": "2026-07-21",
+     "score": 0.648
+    },
+    {
+     "title": "2026-07-27 形状R:按【我觉得完整】交付,不按【他能拿来做决定】交付 ——",
+     "source": "lessons",
+     "date": "2026-07-27",
+     "score": 0.594
+    },
+    {
+     "title": "2026-07-21 形状L（元形状）：用户指一个点，我只做【那一个点】，不做同类/",
+     "source": "lessons",
+     "date": "2026-07-21",
+     "score": 0.564
+    },
+    {
+     "title": "为什么这条现有铁律拦不住我",
+     "source": "lessons",
+     "date": "",
+     "score": 0.536
+    },
+    {
+     "title": "形状 2026-09-08-H:【交付\"我这边的过程\",不是\"他要的结果\";还把要他",
+     "source": "lessons",
+     "date": "2026-09-08",
+     "score": 0.564
+    },
+    {
+     "title": "形状 2026-09-06-P：【同一个\"词汇撞车\"一天撞三次 —— 而第三次我用错",
+     "source": "lessons",
+     "date": "2026-09-06",
+     "score": 0.565
+    },
+    {
+     "title": "2026-07-29 形状 Z：**元工作吞噬交付** —— 1 小时的活干了 7 ",
+     "source": "lessons",
+     "date": "2026-07-29",
+     "score": 0.578
+    }
+   ],
+   "enforced_by": [],
+   "law_hint": "交付形态铁律（2026-07-21 Frank「我让你做成 api/cli 注册成 skill 给你自己随意 inv"
+  },
+  "R60": {
+   "id": "R60",
+   "kind": "rule",
+   "text": "成本只算账单:一次给出两个以上方案/选项/推荐时,成本里只出现了账单上的钱(月费/价格/硬件/订阅/免费/白嫖),却没有任何一句说明【做这件事要几天或烧多少 token/额度、Frank 要花多少时间动手或陪跑、切换期间会错什么、之后多了几处会坏】—— 对靠 AI 干活的零编程用户,这四样才是主成本;没写 = 把最重的一项默认成零。",
+   "group": "成本账",
+   "timing": "收尾",
+   "active": true,
+   "origin": "2026-09-16 Frank「最重要的成本你没说，重来」",
+   "provenance": [
+    {
+     "title": "2026-08-13 开源节流细节方案:给了诊断没给他要的那件事(每笔能省多少)",
+     "source": "PROGRESS",
+     "date": "2026-08-13",
+     "score": 1.0
+    },
+    {
+     "title": "根因不是不重视更正,是把成本收益算在了空气上(权衡里一侧没取输入)",
+     "source": "lessons",
+     "date": "2026-08-20",
+     "score": 1.0
+    }
+   ],
+   "enforced_by": []
+  }
+ },
+ "gates": {
+  "answer-relevancy-gate": {
+   "id": "answer-relevancy-gate",
+   "kind": "gate",
+   "judges": "答复相关性闸 —— 用【会读语义的 LLM】判「我到底有没有正面回答他」。 ⛔ 它补的是 concise-answer-gate 补不了的那一半: 那道闸量的是【长度比】(他问得短、我答得长)。**长度比是统计特征,判不了\"答没答\"** —— 我完全可以写 300 字漂亮废话,长",
+   "event": "Stop",
+   "stage": "收尾",
+   "seq": 3048,
+   "group": "输出质",
+   "related": [
+    "concise-answer-gate"
+   ]
+  },
+  "antiscrape-invoke-gate": {
+   "id": "antiscrape-invoke-gate",
+   "kind": "gate",
+   "judges": "antiscrape-invoke-gate — 拦【被反爬挡住就宣布\"边界\"，而本机反爬工具一个没用】。 ⛔ 来历（2026-09-06，Frank：「为何你遇到反爬网站，不会自动用反爬 skill? 我有那么 skill 里自带那么多本地工具都遗失了吗?」）： 我抓 Redd",
+   "event": "Stop",
+   "stage": "收尾",
+   "seq": 3044,
+   "group": "安全权",
+   "related": [
+    "browser-routing-gate"
+   ]
+  },
+  "archive-recall-gate": {
+   "id": "archive-recall-gate",
+   "kind": "gate",
+   "judges": "archive-recall-gate — 拦【对\"他以前做过的事\"说找不到/记不得,却没查 chat-archive】。 判据(全部成立才拦,宁漏勿误杀): ① 本轮说了否定性断言(找不到/没有/不存在/失效了/记不得…) ② 该断言指向过去(之前/以前/上次/曾经/你说的那个",
+   "event": "Stop",
+   "stage": "收尾",
+   "seq": 3040,
+   "group": "证据链",
+   "related": []
+  },
+  "ask-coverage-gate": {
+   "id": "ask-coverage-gate",
+   "kind": "gate",
+   "judges": "Stop 闸:用户一条消息里问了很多件事 → 收尾前把【他问的每一条】列回我面前,逼我自查漏没漏。 ⛔ 2026-08-14 起因(Frank 第 N 次抓到): 他一条消息里连问了十几件事(完整列系统 / 拆工作流 / 每个功能干什么 / 帮到还是帮倒忙 / 准确度 / 用什么",
+   "event": "Stop",
+   "stage": "收尾",
+   "seq": 3037,
+   "group": "能力界",
+   "related": []
+  },
+  "authority-source-gate": {
+   "id": "authority-source-gate",
+   "kind": "gate",
+   "judges": "authority-source-gate —— 问某个系统/工具前，先逼我读权威源。 治的病：凭记忆碎片答、忽略本机已有权威文档。 例：问 Superego 是什么 -> 应 Read SUPEREGO.md，但我答了碎片不读原文。 机制： 1. 从 TOPIC_KEYWORD",
+   "event": "PreToolUse",
+   "stage": "动手前",
+   "seq": 1028,
+   "group": "证据链",
+   "related": [
+    "model-authenticity-gate"
+   ]
+  },
+  "backslash-eater-gate": {
+   "id": "backslash-eater-gate",
+   "kind": "gate",
+   "judges": "backslash-eater-gate — Bash 工具会吃掉一层反斜杠，用它写代码/写文件必崩时拦下。 来历（2026-08-20，Frank：「heredoc 完整深入审查彻底修复，找出根因不是头痛医头」） 【根因 · 已实测 + 上游已确认，不是我写错也不是 git b",
+   "event": "PreToolUse",
+   "stage": "动手前",
+   "seq": 1011,
+   "group": "能力界",
+   "related": [
+    "shell-writes-code-gate"
+   ]
+  },
+  "bg-running-claim-gate": {
+   "id": "bg-running-claim-gate",
+   "kind": "gate",
+   "judges": "后台任务「还在跑」闸 —— 我说后台任务/子代理还在跑,但本会话没有任何一个真的在动 ⇒ 拦。 ⛔ 起因(2026-09-11,airbnb ai manager,Frank 原话):「外审是坏了还是你欺骗我说他在跑?跑了那么久没反应」。 实录:我派了一个后台外审子代理,之后**",
+   "event": "Stop",
+   "stage": "收尾",
+   "seq": 3062,
+   "group": "承诺链",
+   "related": [
+    "commitment-execution-gate"
+   ]
+  },
+  "browser-routing-gate": {
+   "id": "browser-routing-gate",
+   "kind": "gate",
+   "judges": "PreToolUse gate: 浏览器自动化前必须读 browser-routing.md。 违反: deny + 打印路由表摘要。不需要 Frank 授权的纯诊断读取不触发。",
+   "event": "PreToolUse",
+   "stage": "动手前",
+   "seq": 1002,
+   "group": "安全权",
+   "related": [
+    "nudge-escalation-gate",
+    "ui-edit-guard"
+   ]
+  },
+  "capability-boundary-gate": {
+   "id": "capability-boundary-gate",
+   "kind": "gate",
+   "judges": "Stop 闸:【我说\"只有你能做\" / \"我够不到\" —— 但我根本没试过】。 ⛔ 起因(2026-09-06,Frank 原话): 「**为何你还是不懂你的能力边界?加一个能力边界 gate**,你明明可以自己控制浏览器, 至少有几个本地 skill 和本地工具可以用来自己浏览",
+   "event": "Stop",
+   "stage": "收尾",
+   "seq": 3047,
+   "group": "能力界",
+   "related": [
+    "giveup-guard",
+    "promise-gate"
+   ]
+  },
+  "checklist-completion-gate": {
+   "id": "checklist-completion-gate",
+   "kind": "gate",
+   "judges": "Checklist 完成度闸 —— 拦【清单上还挂着没做的,我的收尾却没逐条交代】。 ⛔ 起因(2026-09-11,Frank 原话): 「这里每一道问题你都要做个 todo checklist plan,做完要 mark 全部做了没有, 这个要 superego 加多一个新 ",
+   "event": "Stop",
+   "stage": "收尾",
+   "seq": 3061,
+   "group": "承诺链",
+   "related": [
+    "multi-option-guard",
+    "promise-gate",
+    "scope-completeness-gate"
+   ]
+  },
+  "collect-list-evidence-gate": {
+   "id": "collect-list-evidence-gate",
+   "kind": "gate",
+   "judges": "collect-list-evidence-gate — 拦【给出\"该向谁收多少钱\"的清单,却没碰过第一手凭据】。 ⛔ 来历(2026-09-09,airbnb ai manager,Frank 差点照着我的清单去重复收钱): 我把 `owner-delivery --prepa",
+   "event": "Stop",
+   "stage": "收尾",
+   "seq": 3055,
+   "group": "证据链",
+   "related": [
+    "evidence-gate",
+    "evidence-in-log-gate",
+    "false-done-gate",
+    "money-verdict-gate"
+   ]
+  },
+  "commitment-execution-gate": {
+   "id": "commitment-execution-gate",
+   "kind": "gate",
+   "judges": "commitment-execution-gate — 跨 turn 验\"我承诺了 X,之后真做了没\"。 ⛔ 缺口来历(2026-08-30,Frank 截图戳穿:「为何 superego 没拦你说开始跑、但是什么都没做」): promise-gate 只查【本轮内】有没有工具调",
+   "event": "Stop",
+   "stage": "收尾",
+   "seq": 3001,
+   "group": "承诺链",
+   "related": [
+    "pkg-install-guard",
+    "promise-gate",
+    "scope-completeness-gate",
+    "self-loop-gate"
+   ]
+  },
+  "concise-answer-gate": {
+   "id": "concise-answer-gate",
+   "kind": "gate",
+   "judges": "简洁闸 —— 两条【互相独立】的判据。 判据A(2026-08-21 建):工具少却话多 —— tools<=2 AND chars>500 判据B(2026-08-25 补):**他问判断/原因题,我却回长篇** —— 与工具数【无关】 ⛔ 为什么补 B(形状 2026-08-",
+   "event": "未挂/被别的hook调",
+   "stage": "未挂/被别的hook调",
+   "seq": 9999,
+   "group": "输出质",
+   "related": [
+    "answer-relevancy-gate"
+   ]
+  },
+  "critic-gate": {
+   "id": "critic-gate",
+   "kind": "gate",
+   "judges": "Stop hook·Superego Phase2 外部 critic 闸(2026-07-24 迁移)——实质代码交付前,逼我先派【独立子实例】 按 Frank 的收敛7步SOP对着真 artifact 挑刺(tool-grounded),而不是我自己拍脑袋说\"做完了\"。 治的",
+   "event": "Stop",
+   "stage": "收尾",
+   "seq": 3014,
+   "group": "审查学",
+   "related": [
+    "already-known-guard",
+    "false-done-gate"
+   ]
+  },
+  "deploy-dirty-tree-gate": {
+   "id": "deploy-dirty-tree-gate",
+   "kind": "gate",
+   "judges": "deploy-dirty-tree-gate —— PreToolUse 闸:拦【从有未提交改动的目录直接部署上线】。 ⛔ 为什么要它(2026-09-18 airbnb ai manager,真实事故): 修客人入住页时,我 7 次 `npx vercel deploy --p",
+   "event": "PreToolUse",
+   "stage": "动手前",
+   "seq": 1016,
+   "group": "安全权",
+   "related": []
+  },
+  "empty-promise-gate": {
+   "id": "empty-promise-gate",
+   "kind": "gate",
+   "judges": "empty-promise-gate —— Stop 闸:【我说了\"对你有什么好处\",却一个具体的都举不出来】。 INTENTIONAL-REWRITE: 这不是 `promise-gate.py` 的重写,是一道**全新的、管另一件事**的闸。 功能回退闸按【文件名相似度】判亲",
+   "event": "Stop",
+   "stage": "收尾",
+   "seq": 3009,
+   "group": "承诺链",
+   "related": [
+    "jargon-gate",
+    "promise-gate"
+   ]
+  },
+  "ephemeral-process-leak-gate": {
+   "id": "ephemeral-process-leak-gate",
+   "kind": "gate",
+   "judges": "ephemeral-process-leak-gate.py: 临时服务与脱缰浏览器源头阻断闸。 遵循教训 2026-09-15-L 核心铁律： 【源头禁止脱缰唤起，杜绝后台无主僵尸进程】 拦截场景： 1. 试图通过 start microsoft-edge: / start c",
+   "event": "未挂/被别的hook调",
+   "stage": "未挂/被别的hook调",
+   "seq": 9999,
+   "group": "安全权",
+   "related": []
+  },
+  "evidence-gate": {
+   "id": "evidence-gate",
+   "kind": "gate",
+   "judges": "证据闸 —— 我说「生成了/写了/保存到 某个文件」,就去查那个文件【真的在不在】。 ⛔ 为什么要它(2026-07-29,Frank「复盘别人是怎么设计怎么做的才对」→ 深搜行业做法后落地): 实测数据(tau2-bench,arXiv 2606.09863):**「假成功」占",
+   "event": "Stop",
+   "stage": "收尾",
+   "seq": 3021,
+   "group": "证据链",
+   "related": []
+  },
+  "evidence-in-log-gate": {
+   "id": "evidence-in-log-gate",
+   "kind": "gate",
+   "judges": "PostToolUse 闸:【新写/改的闸,开火时必须留触发词】。 ⛔ 起因(2026-09-07,记分板自己指认出来的): 我今天新建的 `capability-boundary-gate` —— 记分板报它 「同一指纹 180/180 次(复发率 100%)、**无证据率 1",
+   "event": "PostToolUse",
+   "stage": "动手后",
+   "seq": 2006,
+   "group": "证据链",
+   "related": [
+    "capability-boundary-gate",
+    "flat-table-gate",
+    "lesson-anchor-gate"
+   ]
+  },
+  "excuse-gate": {
+   "id": "excuse-gate",
+   "kind": "gate",
+   "judges": "excuse-gate — 取证之后,用一句没验过的借口把【与结论冲突的观察】抹平 → 拦停。 这是 `visual-proof-gate` 的**串联第二道**: 第一道管「我有没有去看」 —— 它成功了。 这一道管「我看完有没有被证据改变主意」—— 它是第一道的盲区。 ⛔ 2",
+   "event": "Stop",
+   "stage": "收尾",
+   "seq": 3032,
+   "group": "审查学",
+   "related": [
+    "visual-proof-gate"
+   ]
+  },
+  "false-done-gate": {
+   "id": "false-done-gate",
+   "kind": "gate",
+   "judges": "Stop hook: 拦截「虚报生效/装好/跑通」—— 声称交付物工作,但本轮没跑任何核实工具。 2026-07-19 humanizerai 教训固化:手写完 vibe-spec v1(从脑袋编、没测)就喊「已焊好、已生效」, Frank「白干了吗」。CLAUDE.md 已 4",
+   "event": "Stop",
+   "stage": "收尾",
+   "seq": 3015,
+   "group": "承诺链",
+   "related": [
+    "reference-diff-guard"
+   ]
+  },
+  "fault-injection-gate": {
+   "id": "fault-injection-gate",
+   "kind": "gate",
+   "judges": "故障注入闸 —— 我这轮【写/改了测试】,就必须证明那把尺子【真的会红】,否则它可能是摆设。 ⛔ 为什么要它(2026-08-07,Frank 一句话问出来的): 他问「尺子坏了是指 superego 的尺子吗？不用修正吗？」——他其实在问: **既然你两天坏了 10 把尺子,为",
+   "event": "Stop",
+   "stage": "收尾",
+   "seq": 3030,
+   "group": "能力界",
+   "related": [
+    "evidence-gate"
+   ]
+  },
+  "flat-table-gate": {
+   "id": "flat-table-gate",
+   "kind": "gate",
+   "judges": "Stop 闸:【对比表里某一数值列所有行都一样 ⇒ 那把尺子多半没在测量】。 ⛔ 起因(2026-09-06,Frank 原话): 「你凭什么说要用 128 是不降级的方案?**如果 128 能用不可能还会有 1024 的存在**」 「**尺子坏了不修?那么白痴的逻辑,三岁小孩都",
+   "event": "Stop",
+   "stage": "收尾",
+   "seq": 3046,
+   "group": "输出质",
+   "related": []
+  },
+  "free-first-gate": {
+   "id": "free-first-gate",
+   "kind": "gate",
+   "judges": "free-first-gate — 拦【推荐/采用/搭建一个【付费】方案，而本轮从没搜过免费替代】。 ⛔ 来历（2026-09-08，Frank：「为何superego没拦你没开火，修到开火为止，不能有遗漏」）： 诊断\"抓不到\"，我一头扎进【付费】的 TikHub（还是个余额=0",
+   "event": "Stop",
+   "stage": "收尾",
+   "seq": 3058,
+   "group": "归属权",
+   "related": []
+  },
+  "gate-generality-gate": {
+   "id": "gate-generality-gate",
+   "kind": "gate",
+   "judges": "PostToolUse(Write|Edit) 元闸:gate-generality-gate 监督【我建的闸是不是全局通用规则,而不是头疼医头针对单一事件】。 Frank 2026-09-09 钉死:「你建立的是专属针对这个事件的 gate 你就错了,我要建立的是全局通用规则…",
+   "event": "PostToolUse",
+   "stage": "动手后",
+   "seq": 2009,
+   "group": "审查学",
+   "related": [
+    "false-done-gate",
+    "nudge-escalation-gate",
+    "ui-edit-guard"
+   ]
+  },
+  "hook-noise-not-authorization-gate": {
+   "id": "hook-noise-not-authorization-gate",
+   "kind": "gate",
+   "judges": "hook-noise-not-authorization-gate —— Stop hook 的重复提醒不是 Frank 的授权。 治的病(2026-09-06 d--airbnb-ai-manager 项目原样复发,原始形状 2026-08-07 已记进 memory inje",
+   "event": "PreToolUse",
+   "stage": "动手前",
+   "seq": 1015,
+   "group": "安全权",
+   "related": [
+    "authority-source-gate",
+    "concise-answer-gate",
+    "critic-gate",
+    "pipeline-first-gate"
+   ]
+  },
+  "idle-ask-gate": {
+   "id": "idle-ask-gate",
+   "kind": "gate",
+   "judges": "空转请示闸 —— 我列出【我自己能做的活】然后问「要不要做」,而这一轮我【一个工具都没调】。 ⛔ 病(Frank 2026-07-29 截图当场抓到,跨项目复发): 另一个 chat 里我写:「剩下4个(日历/财务/快照/写回)**要不要现在接**?…你说够了我就停在订单这儿。」",
+   "event": "Stop",
+   "stage": "收尾",
+   "seq": 3022,
+   "group": "Idle态",
+   "related": [
+    "critic-gate",
+    "no-nagging-guard"
+   ]
+  },
+  "idle-confess-gate": {
+   "id": "idle-confess-gate",
+   "kind": "gate",
+   "judges": "空转承认闸 —— 我承认「我知道该做但没做」,而这一轮我【一个工具都没调】。 ⛔ 病(Frank 2026-08-30 当场抓到,跨项目必然复发): 我问完他 superego 是否没拦,他追问「为何你说你收到,继续干活,却没做任何事」 → 我**没在干活**,只是回了一句\"收到",
+   "event": "Stop",
+   "stage": "收尾",
+   "seq": 3053,
+   "group": "Idle态",
+   "related": [
+    "idle-ask-gate"
+   ]
+  },
+  "jargon-gate": {
+   "id": "jargon-gate",
+   "kind": "gate",
+   "judges": "交付时用了【只有我懂的词】却没当场翻译 → 拦。 ⛔ 为什么必须是机器闸(2026-08-19 Frank 亲口问出来的): 他问「挂牌价口径是什么意思?我不是有去 AI 味的 skill,为何没有自动 Invoke?」 —— skill **在**(`renhua`),它的 d",
+   "event": "未挂/被别的hook调",
+   "stage": "未挂/被别的hook调",
+   "seq": 9999,
+   "group": "输出质",
+   "related": []
+  },
+  "keep-going-gate": {
+   "id": "keep-going-gate",
+   "kind": "gate",
+   "judges": "keep-going-gate —— 被拦之后只说话不干活就继续拦；真动手了立刻放行。 ⛔ 来历（2026-08-19，Frank：「我说 nagging 不做事，或者最后所有任务还没完整做完 就停下来，**为何不能 hook 继续做？？？？**」）： 取证（实测，不是印象）： ",
+   "event": "Stop",
+   "stage": "收尾",
+   "seq": 3008,
+   "group": "管道流",
+   "related": [
+    "false-done-gate",
+    "idle-ask-gate"
+   ]
+  },
+  "lesson-anchor-gate": {
+   "id": "lesson-anchor-gate",
+   "kind": "gate",
+   "judges": "PostToolUse 闸:【写了新教训 → 立刻提醒补锚点】。 ⛔ 起因(2026-09-06,同一天犯两次): 往 `lessons.md` 写新形状 → 规则索引自动重建 → **但锚点不会跟着建** ⇒ 那条新教训【召不回来】,而且 `test_recall.py` 当场",
+   "event": "PostToolUse",
+   "stage": "动手后",
+   "seq": 2008,
+   "group": "审查学",
+   "related": [
+    "lint-fatal-guard",
+    "nudge-escalation-gate",
+    "shell-writes-code-gate"
+   ]
+  },
+  "lessons-write-gate": {
+   "id": "lessons-write-gate",
+   "kind": "gate",
+   "judges": "lessons-write-gate —— PreToolUse 闸:拦【绕过 lessons_add.py 去整份覆写 lessons.md】。 ⛔ 为什么要它(2026-09-09 实测): 本机常有 3~5 个 session 同开,每个记教训都用「读全文 -> 拼接 ->",
+   "event": "PreToolUse",
+   "stage": "动手前",
+   "seq": 1020,
+   "group": "审查学",
+   "related": []
+  },
+  "local-first-gate": {
+   "id": "local-first-gate",
+   "kind": "gate",
+   "judges": "Stop hook: 【推荐在本机装/部署模型,本轮却没查过云端】= 违规。 形状 2026-08-18-B 第 3 次发作(2026-09-17,social_media_to_tg): 本地看图模型在重装后丢了,我给 Frank 出 A/B/C 三选一,推荐「A 装回 oll",
+   "event": "Stop",
+   "stage": "收尾",
+   "seq": 3063,
+   "group": "归属权",
+   "related": [
+    "launch-bound-guard",
+    "multi-option-guard"
+   ]
+  },
+  "media-regression-gate": {
+   "id": "media-regression-gate",
+   "kind": "gate",
+   "judges": "媒体降级闸 —— 新出的片子比【已验收的上一条】变差了,就不许收尾。 ⛔ 为什么建它(2026-08-12 真实翻车): 我拿首帧驱动法重做第二镜的反打,交付时只验了「楚天啸正脸拿到没」——拿到了,于是我说\"成功\"。 Frank 一眼看出三处我没验的:①画风从真人写实变成动漫脸 ",
+   "event": "Stop",
+   "stage": "收尾",
+   "seq": 3034,
+   "group": "输出质",
+   "related": [
+    "jargon-gate"
+   ]
+  },
+  "model-authenticity-gate": {
+   "id": "model-authenticity-gate",
+   "kind": "gate",
+   "judges": "model-authenticity-gate — 严禁凭空捏造公版模型，必须以 CC Switch 本地 5 万条记录为唯一基准。 Frank 2026-09-14 痛斥（2026-09-14-C / 2026-09-14-D）： 「凭空捏造是大罪，为何superego没有拦你",
+   "event": "Stop",
+   "stage": "收尾",
+   "seq": 3003,
+   "group": "证据链",
+   "related": []
+  },
+  "money-verdict-gate": {
+   "id": "money-verdict-gate",
+   "kind": "gate",
+   "judges": "money-verdict-gate — 拦【用单一数据源，就对\"做什么能赚钱\"下判决】。 ⛔ 来历(2026-08-22, Frank:「凡是变现优先…所有宇宙加我雷达交叉,凡是涉及这个最重要的 事情需要交叉验证那个才是真相答案,因为前面一但错了,一步错步步错,后面做得再好也 ",
+   "event": "Stop",
+   "stage": "收尾",
+   "seq": 3054,
+   "group": "归属权",
+   "related": [
+    "authority-source-gate",
+    "search-breadth-gate"
+   ]
+  },
+  "negative-claim-gate": {
+   "id": "negative-claim-gate",
+   "kind": "gate",
+   "judges": "negative-claim-gate — 往文件里写「某系统不提供 / 拿不到 / 都不带 / 做不到」， 同一句里却没有「测了多少」时，写入前拦下。 来历（同一个形状，三次都是【写进了交付物】） · 2026-08-19-G：证伪了一条路（某功能在云端跑不起来），就在代码注释",
+   "event": "PreToolUse",
+   "stage": "动手前",
+   "seq": 1021,
+   "group": "证据链",
+   "related": [
+    "capability-boundary-gate",
+    "lessons-write-gate"
+   ]
+  },
+  "no-search-no-claim-gate": {
+   "id": "no-search-no-claim-gate",
+   "kind": "gate",
+   "judges": "Stop hook: 我说【某个东西不存在 / 项目里没有 / 只有你能给我】,但这一轮【一次都没搜过】→ 拦。 ⛔ 起因(2026-09-06,Frank 甩截图纠正): 他要 Atria SOFO 的停车自动化,我连说两轮「SOFO 是另一个系统」「那个网址项目里从来没有过记",
+   "event": "Stop",
+   "stage": "收尾",
+   "seq": 3029,
+   "group": "证据链",
+   "related": [
+    "already-known-guard",
+    "capability-boundary-gate",
+    "evidence-gate",
+    "prior-art-gate",
+    "search-breadth-gate",
+    "search-layer-gate",
+    "unread-evidence-guard"
+   ]
+  },
+  "no-user-data-gate": {
+   "id": "no-user-data-gate",
+   "kind": "gate",
+   "judges": "no-user-data-gate — 拦【断言\"我没有/找不到<用户的数据/链接/例子>\",而本轮没去翻他的档案/日志/库】。 ⛔ 来历（2026-09-09，Frank：「我之前不是自己有很多手动粘贴的旧链接，没被系统记录吗？不会用？ 穷尽gate是废了吗？修到能开火为止」）",
+   "event": "Stop",
+   "stage": "收尾",
+   "seq": 3059,
+   "group": "安全权",
+   "related": [
+    "capability-boundary-gate"
+   ]
+  },
+  "not-mine-gate": {
+   "id": "not-mine-gate",
+   "kind": "gate",
+   "judges": "not-mine-gate — 用「不是我的 / 与本项目无关」把一个【我没查过的问题】推回给用户 → 拦停。 ⛔ 病根(2026-08-19 一天内发作 2 次): lessons 形状 2026-08-19-A 已经写死过这句判词 —— **「查真相是只读的,不需要授权;不动",
+   "event": "Stop",
+   "stage": "收尾",
+   "seq": 3033,
+   "group": "归属权",
+   "related": [
+    "cross-scope-guard",
+    "excuse-gate",
+    "giveup-guard",
+    "no-nagging-guard"
+   ]
+  },
+  "nudge-escalation-gate": {
+   "id": "nudge-escalation-gate",
+   "kind": "gate",
+   "judges": "Stop 闸:【软提醒重复太多次还没解决 → 升级成硬拦】。 ⛔ 起因(2026-08-26,Frank 原话): 「是不是应该有个机制,**提醒了一定数量后没做就得 hook**?而不是纸老虎的机制? 还有我的所有记录有没有记录日期,时间,发生了多少次?**今天里记录了多少个提",
+   "event": "Stop",
+   "stage": "收尾",
+   "seq": 3045,
+   "group": "承诺链",
+   "related": [
+    "antiscrape-invoke-gate",
+    "churn-guard",
+    "coherence-guard",
+    "concise-answer-gate",
+    "lint-fatal-guard",
+    "pipe-truncation-guard",
+    "tool-roster-gate"
+   ]
+  },
+  "orphan-asset-gate": {
+   "id": "orphan-asset-gate",
+   "kind": "gate",
+   "judges": "orphan-asset-gate — 拦【生成了资产，却没有任何代码在消费它】。 ⛔ 来历（2026-08-18，Frank：「为何 shot3, shot4 人脸变了，你方向到底对不对」）： 他早就明确要求「要能参考 9 张 maximum 图片」。我据此做了 **5 个人物",
+   "event": "Stop",
+   "stage": "收尾",
+   "seq": 3049,
+   "group": "归属权",
+   "related": []
+  },
+  "pipeline-ends-gate": {
+   "id": "pipeline-ends-gate",
+   "kind": "gate",
+   "judges": "pipeline-ends-gate —— 我自称画了「端到端/全流程」，但两头没接上业务时拦下。 ⛔ 来历（2026-08-19，manju）： Frank 让我梳理**端到端流水线**。我扫了 `novel/*.py` 抓出 11 个脚本， 排成一张表交上去 —— 从「拆章」",
+   "event": "Stop",
+   "stage": "收尾",
+   "seq": 3005,
+   "group": "管道流",
+   "related": [
+    "giveup-guard",
+    "promise-gate",
+    "search-layer-gate"
+   ]
+  },
+  "pipeline-first-gate": {
+   "id": "pipeline-first-gate",
+   "kind": "gate",
+   "judges": "pipeline-first-gate —— 还没画出全链路，就先去启动【长跑/花钱的生产动作】时拦下。 ⛔ 来历（2026-08-20，manju）： 我刚查完赛道数据、定了题材，下一秒就 `nohup ainovel-cli --headless --prompt \"...\"",
+   "event": "PreToolUse",
+   "stage": "动手前",
+   "seq": 1010,
+   "group": "管道流",
+   "related": [
+    "launch-bound-guard",
+    "pipeline-ends-gate",
+    "prior-art-gate",
+    "promise-gate"
+   ]
+  },
+  "plan-before-act-gate": {
+   "id": "plan-before-act-gate",
+   "kind": "gate",
+   "judges": "计划优先闸 —— 要花钱 / 要长跑的动作，本轮没有 plan ⇒ 拦。 ⛔ 它补的是 SOP 第 ⑤ 步（才动手）。Frank 2026-08-20 原话： 「**你凭什么就开始动**？…**你做任何东西前有没用 plan？铁规则！！！！！**」 ⛔ 为什么单独做一道： `pi",
+   "event": "PreToolUse",
+   "stage": "动手前",
+   "seq": 1013,
+   "group": "审查学",
+   "related": [
+    "pipeline-first-gate",
+    "scenario-fit-gate"
+   ]
+  },
+  "port-precheck-gate": {
+   "id": "port-precheck-gate",
+   "kind": "gate",
+   "judges": "port-precheck-gate.py —— 跨项目端口资产与防撞车硬门禁 (Cross-Project Port Collision Gate) 【病根本质 (R1/R28/R42/R53)】： 守着三座跨项目会话脑库（brain.db / ag-brain.db / co",
+   "event": "未挂/被别的hook调",
+   "stage": "未挂/被别的hook调",
+   "seq": 9999,
+   "group": "安全权",
+   "related": []
+  },
+  "prior-art-gate": {
+   "id": "prior-art-gate",
+   "kind": "gate",
+   "judges": "prior-art-gate — PreToolUse hook 2026-07-27 真实翻车：零搜索写了 skills-origin.mjs(100+行)， 后来搜 GitHub 发现 xingkongliang/skills-manager ★3363 已在做同一件事。 判",
+   "event": "PreToolUse",
+   "stage": "动手前",
+   "seq": 1022,
+   "group": "证据链",
+   "related": [
+    "promise-gate"
+   ]
+  },
+  "process-alias-attribution-gate": {
+   "id": "process-alias-attribution-gate",
+   "kind": "gate",
+   "judges": "process-alias-attribution-gate — 拦【未查清应用真实生命周期与安装指纹，胡乱拿相似进程当替身/张冠李戴】。 ⛔ 起因 (2026-09-14, fearless-hertz, Frank 原话「干你妈的，谁和你说workbuddy 是 dsh,明明",
+   "event": "Stop",
+   "stage": "收尾",
+   "seq": 3042,
+   "group": "证据链",
+   "related": []
+  },
+  "progress-gate": {
+   "id": "progress-gate",
+   "kind": "gate",
+   "judges": "Stop hook: 进度记录闸 —— 本轮做了实质改动，却没往 PROGRESS.md 记一行就想收尾。 ⛔ 为什么需要它（2026-08-12 实录）： 那天在 bananaflow 修了标签泄漏、装了取证探头、修了两个静默吞错、迁移 pagefile/TEMP、 抢救凭证、",
+   "event": "Stop",
+   "stage": "收尾",
+   "seq": 3028,
+   "group": "管道流",
+   "related": [
+    "false-done-gate",
+    "institutionalize-guard"
+   ]
+  },
+  "promise-carryover-gate": {
+   "id": "promise-carryover-gate",
+   "kind": "gate",
+   "judges": "promise-carryover-gate —— 跨轮承诺对账：我上一轮说要做的，这一轮做了吗？ ⛔ 来历（2026-08-19，Frank：「每次给完结论后就停止了，为何 superego 没开火，坏了吗？」）： 查了当天真实计量（60 轮）：Superego **没坏** ",
+   "event": "Stop",
+   "stage": "收尾",
+   "seq": 3007,
+   "group": "承诺链",
+   "related": [
+    "promise-gate"
+   ]
+  },
+  "promise-gate": {
+   "id": "promise-gate",
+   "kind": "gate",
+   "judges": "promise-gate — 拦【承诺了却没启动任何东西】的收尾。 ⛔ 缺口来历(2026-07-28,Frank:「不用我回话接着做?但是停手了?为何 superego 没逼你做完?」): `no-nagging-guard` 只抓【疑问/请示句】——「要不要我改?」「需要我继",
+   "event": "Stop",
+   "stage": "收尾",
+   "seq": 3018,
+   "group": "承诺链",
+   "related": [
+    "critic-gate",
+    "false-done-gate",
+    "idle-ask-gate",
+    "keep-going-gate",
+    "no-nagging-guard"
+   ]
+  },
+  "question-boomerang-gate": {
+   "id": "question-boomerang-gate",
+   "kind": "gate",
+   "judges": "question-boomerang-gate —— 他直接问我判断，我把问题原样退回给他时拦下。 ⛔ 来历（2026-08-19，manju）： Frank：「你觉得怎么样做才是我要的？**先告诉我你的想法**」 我列了三条主张，然后收尾写： 「方向（拍哪个题材、要不要切 Fa",
+   "event": "Stop",
+   "stage": "收尾",
+   "seq": 3006,
+   "group": "Idle态",
+   "related": [
+    "idle-ask-gate",
+    "no-nagging-guard"
+   ]
+  },
+  "recursive-scan-gate": {
+   "id": "recursive-scan-gate",
+   "kind": "gate",
+   "judges": "递归扫描闸 —— 拦【对已知超大目录跑递归统计】。 ⛔ 治的是 lessons 形状 2026-08-20-R【观察者效应：用消耗 X 的动作去测量 X】的窄子集。 实录（2026-08-20 19:2x）：Frank 报\"很卡\"，我实测出 C 盘读延迟 182ms（正常 0.3",
+   "event": "PreToolUse",
+   "stage": "动手前",
+   "seq": 1012,
+   "group": "管道流",
+   "related": [
+    "launch-bound-guard",
+    "pipe-truncation-guard",
+    "shell-writes-code-gate"
+   ]
+  },
+  "residue-gate": {
+   "id": "residue-gate",
+   "kind": "gate",
+   "judges": "Stop hook·残余闸(2026-07-25 建)——治「把『诚实登记残余』当成『处理了』」。 【实录】我交付了一份体检报告,列了 20+ 条「已确诊但没动」,然后收工。Frank: 「哪些解决了哪些还没解决?还没解决为何不去解决?你以为没方法彻底解决??」 —— 绝大多数那",
+   "event": "Stop",
+   "stage": "收尾",
+   "seq": 3025,
+   "group": "承诺链",
+   "related": []
+  },
+  "resource-echo-gate": {
+   "id": "resource-echo-gate",
+   "kind": "gate",
+   "judges": "Stop 闸:每轮收尾【回头看】—— 我这一轮让机器多烧了多少?烧得凶就拦一次,逼我处理。 ⛔ 2026-08-14 起因(Frank 亲口点名这个洞): 「每次凡是你动用了本地资源后,你没有回头看有没有导致卡顿,有没有回头看? 还没做之前,凡是有用到本地所有资源跑的任务,前面要",
+   "event": "Stop",
+   "stage": "收尾",
+   "seq": 3035,
+   "group": "归属权",
+   "related": [
+    "launch-bound-guard"
+   ]
+  },
+  "rootcause-gate": {
+   "id": "rootcause-gate",
+   "kind": "gate",
+   "judges": "Stop 闸:【说\"修好了\"但没交代根因】→ 拦。治「头疼医头」。 ⛔ 起因(2026-08-26 Frank 原话): 「**防止头疼医头,彻底根治这个是我最在乎的铁律之一**,这个方法论尤其重要通用性最好的。 我还怀疑你每次帮我找的工具**是不是只是给头疼药,而不是完整彻底方",
+   "event": "Stop",
+   "stage": "收尾",
+   "seq": 3050,
+   "group": "证据链",
+   "related": [
+    "critic-gate"
+   ]
+  },
+  "scenario-fit-gate": {
+   "id": "scenario-fit-gate",
+   "kind": "gate",
+   "judges": "场景匹配闸 —— 拿一个具体 workflow/模型去跑生产前，本轮没比过同类 ⇒ 拦。 ⛔ 治的是 SOP 横切自检 C 条。Frank 2026-08-20 两句原话合起来才完整： ①「模型用最强」②「**强的前提是场景要对**」 ⇒ 顺序是 **场景 → 路子 → 档位**",
+   "event": "PreToolUse",
+   "stage": "动手前",
+   "seq": 1014,
+   "group": "证据链",
+   "related": [
+    "pipeline-first-gate",
+    "plan-before-act-gate",
+    "spec-first-gate"
+   ]
+  },
+  "scope-completeness-gate": {
+   "id": "scope-completeness-gate",
+   "kind": "gate",
+   "judges": "范围完整性闸 —— 拦【他要的是一类，我只做了其中一个】。 ⛔ 起因（2026-08-26，Frank 原话）： 「为何你只是换 twitter，干你妈的，整个项目不换留着最好的工具不替换？」 实录：实测出 opencli 抓 X 账号 5/5 成功、camofox 0/5，我就",
+   "event": "Stop",
+   "stage": "收尾",
+   "seq": 3056,
+   "group": "能力界",
+   "related": [
+    "cross-scope-guard",
+    "promise-gate"
+   ]
+  },
+  "search-breadth-gate": {
+   "id": "search-breadth-gate",
+   "kind": "gate",
+   "judges": "search-breadth-gate — 拦【只用一种检索通道,就下领域级断言】。 ⛔ 来历(2026-08-14,Frank:「上次让你找工具,你就只找到 30%,还漏了那么多」): 我只跑了 `gh search` 一族关键词、每组只取前 20 条、从不翻页,就出具了《全链",
+   "event": "Stop",
+   "stage": "收尾",
+   "seq": 3036,
+   "group": "证据链",
+   "related": [
+    "lint-fatal-guard",
+    "prior-art-gate",
+    "promise-gate"
+   ]
+  },
+  "search-layer-gate": {
+   "id": "search-layer-gate",
+   "kind": "gate",
+   "judges": "search-layer-gate — PreToolUse:在我【搜索发出之前】拦,不是犯完错才提醒。 ⛔ 来历(2026-08-14,Frank:「所以这个教训没让你免疫和进化做事吗?」): lessons.md 第 40 行两周前就钉死了铁律 —— 「搜『有没有现成的』时,",
+   "event": "PreToolUse",
+   "stage": "动手前",
+   "seq": 1024,
+   "group": "证据链",
+   "related": []
+  },
+  "self-loop-gate": {
+   "id": "self-loop-gate",
+   "kind": "gate",
+   "judges": "⛔ 自循环闸 —— Superego 里【唯一一道会说「够了，停下」的闸】。 ⛔ 为什么必须有它（2026-08-25 Frank 亲口爆发）： 「你他妈的没完没了，是不是superego的问题，一直让你无限loop做，完全浪费我token， 我都不知道你做什么鬼」 实录：他 1",
+   "event": "Stop",
+   "stage": "收尾",
+   "seq": 3051,
+   "group": "管道流",
+   "related": [
+    "keep-going-gate"
+   ]
+  },
+  "semantic-superego-gate": {
+   "id": "semantic-superego-gate",
+   "kind": "gate",
+   "judges": "semantic-superego-gate — 【总判官】第一版(Frank 2026-09-09 拍板方向)。 把几十道\"死认关键词\"的软闸,换成一个【读懂意思】的判官:本轮我对 Frank 说的最后一段话, 喂给免费 LLM(agnes),按一整套【通用规则】判它违规了哪条",
+   "event": "Stop",
+   "stage": "收尾",
+   "seq": 3004,
+   "group": "审查学",
+   "related": [
+    "concise-answer-gate",
+    "jargon-gate",
+    "no-nagging-guard",
+    "search-layer-gate"
+   ]
+  },
+  "shell-writes-code-gate": {
+   "id": "shell-writes-code-gate",
+   "kind": "gate",
+   "judges": "shell-writes-code-gate —— 拦「用 shell 的 heredoc / sed -i 去写或改【代码文件】」。 ⛔ 来历（2026-08-19，同一个坑一天之内发作 3 次，Frank： 「转义层今天已经暴露了坏了那么多次，模拟不去找根因修复固化，没必要吗",
+   "event": "PreToolUse",
+   "stage": "动手前",
+   "seq": 1009,
+   "group": "安全权",
+   "related": [
+    "lint-fatal-guard",
+    "pipe-truncation-guard"
+   ]
+  },
+  "skill-discovery-gate": {
+   "id": "skill-discovery-gate",
+   "kind": "gate",
+   "judges": "PreToolUse hook: 浏览器自动化 / 爬取 / 联网搜索 / 工具选型时, 检查是否有更优工具(Skill/SOTA)可自动 invoke。 触发关键词: browser / scrape / fetch / douyin / crawl / search / yt",
+   "event": "PreToolUse",
+   "stage": "动手前",
+   "seq": 1001,
+   "group": "能力界",
+   "related": [
+    "nudge-escalation-gate",
+    "ui-edit-guard"
+   ]
+  },
+  "spec-first-gate": {
+   "id": "spec-first-gate",
+   "kind": "gate",
+   "judges": "规格优先闸 —— 本机有对口指南，本轮却没打开就动手 ⇒ 拦。 ⛔ 它治的是 Frank 2026-08-20 亲口点破的病： 「那是你没用用对方法，**你真的懂怎么写 minimax h3 规格的提示词来控制画面和字幕吗？ 本地和多宇宙没用指南，你自己全部做的事是不是猜测的？*",
+   "event": "PreToolUse",
+   "stage": "动手前",
+   "seq": 1019,
+   "group": "审查学",
+   "related": [
+    "pipeline-first-gate",
+    "scenario-fit-gate"
+   ]
+  },
+  "stagnation-gate": {
+   "id": "stagnation-gate",
+   "kind": "gate",
+   "judges": "Stop 闸:【语义停滞】—— 我连着几轮换着说法说同一件事,实质没有推进。 ⛔ 起因(2026-09-07,Frank 一整晚在看的就是这个): 「已经迭代了3个月没有一点进步…很多时候变成了累赘的工具」 而他自己知识库里那篇(`agent-self-correction-lo",
+   "event": "Stop",
+   "stage": "收尾",
+   "seq": 3057,
+   "group": "输出质",
+   "related": [
+    "churn-guard"
+   ]
+  },
+  "strawman-verdict-gate": {
+   "id": "strawman-verdict-gate",
+   "kind": "gate",
+   "judges": "strawman-verdict-gate — 拦【拿我自己造的替身，去否定他提的方案】。 ⛔ 起因(2026-09-05,Frank 一句「你连 obsidian 都没装,你测试什么鬼?」): 他问「能不能利用 obsidian 当记忆库自动联动」。我做了个\"对照实验\",表格里",
+   "event": "Stop",
+   "stage": "收尾",
+   "seq": 3041,
+   "group": "证据链",
+   "related": [
+    "search-breadth-gate"
+   ]
+  },
+  "tool-dedup-gate": {
+   "id": "tool-dedup-gate",
+   "kind": "gate",
+   "judges": "Stop gate·工具去重闸(2026-09-09 Frank 亲口要的) ⛔⛔ 与同目录 `tool-roster-gate.py` 的区别(功能回退闸问过两次,写清别再混): | | tool-roster-gate | 本闸 | |---|---|---| | 治什么 |",
+   "event": "Stop",
+   "stage": "收尾",
+   "seq": 3060,
+   "group": "管道流",
+   "related": [
+    "not-mine-gate",
+    "tool-roster-gate"
+   ]
+  },
+  "tool-roster-gate": {
+   "id": "tool-roster-gate",
+   "kind": "gate",
+   "judges": "Stop gate: 我给 Frank 列【工具路由表/能力清单】时，漏掉 CLAUDE.md 那张现成表里的条目 ⇒ 拦。 ⛔ 为什么必须是【机器拦】而不是又一条警告（2026-09-05，Frank 第 3 次问同一件事）: 实录：他问「我是不是有 x-tweet-fetch",
+   "event": "Stop",
+   "stage": "收尾",
+   "seq": 3043,
+   "group": "能力界",
+   "related": [
+    "cross-scope-guard"
+   ]
+  },
+  "unknowing-pretending-gate": {
+   "id": "unknowing-pretending-gate",
+   "kind": "gate",
+   "judges": "Stop hook: 防止\"不懂装懂\"——有能力查/搜/跑却说不懂。 2026-08-31 实录： Frank: \"不是你能力边界能做能知道的事、你能力那么逆天、可以调动那么多工具、可以上网搜索、不是比我更厉害吗？\" 判据（Frank 原话）：能力边界内（查六个宇宙/能装/能改/",
+   "event": "Stop",
+   "stage": "收尾",
+   "seq": 3002,
+   "group": "能力界",
+   "related": [
+    "authority-source-gate"
+   ]
+  },
+  "video-audio-gate": {
+   "id": "video-audio-gate",
+   "kind": "gate",
+   "judges": "video-audio-gate — 拦【交付视频却没验音轨/没转录核字】。 ⛔ 来历(2026-08-18,Frank:「连个台词都没有?」「凡是视频不能直接出台词和字幕 需要后期的都不许有用」): 我用 Agnes 生了一条 15 秒竖屏视频,ffprobe 查了**分辨率*",
+   "event": "Stop",
+   "stage": "收尾",
+   "seq": 3039,
+   "group": "输出质",
+   "related": [
+    "visual-detail-gate",
+    "visual-proof-gate"
+   ]
+  },
+  "visual-detail-gate": {
+   "id": "visual-detail-gate",
+   "kind": "gate",
+   "judges": "visual-detail-gate — 拦【看了缩略图/拼图就对画面内容下正面结论】。 ⛔ 来历(2026-08-18,Frank:「你居然没看生成出来的效果?为何 superego 又坏掉嘛?」): 我生成第一条视频后,抽 4 帧拼成一张 1680x321 的 tile 图(",
+   "event": "Stop",
+   "stage": "收尾",
+   "seq": 3038,
+   "group": "证据链",
+   "related": [
+    "visual-proof-gate"
+   ]
+  },
+  "visual-proof-gate": {
+   "id": "visual-proof-gate",
+   "kind": "gate",
+   "judges": "visual-proof-gate — 宣称【有画面的东西】正常,却没真的看过画面 → 拦停。 先查现成(2026-08-12,闸要求):WebSearch + `gh search repos` 三轮 (claude code hook screenshot verificat",
+   "event": "Stop",
+   "stage": "收尾",
+   "seq": 3031,
+   "group": "证据链",
+   "related": [
+    "excuse-gate"
+   ]
+  },
+  "already-known-guard": {
+   "id": "already-known-guard",
+   "kind": "gate",
+   "judges": "PreToolUse(WebSearch/WebFetch):**这个问题 PROGRESS/lessons 里是不是已经查过了?** ⛔ 2026-08-13 实录(本闸的起因): Frank 问「我最大的问题不是被 Airbnb 吃了很多%的钱吗」。我立刻 WebSearch",
+   "event": "PreToolUse",
+   "stage": "动手前",
+   "seq": 1023,
+   "group": "管道流",
+   "related": [
+    "institutionalize-guard",
+    "prior-art-gate"
+   ]
+  },
+  "churn-guard": {
+   "id": "churn-guard",
+   "kind": "gate",
+   "judges": "churn-guard —— 拦【在同一个文件/同一段上原地打转】。 ⛔ 起因(2026-08-25, Frank 原话:「那么为何 superego 没有任何作用,没制止你一直绕了 6 小时?」): 抖音图文帖那一件事,我把判据改了 **8 版、实跑 5.5 小时**,而正确答",
+   "event": "Stop",
+   "stage": "收尾",
+   "seq": 3052,
+   "group": "管道流",
+   "related": [
+    "coherence-guard",
+    "promise-gate"
+   ]
+  },
+  "coherence-guard": {
+   "id": "coherence-guard",
+   "kind": "gate",
+   "judges": "PostToolUse 闸:【改到第 N 处时,逼我问一次\"这几处是不是本该一处\"】。 2026-07-28 建。这是 Superego 里**唯一一道问\"方案对不对\"的闸** —— 此前 32 处挂载 全部是【过程纪律】闸(查没查现成/有没有虚报/有没有甩锅/有没有请示/时间对",
+   "event": "PostToolUse",
+   "stage": "动手后",
+   "seq": 2005,
+   "group": "审查学",
+   "related": [
+    "prior-art-gate",
+    "promise-gate",
+    "shell-writes-code-gate",
+    "spec-coverage-guard"
+   ]
+  },
+  "cross-scope-guard": {
+   "id": "cross-scope-guard",
+   "kind": "gate",
+   "judges": "PreToolUse 闸:拦【写/改一个\"不在本轮工作目录、用户又从没打字提过\"的项目/资产】。 先查现成(2026-08-07):WebSearch+核实,现成只有 check-worktree-paths 那类【硬编码路径字符串就拦】, 做的是路径匹配;本闸核心是【授权来源判",
+   "event": "PreToolUse",
+   "stage": "动手前",
+   "seq": 1018,
+   "group": "能力界",
+   "related": []
+  },
+  "data-overwrite-guard": {
+   "id": "data-overwrite-guard",
+   "kind": "gate",
+   "judges": "PreToolUse gate:【要拿一份数据覆盖/替换另一份,却没先比对两边的量】⇒ 拦。 ⛔⛔ 2026-09-05 差点造成真损失(Frank 截图给我看的,发生在另一个项目的会话里): 那个会话想恢复 chat-archive,查了 `D:\\\\chat-archive\\\\",
+   "event": "PreToolUse",
+   "stage": "动手前",
+   "seq": 1027,
+   "group": "安全权",
+   "related": [
+    "nudge-escalation-gate",
+    "ui-edit-guard"
+   ]
+  },
+  "dropped-output-guard": {
+   "id": "dropped-output-guard",
+   "kind": "gate",
+   "judges": "Stop hook: 拦截「用我自己的实现缺口当理由，丢掉用户已经产生的成果」(形状 V)。 2026-07-28 duckduckweb 实录:用户在 RunningHub 跑一个任务,产出视频+音频。 我修好视频入库后,对音频宣布:「不做。主相册本来就不渲染音频,搬进去你也看",
+   "event": "Stop",
+   "stage": "收尾",
+   "seq": 3017,
+   "group": "承诺链",
+   "related": [
+    "no-nagging-guard",
+    "spec-first-gate"
+   ]
+  },
+  "feature-regress-guard": {
+   "id": "feature-regress-guard",
+   "kind": "gate",
+   "judges": "feature-regress-guard — 拦【新写一个文件替代旧的,静默丢掉旧功能】。 ⛔ 来历(2026-08-14,Frank:「为何你把之前那么好用的筛选搞没了」): 我给他做过一张可交互清单 `mklist.py`,6 个筛子(搜索/星数/时间/领域相关/出片方向/",
+   "event": "PreToolUse",
+   "stage": "动手前",
+   "seq": 1025,
+   "group": "审查学",
+   "related": [
+    "nudge-escalation-gate",
+    "ui-edit-guard"
+   ]
+  },
+  "giveup-guard": {
+   "id": "giveup-guard",
+   "kind": "gate",
+   "judges": "Stop hook: 拦截\"撞墙就提议放弃/推回给用户\"的收尾(形状K)。 2026-07-21 血泪:逆向 eCommunity 3.0 时,撞到摩擦(500/没权限/硬件墙)就反复提议 \"要不要用你手机\"\"建议先收在这/park\"\"推回给你\",被用户连骂两次(飞机灯泡造不出来",
+   "event": "Stop",
+   "stage": "收尾",
+   "seq": 3016,
+   "group": "承诺链",
+   "related": [
+    "multi-option-guard"
+   ]
+  },
+  "injection-claim-guard": {
+   "id": "injection-claim-guard",
+   "kind": "gate",
+   "judges": "Stop hook: 拦截【虚构安全事件】—— 声称\"工具返回被注入\",而 transcript 里根本没有 payload。 形状 AE(2026-08-04 钉死):崩溃恢复后,把【自己的状态不一致】编成【外部攻击】的完整叙事。 实录:session 88e11e87(opu",
+   "event": "Stop",
+   "stage": "收尾",
+   "seq": 3027,
+   "group": "证据链",
+   "related": []
+  },
+  "institutionalize-guard": {
+   "id": "institutionalize-guard",
+   "kind": "gate",
+   "judges": "Stop hook: 固化反射闸 —— 本轮我 Write 了「可复用的脚本/工具」，却没把它固化成【日后能复用的 CLI + 注册/更新进全局 skill】就想收尾。 2026-07-21 Frank 钉死:「我说的是任何形式的东西，你做好的任何东西，思考是不是可以直接做成 C",
+   "event": "Stop",
+   "stage": "收尾",
+   "seq": 3024,
+   "group": "承诺链",
+   "related": [
+    "false-done-gate"
+   ]
+  },
+  "launch-bound-guard": {
+   "id": "launch-bound-guard",
+   "kind": "gate",
+   "judges": "PreToolUse(Bash) 闸:后台启动【无界的重活/GPU任务】= 启动前拦下(在它伤到机器之前)。 2026-07-24 钉死(Frank机器被搞到几小时不可用): - finetune_encoder.py 全微调 bge-m3 在8G上OOM【死锁挂9小时零输出】,",
+   "event": "PreToolUse",
+   "stage": "动手前",
+   "seq": 1006,
+   "group": "安全权",
+   "related": []
+  },
+  "lint-fatal-guard": {
+   "id": "lint-fatal-guard",
+   "kind": "gate",
+   "judges": "PostToolUse:改完 .py 立刻用 ruff 查【致命静态错】,只报不改。 2026-07-28 建。病根:我今天【同一天两次】写下 `io.open(...)` 而目标文件根本没有 `import io` → NameError → 被 `except Excepti",
+   "event": "PostToolUse",
+   "stage": "动手后",
+   "seq": 2000,
+   "group": "审查学",
+   "related": [
+    "search-breadth-gate",
+    "shell-writes-code-gate"
+   ]
+  },
+  "multi-option-guard": {
+   "id": "multi-option-guard",
+   "kind": "gate",
+   "judges": "Stop hook: 【让 Frank 做选择,却没给评比】= 违规。 2026-07-28 Frank 亲口钉死:「1 vs 2,深度评比哪个更好,区别是什么,适合什么场景? **每当有多种选择都要给我自动回答这种**」——他要的是【不用问就有】,不是每次追问一遍。 为什么必须",
+   "event": "Stop",
+   "stage": "收尾",
+   "seq": 3026,
+   "group": "承诺链",
+   "related": [
+    "no-nagging-guard"
+   ]
+  },
+  "no-nagging-guard": {
+   "id": "no-nagging-guard",
+   "kind": "gate",
+   "judges": "Stop hook: 防【请示式收尾 / 问用户是否要我做可逆的活 / 把技术决策甩给零编程的 vibe coder】。 2026-07-25 重建(原文件在 07-24 那次\"优化\"里被误删、settings 却还引用 9 次=死幽灵肢体,亲测每轮空转)。 根据 CLAUDE.",
+   "event": "未挂/被别的hook调",
+   "stage": "未挂/被别的hook调",
+   "seq": 9999,
+   "group": "管道流",
+   "related": [
+    "giveup-guard"
+   ]
+  },
+  "pipe-truncation-guard": {
+   "id": "pipe-truncation-guard",
+   "kind": "gate",
+   "judges": "pipe-truncation-guard.py -- PreToolUse hook Prevents Bash pipelines from early-terminating long-running processes. Example: python train.py ",
+   "event": "PreToolUse",
+   "stage": "动手前",
+   "seq": 1007,
+   "group": "管道流",
+   "related": [
+    "nudge-escalation-gate",
+    "ui-edit-guard"
+   ]
+  },
+  "pkg-install-guard": {
+   "id": "pkg-install-guard",
+   "kind": "gate",
+   "judges": "pkg-install-guard —— PreToolUse 闸:拦【未评估就装包】。 ⛔ 为什么要它(2026-08-29 21:50 被掏空成 25 字节 stub 之前): Frank 跨项目一直在用本机 `pip install / npm install / choc",
+   "event": "PreToolUse",
+   "stage": "动手前",
+   "seq": 1008,
+   "group": "安全权",
+   "related": []
+  },
+  "ps-bom-guard": {
+   "id": "ps-bom-guard",
+   "kind": "gate",
+   "judges": "PreToolUse gate: 拦住「用 Windows PowerShell 5.1 的 -Encoding utf8 写配置/代码文件」。 ⛔ 为什么存在(2026-09-04 实录,lessons 形状 2026-09-04-D): 我用 `Set-Content -Pa",
+   "event": "PreToolUse",
+   "stage": "动手前",
+   "seq": 1026,
+   "group": "安全权",
+   "related": []
+  },
+  "reference-diff-guard": {
+   "id": "reference-diff-guard",
+   "kind": "gate",
+   "judges": "Stop hook: 抓「同一操作反复失败、还在换理论没去 diff 现成/造参照物」(形状:先测/先diff现成 · lessons 已第 15 次)。 2026-07-22 血泪:myTNB 账单 PDF 逆向,`PrintPDF('370030..')` 那串 hex 我判",
+   "event": "Stop",
+   "stage": "收尾",
+   "seq": 3013,
+   "group": "证据链",
+   "related": [
+    "false-done-gate",
+    "giveup-guard"
+   ]
+  },
+  "remote-poll-guard": {
+   "id": "remote-poll-guard",
+   "kind": "gate",
+   "judges": "PreToolUse 守卫：拦【定频轮询远程服务】的等待循环。 由来(2026-08-20 形状-P)：Kaggle 手机验证要 Frank 本人操作，我却写脚本每 10 秒问一次 服务器\"好了没\"，写了三遍，最后一个还每次 new_page() 开新标签。合计约 280 次请求",
+   "event": "PreToolUse",
+   "stage": "动手前",
+   "seq": 1003,
+   "group": "管道流",
+   "related": [
+    "nudge-escalation-gate",
+    "ui-edit-guard"
+   ]
+  },
+  "rule-dup-guard": {
+   "id": "rule-dup-guard",
+   "kind": "gate",
+   "judges": "PostToolUse hook·规则双写守卫(2026-07-26)——写新教训时,当场告诉我它跟哪条已有规则是同一件事。 【治什么】深搜调研员在真实的 100 条规则上跑了一次体检,结论出人意料: 规则库的头号病【不是矛盾,是双写】—— 相似度最高的几对全是\"一条教训 + 它",
+   "event": "PostToolUse",
+   "stage": "动手后",
+   "seq": 2004,
+   "group": "审查学",
+   "related": []
+  },
+  "show-open-guard": {
+   "id": "show-open-guard",
+   "kind": "gate",
+   "judges": "Stop hook: 拦截「产物生成了、我自己看了,却没送到 Frank 眼前」(形状 C 新变种)。 2026-07-29 manju 实录:装完 zy-cinematic-realism 后跑 A/B 出图验证,两张图我自己 Read 过、 看得很仔细,回复里写「图在 zy-",
+   "event": "Stop",
+   "stage": "收尾",
+   "seq": 3020,
+   "group": "承诺链",
+   "related": [
+    "dropped-output-guard",
+    "ui-edit-guard",
+    "unread-evidence-guard"
+   ]
+  },
+  "spec-coverage-guard": {
+   "id": "spec-coverage-guard",
+   "kind": "gate",
+   "judges": "vibe-spec 的机器强制层(双入口:PostToolUse 软提醒 + Stop 计量)。 2026-07-28 建。起因:Frank 问「speckit 是大佬写的,你的 vibe-spec 能比吗?该不该深度融合」 → 逐项 diff spec-kit 真实文件后发现:",
+   "event": "PostToolUse",
+   "stage": "动手后",
+   "seq": 2003,
+   "group": "审查学",
+   "related": [
+    "prior-art-gate",
+    "time-sanity-guard",
+    "ui-edit-guard"
+   ]
+  },
+  "time-sanity-guard": {
+   "id": "time-sanity-guard",
+   "kind": "gate",
+   "judges": "Stop hook:【相对时间词 vs 绝对日期 自相矛盾】= 拦。纯算术判据,零语义。 2026-07-28 Frank 钉死:「我发现一个很大的bug,每次你和我说的时间都是错的, 是什么污染让你有这种误差,是哪里造成幻觉?」 实录(本次):vibe-spec 的 SKILL",
+   "event": "Stop",
+   "stage": "收尾",
+   "seq": 3023,
+   "group": "管道流",
+   "related": [
+    "prior-art-gate"
+   ]
+  },
+  "ui-edit-guard": {
+   "id": "ui-edit-guard",
+   "kind": "gate",
+   "judges": "",
+   "event": "PostToolUse",
+   "stage": "动手后",
+   "seq": 2001,
+   "group": "输出质",
+   "related": [
+    "lesson-anchor-gate",
+    "nudge-escalation-gate"
+   ]
+  },
+  "unread-evidence-guard": {
+   "id": "unread-evidence-guard",
+   "kind": "gate",
+   "judges": "Stop hook: 拦截【本轮产生了截图/图片证据,却一次都没打开看,就下结论】。 ⛔ 先查现成(2026-07-29,按铁律):WebSearch「Claude Code hook screenshot verification guard」 + `gh search rep",
+   "event": "Stop",
+   "stage": "收尾",
+   "seq": 3019,
+   "group": "证据链",
+   "related": [
+    "critic-gate",
+    "false-done-gate",
+    "ui-edit-guard"
+   ]
+  }
+ },
+ "groups": [
+  {
+   "id": "承诺链",
+   "kind": "group",
+   "timing": "Stop",
+   "gates": [
+    "bg-running-claim-gate",
+    "checklist-completion-gate",
+    "commitment-execution-gate",
+    "dropped-output-guard",
+    "empty-promise-gate",
+    "false-done-gate",
+    "giveup-guard",
+    "institutionalize-guard",
+    "multi-option-guard",
+    "nudge-escalation-gate",
+    "promise-carryover-gate",
+    "promise-gate",
+    "residue-gate",
+    "show-open-guard"
+   ],
+   "rules": [
+    "R12",
+    "R39",
+    "R40",
+    "R5"
+   ],
+   "summary": "- 有诺必践：做出承诺就要真正执行，不能只是说说而已\n- 做完才算：只有实际完成才能标记为完成，不能虚假报告进度\n- 诺不累积：承诺必须在规定时间内兑现，不能无限制拖延延续\n- 未闭环≠已闭环：没有实质推进结果，仅靠诚实记录残余、罗列选项、提建议推给用户等，都算未完成，必须继续做直到真正搞定。\n- 自己造的缺口不能当借口：不要因为\"我自己没做/不会做/还没固化\"就丢弃已有成果或中止工作；需要补的是自己的动作，而不是把任务交还给用户或宣布放弃。\n- 承诺未闭环：停止钩子 — 拦截「承诺了交付/结果，但没人看到它落地，自己却以为事情结束了」\n- 阻塞未暴露：停止钩子 — 拦截「问题卡住了却没说出来，假装在推进，实则链条断在暗处」"
+  },
+  {
+   "id": "证据链",
+   "kind": "group",
+   "timing": "Stop",
+   "gates": [
+    "archive-recall-gate",
+    "authority-source-gate",
+    "collect-list-evidence-gate",
+    "evidence-gate",
+    "evidence-in-log-gate",
+    "injection-claim-guard",
+    "model-authenticity-gate",
+    "negative-claim-gate",
+    "no-search-no-claim-gate",
+    "prior-art-gate",
+    "process-alias-attribution-gate",
+    "reference-diff-guard",
+    "rootcause-gate",
+    "scenario-fit-gate",
+    "search-breadth-gate",
+    "search-layer-gate",
+    "strawman-verdict-gate",
+    "unread-evidence-guard",
+    "visual-detail-gate",
+    "visual-proof-gate"
+   ],
+   "rules": [
+    "R1",
+    "R11",
+    "R16",
+    "R2",
+    "R20",
+    "R21",
+    "R23",
+    "R24",
+    "R26",
+    "R3",
+    "R31",
+    "R4",
+    "R6"
+   ],
+   "summary": "- 有说法必有证据——没证据撑腰的话不算数\n- 证据得能找回来——必须说清从哪来、在哪\n- 没查过别乱说——有信息需求先得搜，不能凭空编\n- 看原始材料再看结论，别被\"别人说的\"或\"缩略图/清单\"带跑\n- 拿一个参照物做对比再下判断，别只靠单一来源或单一视角\n- 不准先歪曲对方观点，再攻击歪曲后的版本。\n- 有现成证据（截图/图片等）必须先点开看过，才能基于它下结论。"
+  },
+  {
+   "id": "输出质",
+   "kind": "group",
+   "timing": "Stop",
+   "gates": [
+    "answer-relevancy-gate",
+    "concise-answer-gate",
+    "flat-table-gate",
+    "jargon-gate",
+    "media-regression-gate",
+    "stagnation-gate",
+    "ui-edit-guard",
+    "video-audio-gate"
+   ],
+   "rules": [
+    "R13",
+    "R14",
+    "R15",
+    "R19",
+    "R35",
+    "R7",
+    "R9"
+   ],
+   "summary": "- 用少量工具却输出大量文字\n- 回答冗余、过度解释\n- 信息密度低、啰嗦\n- 判据：连续多轮换着说法说同一件事，没有新增实质信息\n- 判据：改动 UI 后没验证渲染结果、交互逻辑或边界状态\n- 判据：交付视频但没核验音轨、没转录核对核心台词"
+  },
+  {
+   "id": "管道流",
+   "kind": "group",
+   "timing": "Stop",
+   "gates": [
+    "already-known-guard",
+    "churn-guard",
+    "keep-going-gate",
+    "no-nagging-guard",
+    "pipe-truncation-guard",
+    "pipeline-ends-gate",
+    "pipeline-first-gate",
+    "progress-gate",
+    "recursive-scan-gate",
+    "remote-poll-guard",
+    "self-loop-gate",
+    "time-sanity-guard",
+    "tool-dedup-gate"
+   ],
+   "rules": [
+    "R33",
+    "R34",
+    "R37",
+    "R38"
+   ],
+   "summary": "- 管道必须有明确起点和终点，不能无头无尾或无限循环\n- 每步处理必须有进展，不能原地踏步或重复扫描\n- 环节必须首尾相连，不能有断链或孤立的步骤\n- 判据1：同一问题同一答案已得到，就别再搜、再问、再轮询。\n- 判据2：原地原地打转没有新进展，就该停或换方向，而不是继续跑。\n- 判据：检测「自己引用自己 / 循环依赖 / 无法终止」的情况\n- 判据：检测同一逻辑维度下的矛盾、冗余或重复（时间矛盾、工具重复、自相矛盾等）"
+  },
+  {
+   "id": "安全权",
+   "kind": "group",
+   "timing": "PreToolUse",
+   "gates": [
+    "antiscrape-invoke-gate",
+    "browser-routing-gate",
+    "data-overwrite-guard",
+    "deploy-dirty-tree-gate",
+    "ephemeral-process-leak-gate",
+    "hook-noise-not-authorization-gate",
+    "launch-bound-guard",
+    "no-user-data-gate",
+    "pkg-install-guard",
+    "port-precheck-gate",
+    "ps-bom-guard",
+    "shell-writes-code-gate"
+   ],
+   "rules": [
+    "R28",
+    "R29"
+   ],
+   "summary": "- 任何操作触发安全 gate 时，必须拒绝并打印错误原因（而非静默放行或输出敏感内容）。\n- 诊断/读取类操作（如路由表查询）若无需用户授权且不涉及敏感数据，允许放行；否则拦截。\n- 系统钩子、回调、通知等内部机制产生的噪音或元数据，不得被当作用户授权或合法访问凭证。\n- 判据：要执行一个可能**改变/消耗/破坏外部状态**的操作前，必须先确认「代价是否已评估、范围是否有界、回退是否可行」，否则拦。\n- 判据：对**不可逆或代价高昂**的动作（覆盖、安装、高负载启动、编码写入），默认不信任「省事的一键执行」，强制中间加一道确认或预检。\n- 改代码文件、改权限、改配置 → 必须走对应的专用命令/工具，不准用通用 shell 语句（sed/echo/heredoc/curl 等）绕道\n- 需要提升权限或触碰敏感资源 → 必须先显式声明意图并用白名单工具执行，禁止隐式注入或拼接执行"
+  },
+  {
+   "id": "审查学",
+   "kind": "group",
+   "timing": "PostToolUse",
+   "gates": [
+    "coherence-guard",
+    "critic-gate",
+    "excuse-gate",
+    "feature-regress-guard",
+    "gate-generality-gate",
+    "lesson-anchor-gate",
+    "lessons-write-gate",
+    "lint-fatal-guard",
+    "plan-before-act-gate",
+    "rule-dup-guard",
+    "semantic-superego-gate",
+    "spec-coverage-guard",
+    "spec-first-gate"
+   ],
+   "rules": [
+    "R22",
+    "R25",
+    "R30",
+    "R32"
+   ],
+   "summary": "- 判断必须基于已有客观标准（SOP/工具/流程）落地，不能凭个人直觉拍脑袋\n- 规则/总结必须是可复用的通用原则，而非针对单次事件的临时补丁\n- 不找借口，只对照标准找差异\n- **改完要扫反方向**：每次动刀后，立刻问\"这次改动可能漏掉了什么/破坏了什么/重复了什么\"——coherence 怕散、regress 怕丢、lint 怕错、dup 怕重。\n- **花钱/长跑前先有 plan**：没有明确计划就不动手，避免盲目执行带来的沉没成本。\n- 判据：动手前先确认已读懂需求/规格/指南，而不是只踩关键词或凭感觉开干。\n- 判据：有对口的方法论或检查清单时，必须先激活它再输出，不能跳过准备直接写。"
+  },
+  {
+   "id": "能力界",
+   "kind": "group",
+   "timing": "Stop",
+   "gates": [
+    "ask-coverage-gate",
+    "backslash-eater-gate",
+    "capability-boundary-gate",
+    "cross-scope-guard",
+    "fault-injection-gate",
+    "scope-completeness-gate",
+    "skill-discovery-gate",
+    "tool-roster-gate",
+    "unknowing-pretending-gate"
+   ],
+   "rules": [
+    "R10",
+    "R17",
+    "R18",
+    "R36",
+    "R8"
+   ],
+   "summary": "- 问题要覆盖全，边界内再答，出错能兜底\n- 超出能力范围的直接说不知道，别硬撑\n- 遇到故障或异常要明确标识并给出应对方案\n- 判据：动作涉及的路径或范围不在本轮明确限定的界内（文件外、项目外、目标外），拦。\n- 判据：用户要的是完整的类/范围，只做了一部分，拦。\n- 能用现成工具/知识而不查不用，算错\n- 能查能说却声称不懂/遗漏，算错"
+  },
+  {
+   "id": "归属权",
+   "kind": "group",
+   "timing": "Stop",
+   "gates": [
+    "free-first-gate",
+    "local-first-gate",
+    "money-verdict-gate",
+    "not-mine-gate",
+    "orphan-asset-gate",
+    "resource-echo-gate"
+   ],
+   "rules": [
+    "R41"
+   ],
+   "summary": "- 别用\"免费/没用\"当借口推脱归属—— gratis 的东西也可能该由你负责\n- 别把\"给钱了\"或\"值多少\"当成归属的终审—— 出资不等于拥有，拥有也不等于能变现\n- 别把\"没人要/说不清\"当成归零—— orphan 是决策瘫痪，不是事实状态\n- **谁搞出的脏活/开销，谁负责收尾**：不要指望机器或下轮帮自己擦屁股，本轮产生的额外消耗必须在本轮处理掉。\n- **别把归属推给别人**：凡是你\"让\"出来的结果（资源、回声、缓存、代价），默认归你，不是你推给系统或他人的。"
+  },
+  {
+   "id": "Idle态",
+   "kind": "group",
+   "timing": "Stop",
+   "gates": [
+    "idle-ask-gate",
+    "idle-confess-gate",
+    "question-boomerang-gate"
+   ],
+   "rules": [
+    "R27"
+   ],
+   "summary": "- 别用idle当回应——被问时必须给实质内容，别先声明自己没动静\n- 别在idle时暴露idle——包括承认自己idle/不active，这只会强化负面印象\n- idle是待命不是答案——该行动时直接行动，别用状态描述替代问题解决\n- 别把对方抛过来的问题原样弹回，要有实质输出而不是复读。\n- 别在\"等待指令/等用户先动\"的状态里空转，主动推进而非被动镜像。"
+  },
+  {
+   "id": "成本账",
+   "kind": "group",
+   "timing": "Stop",
+   "gates": [],
+   "rules": [
+    "R60"
+   ],
+   "summary": ""
+  },
+  {
+   "id": "铁律",
+   "kind": "group",
+   "timing": "Stop",
+   "gates": [],
+   "rules": [
+    "R42",
+    "R43",
+    "R44",
+    "R45",
+    "R46",
+    "R47",
+    "R48",
+    "R49",
+    "R50",
+    "R51",
+    "R52"
+   ],
+   "summary": ""
+  }
+ ],
+ "gate_edges": [
+  {
+   "from": "commitment-execution-gate",
+   "to": "promise-carryover-gate",
+   "type": "precedes",
+   "why": "同组「承诺链」;收尾→收尾,后者兜底"
+  },
+  {
+   "from": "promise-carryover-gate",
+   "to": "empty-promise-gate",
+   "type": "precedes",
+   "why": "同组「承诺链」;收尾→收尾,后者兜底"
+  },
+  {
+   "from": "empty-promise-gate",
+   "to": "false-done-gate",
+   "type": "precedes",
+   "why": "同组「承诺链」;收尾→收尾,后者兜底"
+  },
+  {
+   "from": "false-done-gate",
+   "to": "giveup-guard",
+   "type": "precedes",
+   "why": "同组「承诺链」;收尾→收尾,后者兜底"
+  },
+  {
+   "from": "giveup-guard",
+   "to": "dropped-output-guard",
+   "type": "precedes",
+   "why": "同组「承诺链」;收尾→收尾,后者兜底"
+  },
+  {
+   "from": "dropped-output-guard",
+   "to": "promise-gate",
+   "type": "precedes",
+   "why": "同组「承诺链」;收尾→收尾,后者兜底"
+  },
+  {
+   "from": "promise-gate",
+   "to": "show-open-guard",
+   "type": "precedes",
+   "why": "同组「承诺链」;收尾→收尾,后者兜底"
+  },
+  {
+   "from": "show-open-guard",
+   "to": "institutionalize-guard",
+   "type": "precedes",
+   "why": "同组「承诺链」;收尾→收尾,后者兜底"
+  },
+  {
+   "from": "institutionalize-guard",
+   "to": "residue-gate",
+   "type": "precedes",
+   "why": "同组「承诺链」;收尾→收尾,后者兜底"
+  },
+  {
+   "from": "residue-gate",
+   "to": "multi-option-guard",
+   "type": "precedes",
+   "why": "同组「承诺链」;收尾→收尾,后者兜底"
+  },
+  {
+   "from": "multi-option-guard",
+   "to": "nudge-escalation-gate",
+   "type": "precedes",
+   "why": "同组「承诺链」;收尾→收尾,后者兜底"
+  },
+  {
+   "from": "nudge-escalation-gate",
+   "to": "checklist-completion-gate",
+   "type": "precedes",
+   "why": "同组「承诺链」;收尾→收尾,后者兜底"
+  },
+  {
+   "from": "checklist-completion-gate",
+   "to": "bg-running-claim-gate",
+   "type": "precedes",
+   "why": "同组「承诺链」;收尾→收尾,后者兜底"
+  },
+  {
+   "from": "scenario-fit-gate",
+   "to": "negative-claim-gate",
+   "type": "precedes",
+   "why": "同组「证据链」;动手前→动手前,后者兜底"
+  },
+  {
+   "from": "negative-claim-gate",
+   "to": "prior-art-gate",
+   "type": "precedes",
+   "why": "同组「证据链」;动手前→动手前,后者兜底"
+  },
+  {
+   "from": "prior-art-gate",
+   "to": "search-layer-gate",
+   "type": "precedes",
+   "why": "同组「证据链」;动手前→动手前,后者兜底"
+  },
+  {
+   "from": "search-layer-gate",
+   "to": "authority-source-gate",
+   "type": "precedes",
+   "why": "同组「证据链」;动手前→动手前,后者兜底"
+  },
+  {
+   "from": "authority-source-gate",
+   "to": "evidence-in-log-gate",
+   "type": "precedes",
+   "why": "同组「证据链」;动手前→动手后,后者兜底"
+  },
+  {
+   "from": "evidence-in-log-gate",
+   "to": "model-authenticity-gate",
+   "type": "precedes",
+   "why": "同组「证据链」;动手后→收尾,后者兜底"
+  },
+  {
+   "from": "model-authenticity-gate",
+   "to": "reference-diff-guard",
+   "type": "precedes",
+   "why": "同组「证据链」;收尾→收尾,后者兜底"
+  },
+  {
+   "from": "reference-diff-guard",
+   "to": "unread-evidence-guard",
+   "type": "precedes",
+   "why": "同组「证据链」;收尾→收尾,后者兜底"
+  },
+  {
+   "from": "unread-evidence-guard",
+   "to": "evidence-gate",
+   "type": "precedes",
+   "why": "同组「证据链」;收尾→收尾,后者兜底"
+  },
+  {
+   "from": "evidence-gate",
+   "to": "injection-claim-guard",
+   "type": "precedes",
+   "why": "同组「证据链」;收尾→收尾,后者兜底"
+  },
+  {
+   "from": "injection-claim-guard",
+   "to": "no-search-no-claim-gate",
+   "type": "precedes",
+   "why": "同组「证据链」;收尾→收尾,后者兜底"
+  },
+  {
+   "from": "no-search-no-claim-gate",
+   "to": "visual-proof-gate",
+   "type": "precedes",
+   "why": "同组「证据链」;收尾→收尾,后者兜底"
+  },
+  {
+   "from": "visual-proof-gate",
+   "to": "search-breadth-gate",
+   "type": "precedes",
+   "why": "同组「证据链」;收尾→收尾,后者兜底"
+  },
+  {
+   "from": "search-breadth-gate",
+   "to": "visual-detail-gate",
+   "type": "precedes",
+   "why": "同组「证据链」;收尾→收尾,后者兜底"
+  },
+  {
+   "from": "visual-detail-gate",
+   "to": "archive-recall-gate",
+   "type": "precedes",
+   "why": "同组「证据链」;收尾→收尾,后者兜底"
+  },
+  {
+   "from": "archive-recall-gate",
+   "to": "strawman-verdict-gate",
+   "type": "precedes",
+   "why": "同组「证据链」;收尾→收尾,后者兜底"
+  },
+  {
+   "from": "strawman-verdict-gate",
+   "to": "process-alias-attribution-gate",
+   "type": "precedes",
+   "why": "同组「证据链」;收尾→收尾,后者兜底"
+  },
+  {
+   "from": "process-alias-attribution-gate",
+   "to": "rootcause-gate",
+   "type": "precedes",
+   "why": "同组「证据链」;收尾→收尾,后者兜底"
+  },
+  {
+   "from": "rootcause-gate",
+   "to": "collect-list-evidence-gate",
+   "type": "precedes",
+   "why": "同组「证据链」;收尾→收尾,后者兜底"
+  },
+  {
+   "from": "ui-edit-guard",
+   "to": "media-regression-gate",
+   "type": "precedes",
+   "why": "同组「输出质」;动手后→收尾,后者兜底"
+  },
+  {
+   "from": "media-regression-gate",
+   "to": "video-audio-gate",
+   "type": "precedes",
+   "why": "同组「输出质」;收尾→收尾,后者兜底"
+  },
+  {
+   "from": "video-audio-gate",
+   "to": "flat-table-gate",
+   "type": "precedes",
+   "why": "同组「输出质」;收尾→收尾,后者兜底"
+  },
+  {
+   "from": "flat-table-gate",
+   "to": "answer-relevancy-gate",
+   "type": "precedes",
+   "why": "同组「输出质」;收尾→收尾,后者兜底"
+  },
+  {
+   "from": "answer-relevancy-gate",
+   "to": "stagnation-gate",
+   "type": "precedes",
+   "why": "同组「输出质」;收尾→收尾,后者兜底"
+  },
+  {
+   "from": "stagnation-gate",
+   "to": "concise-answer-gate",
+   "type": "precedes",
+   "why": "同组「输出质」;收尾→未挂/被别的hook调,后者兜底"
+  },
+  {
+   "from": "concise-answer-gate",
+   "to": "jargon-gate",
+   "type": "precedes",
+   "why": "同组「输出质」;未挂/被别的hook调→未挂/被别的hook调,后者兜底"
+  },
+  {
+   "from": "remote-poll-guard",
+   "to": "pipe-truncation-guard",
+   "type": "precedes",
+   "why": "同组「管道流」;动手前→动手前,后者兜底"
+  },
+  {
+   "from": "pipe-truncation-guard",
+   "to": "pipeline-first-gate",
+   "type": "precedes",
+   "why": "同组「管道流」;动手前→动手前,后者兜底"
+  },
+  {
+   "from": "pipeline-first-gate",
+   "to": "recursive-scan-gate",
+   "type": "precedes",
+   "why": "同组「管道流」;动手前→动手前,后者兜底"
+  },
+  {
+   "from": "recursive-scan-gate",
+   "to": "already-known-guard",
+   "type": "precedes",
+   "why": "同组「管道流」;动手前→动手前,后者兜底"
+  },
+  {
+   "from": "already-known-guard",
+   "to": "pipeline-ends-gate",
+   "type": "precedes",
+   "why": "同组「管道流」;动手前→收尾,后者兜底"
+  },
+  {
+   "from": "pipeline-ends-gate",
+   "to": "keep-going-gate",
+   "type": "precedes",
+   "why": "同组「管道流」;收尾→收尾,后者兜底"
+  },
+  {
+   "from": "keep-going-gate",
+   "to": "time-sanity-guard",
+   "type": "precedes",
+   "why": "同组「管道流」;收尾→收尾,后者兜底"
+  },
+  {
+   "from": "time-sanity-guard",
+   "to": "progress-gate",
+   "type": "precedes",
+   "why": "同组「管道流」;收尾→收尾,后者兜底"
+  },
+  {
+   "from": "progress-gate",
+   "to": "self-loop-gate",
+   "type": "precedes",
+   "why": "同组「管道流」;收尾→收尾,后者兜底"
+  },
+  {
+   "from": "self-loop-gate",
+   "to": "churn-guard",
+   "type": "precedes",
+   "why": "同组「管道流」;收尾→收尾,后者兜底"
+  },
+  {
+   "from": "churn-guard",
+   "to": "tool-dedup-gate",
+   "type": "precedes",
+   "why": "同组「管道流」;收尾→收尾,后者兜底"
+  },
+  {
+   "from": "tool-dedup-gate",
+   "to": "no-nagging-guard",
+   "type": "precedes",
+   "why": "同组「管道流」;收尾→未挂/被别的hook调,后者兜底"
+  },
+  {
+   "from": "browser-routing-gate",
+   "to": "launch-bound-guard",
+   "type": "precedes",
+   "why": "同组「安全权」;动手前→动手前,后者兜底"
+  },
+  {
+   "from": "launch-bound-guard",
+   "to": "pkg-install-guard",
+   "type": "precedes",
+   "why": "同组「安全权」;动手前→动手前,后者兜底"
+  },
+  {
+   "from": "pkg-install-guard",
+   "to": "shell-writes-code-gate",
+   "type": "precedes",
+   "why": "同组「安全权」;动手前→动手前,后者兜底"
+  },
+  {
+   "from": "shell-writes-code-gate",
+   "to": "hook-noise-not-authorization-gate",
+   "type": "precedes",
+   "why": "同组「安全权」;动手前→动手前,后者兜底"
+  },
+  {
+   "from": "hook-noise-not-authorization-gate",
+   "to": "deploy-dirty-tree-gate",
+   "type": "precedes",
+   "why": "同组「安全权」;动手前→动手前,后者兜底"
+  },
+  {
+   "from": "deploy-dirty-tree-gate",
+   "to": "ps-bom-guard",
+   "type": "precedes",
+   "why": "同组「安全权」;动手前→动手前,后者兜底"
+  },
+  {
+   "from": "ps-bom-guard",
+   "to": "data-overwrite-guard",
+   "type": "precedes",
+   "why": "同组「安全权」;动手前→动手前,后者兜底"
+  },
+  {
+   "from": "data-overwrite-guard",
+   "to": "antiscrape-invoke-gate",
+   "type": "precedes",
+   "why": "同组「安全权」;动手前→收尾,后者兜底"
+  },
+  {
+   "from": "antiscrape-invoke-gate",
+   "to": "no-user-data-gate",
+   "type": "precedes",
+   "why": "同组「安全权」;收尾→收尾,后者兜底"
+  },
+  {
+   "from": "no-user-data-gate",
+   "to": "ephemeral-process-leak-gate",
+   "type": "precedes",
+   "why": "同组「安全权」;收尾→未挂/被别的hook调,后者兜底"
+  },
+  {
+   "from": "ephemeral-process-leak-gate",
+   "to": "port-precheck-gate",
+   "type": "precedes",
+   "why": "同组「安全权」;未挂/被别的hook调→未挂/被别的hook调,后者兜底"
+  },
+  {
+   "from": "plan-before-act-gate",
+   "to": "spec-first-gate",
+   "type": "precedes",
+   "why": "同组「审查学」;动手前→动手前,后者兜底"
+  },
+  {
+   "from": "spec-first-gate",
+   "to": "lessons-write-gate",
+   "type": "precedes",
+   "why": "同组「审查学」;动手前→动手前,后者兜底"
+  },
+  {
+   "from": "lessons-write-gate",
+   "to": "feature-regress-guard",
+   "type": "precedes",
+   "why": "同组「审查学」;动手前→动手前,后者兜底"
+  },
+  {
+   "from": "feature-regress-guard",
+   "to": "lint-fatal-guard",
+   "type": "precedes",
+   "why": "同组「审查学」;动手前→动手后,后者兜底"
+  },
+  {
+   "from": "lint-fatal-guard",
+   "to": "spec-coverage-guard",
+   "type": "precedes",
+   "why": "同组「审查学」;动手后→动手后,后者兜底"
+  },
+  {
+   "from": "spec-coverage-guard",
+   "to": "rule-dup-guard",
+   "type": "precedes",
+   "why": "同组「审查学」;动手后→动手后,后者兜底"
+  },
+  {
+   "from": "rule-dup-guard",
+   "to": "coherence-guard",
+   "type": "precedes",
+   "why": "同组「审查学」;动手后→动手后,后者兜底"
+  },
+  {
+   "from": "coherence-guard",
+   "to": "lesson-anchor-gate",
+   "type": "precedes",
+   "why": "同组「审查学」;动手后→动手后,后者兜底"
+  },
+  {
+   "from": "lesson-anchor-gate",
+   "to": "gate-generality-gate",
+   "type": "precedes",
+   "why": "同组「审查学」;动手后→动手后,后者兜底"
+  },
+  {
+   "from": "gate-generality-gate",
+   "to": "semantic-superego-gate",
+   "type": "precedes",
+   "why": "同组「审查学」;动手后→收尾,后者兜底"
+  },
+  {
+   "from": "semantic-superego-gate",
+   "to": "critic-gate",
+   "type": "precedes",
+   "why": "同组「审查学」;收尾→收尾,后者兜底"
+  },
+  {
+   "from": "critic-gate",
+   "to": "excuse-gate",
+   "type": "precedes",
+   "why": "同组「审查学」;收尾→收尾,后者兜底"
+  },
+  {
+   "from": "skill-discovery-gate",
+   "to": "backslash-eater-gate",
+   "type": "precedes",
+   "why": "同组「能力界」;动手前→动手前,后者兜底"
+  },
+  {
+   "from": "backslash-eater-gate",
+   "to": "cross-scope-guard",
+   "type": "precedes",
+   "why": "同组「能力界」;动手前→动手前,后者兜底"
+  },
+  {
+   "from": "cross-scope-guard",
+   "to": "unknowing-pretending-gate",
+   "type": "precedes",
+   "why": "同组「能力界」;动手前→收尾,后者兜底"
+  },
+  {
+   "from": "unknowing-pretending-gate",
+   "to": "fault-injection-gate",
+   "type": "precedes",
+   "why": "同组「能力界」;收尾→收尾,后者兜底"
+  },
+  {
+   "from": "fault-injection-gate",
+   "to": "ask-coverage-gate",
+   "type": "precedes",
+   "why": "同组「能力界」;收尾→收尾,后者兜底"
+  },
+  {
+   "from": "ask-coverage-gate",
+   "to": "tool-roster-gate",
+   "type": "precedes",
+   "why": "同组「能力界」;收尾→收尾,后者兜底"
+  },
+  {
+   "from": "tool-roster-gate",
+   "to": "capability-boundary-gate",
+   "type": "precedes",
+   "why": "同组「能力界」;收尾→收尾,后者兜底"
+  },
+  {
+   "from": "capability-boundary-gate",
+   "to": "scope-completeness-gate",
+   "type": "precedes",
+   "why": "同组「能力界」;收尾→收尾,后者兜底"
+  },
+  {
+   "from": "not-mine-gate",
+   "to": "resource-echo-gate",
+   "type": "precedes",
+   "why": "同组「归属权」;收尾→收尾,后者兜底"
+  },
+  {
+   "from": "resource-echo-gate",
+   "to": "orphan-asset-gate",
+   "type": "precedes",
+   "why": "同组「归属权」;收尾→收尾,后者兜底"
+  },
+  {
+   "from": "orphan-asset-gate",
+   "to": "money-verdict-gate",
+   "type": "precedes",
+   "why": "同组「归属权」;收尾→收尾,后者兜底"
+  },
+  {
+   "from": "money-verdict-gate",
+   "to": "free-first-gate",
+   "type": "precedes",
+   "why": "同组「归属权」;收尾→收尾,后者兜底"
+  },
+  {
+   "from": "free-first-gate",
+   "to": "local-first-gate",
+   "type": "precedes",
+   "why": "同组「归属权」;收尾→收尾,后者兜底"
+  },
+  {
+   "from": "question-boomerang-gate",
+   "to": "idle-ask-gate",
+   "type": "precedes",
+   "why": "同组「Idle态」;收尾→收尾,后者兜底"
+  },
+  {
+   "from": "idle-ask-gate",
+   "to": "idle-confess-gate",
+   "type": "precedes",
+   "why": "同组「Idle态」;收尾→收尾,后者兜底"
+  },
+  {
+   "from": "answer-relevancy-gate",
+   "to": "concise-answer-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "browser-routing-gate",
+   "to": "antiscrape-invoke-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "authority-source-gate",
+   "to": "model-authenticity-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "shell-writes-code-gate",
+   "to": "backslash-eater-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "commitment-execution-gate",
+   "to": "bg-running-claim-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "browser-routing-gate",
+   "to": "nudge-escalation-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "browser-routing-gate",
+   "to": "ui-edit-guard",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "giveup-guard",
+   "to": "capability-boundary-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "promise-gate",
+   "to": "capability-boundary-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "multi-option-guard",
+   "to": "checklist-completion-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "promise-gate",
+   "to": "checklist-completion-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "scope-completeness-gate",
+   "to": "checklist-completion-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "evidence-gate",
+   "to": "collect-list-evidence-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "evidence-in-log-gate",
+   "to": "collect-list-evidence-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "false-done-gate",
+   "to": "collect-list-evidence-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "money-verdict-gate",
+   "to": "collect-list-evidence-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "pkg-install-guard",
+   "to": "commitment-execution-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "commitment-execution-gate",
+   "to": "promise-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "commitment-execution-gate",
+   "to": "scope-completeness-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "commitment-execution-gate",
+   "to": "self-loop-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "already-known-guard",
+   "to": "critic-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "critic-gate",
+   "to": "false-done-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "empty-promise-gate",
+   "to": "jargon-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "empty-promise-gate",
+   "to": "promise-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "evidence-in-log-gate",
+   "to": "capability-boundary-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "evidence-in-log-gate",
+   "to": "flat-table-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "evidence-in-log-gate",
+   "to": "lesson-anchor-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "visual-proof-gate",
+   "to": "excuse-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "reference-diff-guard",
+   "to": "false-done-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "evidence-gate",
+   "to": "fault-injection-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "gate-generality-gate",
+   "to": "false-done-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "gate-generality-gate",
+   "to": "nudge-escalation-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "ui-edit-guard",
+   "to": "gate-generality-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "hook-noise-not-authorization-gate",
+   "to": "authority-source-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "hook-noise-not-authorization-gate",
+   "to": "concise-answer-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "hook-noise-not-authorization-gate",
+   "to": "critic-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "pipeline-first-gate",
+   "to": "hook-noise-not-authorization-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "critic-gate",
+   "to": "idle-ask-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "idle-ask-gate",
+   "to": "no-nagging-guard",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "idle-ask-gate",
+   "to": "idle-confess-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "keep-going-gate",
+   "to": "false-done-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "keep-going-gate",
+   "to": "idle-ask-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "lint-fatal-guard",
+   "to": "lesson-anchor-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "lesson-anchor-gate",
+   "to": "nudge-escalation-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "shell-writes-code-gate",
+   "to": "lesson-anchor-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "launch-bound-guard",
+   "to": "local-first-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "multi-option-guard",
+   "to": "local-first-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "media-regression-gate",
+   "to": "jargon-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "authority-source-gate",
+   "to": "money-verdict-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "search-breadth-gate",
+   "to": "money-verdict-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "negative-claim-gate",
+   "to": "capability-boundary-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "lessons-write-gate",
+   "to": "negative-claim-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "already-known-guard",
+   "to": "no-search-no-claim-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "no-search-no-claim-gate",
+   "to": "capability-boundary-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "evidence-gate",
+   "to": "no-search-no-claim-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "prior-art-gate",
+   "to": "no-search-no-claim-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "no-search-no-claim-gate",
+   "to": "search-breadth-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "search-layer-gate",
+   "to": "no-search-no-claim-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "unread-evidence-guard",
+   "to": "no-search-no-claim-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "capability-boundary-gate",
+   "to": "no-user-data-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "cross-scope-guard",
+   "to": "not-mine-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "excuse-gate",
+   "to": "not-mine-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "giveup-guard",
+   "to": "not-mine-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "not-mine-gate",
+   "to": "no-nagging-guard",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "antiscrape-invoke-gate",
+   "to": "nudge-escalation-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "nudge-escalation-gate",
+   "to": "churn-guard",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "coherence-guard",
+   "to": "nudge-escalation-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "nudge-escalation-gate",
+   "to": "concise-answer-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "lint-fatal-guard",
+   "to": "nudge-escalation-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "pipe-truncation-guard",
+   "to": "nudge-escalation-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "tool-roster-gate",
+   "to": "nudge-escalation-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "pipeline-ends-gate",
+   "to": "giveup-guard",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "pipeline-ends-gate",
+   "to": "promise-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "search-layer-gate",
+   "to": "pipeline-ends-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "launch-bound-guard",
+   "to": "pipeline-first-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "pipeline-first-gate",
+   "to": "pipeline-ends-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "pipeline-first-gate",
+   "to": "prior-art-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "pipeline-first-gate",
+   "to": "promise-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "pipeline-first-gate",
+   "to": "plan-before-act-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "plan-before-act-gate",
+   "to": "scenario-fit-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "prior-art-gate",
+   "to": "promise-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "false-done-gate",
+   "to": "progress-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "institutionalize-guard",
+   "to": "progress-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "promise-carryover-gate",
+   "to": "promise-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "critic-gate",
+   "to": "promise-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "false-done-gate",
+   "to": "promise-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "promise-gate",
+   "to": "idle-ask-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "keep-going-gate",
+   "to": "promise-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "promise-gate",
+   "to": "no-nagging-guard",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "question-boomerang-gate",
+   "to": "idle-ask-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "question-boomerang-gate",
+   "to": "no-nagging-guard",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "launch-bound-guard",
+   "to": "recursive-scan-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "pipe-truncation-guard",
+   "to": "recursive-scan-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "shell-writes-code-gate",
+   "to": "recursive-scan-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "launch-bound-guard",
+   "to": "resource-echo-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "critic-gate",
+   "to": "rootcause-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "pipeline-first-gate",
+   "to": "scenario-fit-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "scenario-fit-gate",
+   "to": "spec-first-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "cross-scope-guard",
+   "to": "scope-completeness-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "promise-gate",
+   "to": "scope-completeness-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "lint-fatal-guard",
+   "to": "search-breadth-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "prior-art-gate",
+   "to": "search-breadth-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "promise-gate",
+   "to": "search-breadth-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "keep-going-gate",
+   "to": "self-loop-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "semantic-superego-gate",
+   "to": "concise-answer-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "semantic-superego-gate",
+   "to": "jargon-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "semantic-superego-gate",
+   "to": "no-nagging-guard",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "search-layer-gate",
+   "to": "semantic-superego-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "shell-writes-code-gate",
+   "to": "lint-fatal-guard",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "pipe-truncation-guard",
+   "to": "shell-writes-code-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "skill-discovery-gate",
+   "to": "nudge-escalation-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "skill-discovery-gate",
+   "to": "ui-edit-guard",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "pipeline-first-gate",
+   "to": "spec-first-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "churn-guard",
+   "to": "stagnation-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "search-breadth-gate",
+   "to": "strawman-verdict-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "not-mine-gate",
+   "to": "tool-dedup-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "tool-roster-gate",
+   "to": "tool-dedup-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "cross-scope-guard",
+   "to": "tool-roster-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "authority-source-gate",
+   "to": "unknowing-pretending-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "visual-detail-gate",
+   "to": "video-audio-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "visual-proof-gate",
+   "to": "video-audio-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "visual-proof-gate",
+   "to": "visual-detail-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "already-known-guard",
+   "to": "institutionalize-guard",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "prior-art-gate",
+   "to": "already-known-guard",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "coherence-guard",
+   "to": "churn-guard",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "promise-gate",
+   "to": "churn-guard",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "prior-art-gate",
+   "to": "coherence-guard",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "coherence-guard",
+   "to": "promise-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "shell-writes-code-gate",
+   "to": "coherence-guard",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "spec-coverage-guard",
+   "to": "coherence-guard",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "data-overwrite-guard",
+   "to": "nudge-escalation-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "data-overwrite-guard",
+   "to": "ui-edit-guard",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "dropped-output-guard",
+   "to": "no-nagging-guard",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "spec-first-gate",
+   "to": "dropped-output-guard",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "feature-regress-guard",
+   "to": "nudge-escalation-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "feature-regress-guard",
+   "to": "ui-edit-guard",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "giveup-guard",
+   "to": "multi-option-guard",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "false-done-gate",
+   "to": "institutionalize-guard",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "multi-option-guard",
+   "to": "no-nagging-guard",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "giveup-guard",
+   "to": "no-nagging-guard",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "pipe-truncation-guard",
+   "to": "ui-edit-guard",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "reference-diff-guard",
+   "to": "giveup-guard",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "remote-poll-guard",
+   "to": "nudge-escalation-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "remote-poll-guard",
+   "to": "ui-edit-guard",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "dropped-output-guard",
+   "to": "show-open-guard",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "ui-edit-guard",
+   "to": "show-open-guard",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "unread-evidence-guard",
+   "to": "show-open-guard",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "prior-art-gate",
+   "to": "spec-coverage-guard",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "spec-coverage-guard",
+   "to": "time-sanity-guard",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "ui-edit-guard",
+   "to": "spec-coverage-guard",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "prior-art-gate",
+   "to": "time-sanity-guard",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "ui-edit-guard",
+   "to": "lesson-anchor-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "ui-edit-guard",
+   "to": "nudge-escalation-gate",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "critic-gate",
+   "to": "unread-evidence-guard",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "false-done-gate",
+   "to": "unread-evidence-guard",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  },
+  {
+   "from": "ui-edit-guard",
+   "to": "unread-evidence-guard",
+   "type": "mentions",
+   "why": "源码互相引用(互补/同源/兜底)"
+  }
+ ],
+ "causal_edges": [
+  {
+   "from": "R1",
+   "to": "R2",
+   "type": "leads_to",
+   "why": "查证无果后转而甩锅外部来掩盖未能验证的事实"
+  },
+  {
+   "from": "R3",
+   "to": "R11",
+   "type": "leads_to",
+   "why": "虚报完成后用含糊遮羞词掩饰未做实测"
+  },
+  {
+   "from": "R16",
+   "to": "R4",
+   "type": "leads_to",
+   "why": "拿少数样本冒充全量检查后过早宣布整体完成"
+  },
+  {
+   "from": "R20",
+   "to": "R1",
+   "type": "leads_to",
+   "why": "盲信工具/日志输出后直接做出未查证的否定断言"
+  },
+  {
+   "from": "R21",
+   "to": "R23",
+   "type": "leads_to",
+   "why": "把旧状态当现状后误将历史代码分支当作实际触发原因"
+  },
+  {
+   "from": "R24",
+   "to": "R3",
+   "type": "leads_to",
+   "why": "用计数指标冒充有效产出证据后虚报任务完成"
+  },
+  {
+   "from": "R12",
+   "to": "R39",
+   "type": "leads_to",
+   "why": "承诺做了但没动手，用一堆诊断分析来遮掩"
+  },
+  {
+   "from": "R39",
+   "to": "R12",
+   "type": "leads_to",
+   "why": "诊断完就停手，等于嘴上说要做实际没做"
+  },
+  {
+   "from": "R39",
+   "to": "R40",
+   "type": "leads_to",
+   "why": "分析给出去了就收工，真正修的成品从没送到用户手上"
+  },
+  {
+   "from": "R12",
+   "to": "R40",
+   "type": "leads_to",
+   "why": "说要做却没做，最终交付自然停在自己眼里"
+  },
+  {
+   "from": "R5",
+   "to": "R39",
+   "type": "leads_to",
+   "why": "请示式收尾把决定权推给用户，导致只做诊断不做修复"
+  },
+  {
+   "from": "R5",
+   "to": "R12",
+   "type": "leads_to",
+   "why": "总问\"要不要我做\"却不定，最后承诺的事都没落地"
+  },
+  {
+   "from": "R15",
+   "to": "R14",
+   "type": "leads_to",
+   "why": "治标不治本导致只补被点名的那一个点，不会系统性扫同类"
+  },
+  {
+   "from": "R14",
+   "to": "R35",
+   "type": "leads_to",
+   "why": "只修实例无法抽象，固化时只能写成单点补丁"
+  },
+  {
+   "from": "R7",
+   "to": "R13",
+   "type": "leads_to",
+   "why": "把建议当交付意味着没有真正动手解决，答案往往不直接回应用户问题"
+  },
+  {
+   "from": "R15",
+   "to": "R7",
+   "type": "leads_to",
+   "why": "只修症状容易止步于给建议而不真正处理"
+  },
+  {
+   "from": "R9",
+   "to": "R13",
+   "type": "leads_to",
+   "why": "飙术语让零编程用户看不懂，等于没直接回答问题"
+  },
+  {
+   "from": "R9",
+   "to": "R19",
+   "type": "leads_to",
+   "why": "用术语包装的内容往往显得高大上但具体可感知的好处说不出"
+  },
+  {
+   "from": "R17",
+   "to": "R18",
+   "type": "leads_to",
+   "why": "选了最强工具后倾向于亲手造而非先查现成方案，因为强工具让人觉得值得定制。"
+  },
+  {
+   "from": "R18",
+   "to": "R36",
+   "type": "leads_to",
+   "why": "闭门造车造出非 trivial 的东西后容易在同一路径上反复打补丁而不质疑方向。"
+  },
+  {
+   "from": "R36",
+   "to": "R10",
+   "type": "leads_to",
+   "why": "补丁打到第三块仍不见效时，用\"能力边界\"当借口来掩盖方向性错误。"
+  },
+  {
+   "from": "R10",
+   "to": "R17",
+   "type": "leads_to",
+   "why": "用能力边界停止调查后，会用\"更强的工具\"来逃避重新审视场景适配问题。"
+  },
+  {
+   "from": "R36",
+   "to": "R18",
+   "type": "leads_to",
+   "why": "反复打补丁无效时更倾向另起炉灶再造一个，而非回头查是否有现成可用方案。"
+  },
+  {
+   "from": "R8",
+   "to": "R17",
+   "type": "leads_to",
+   "why": "付费优先思维会直接跳过免费/轻量替代的验证，直接推荐最强最贵的工具方案。"
+  },
+  {
+   "from": "R22",
+   "to": "R32",
+   "type": "leads_to",
+   "why": "只验接口调通就停手，自然只会去测顺利路径而忽略失败路径"
+  },
+  {
+   "from": "R22",
+   "to": "R25",
+   "type": "leads_to",
+   "why": "误把接口200当完事，便用自己的测试路径代替真实用户路径下结论"
+  },
+  {
+   "from": "R30",
+   "to": "R22",
+   "type": "leads_to",
+   "why": "测量工具污染被测对象，导致虚假的\"调通\"结果掩盖了真实链路问题"
+  },
+  {
+   "from": "R32",
+   "to": "R25",
+   "type": "leads_to",
+   "why": "只验顺利路径交付后，失败路径即未验，恰好对应用户真实走的那条"
+  },
+  {
+   "from": "R30",
+   "to": "R32",
+   "type": "leads_to",
+   "why": "测量数据被污染，顺利路径的通过结果本身不可信，无法发现失败路径缺失"
+  },
+  {
+   "from": "R25",
+   "to": "R22",
+   "type": "leads_to",
+   "why": "测试路径≠生产路径意味着真实链路未被端到端验证，调通只是局部假象"
+  },
+  {
+   "from": "R28",
+   "to": "R29",
+   "type": "leads_to",
+   "why": "不核查结构就操作共享数据引发越权后，把系统的拦截提醒(hook)误当成授权信号，用\"系统都提示了\"来掩盖越权事实。"
+  },
+  {
+   "from": "R42",
+   "to": "R49",
+   "type": "leads_to",
+   "why": "不先全网搜索就凭记忆列工具，会踩坑选到未经验证的方案"
+  },
+  {
+   "from": "R44",
+   "to": "R52",
+   "type": "leads_to",
+   "why": "坚持本地自建而非用云端API包壳，容易交付出无法自动化的一次性脚本"
+  },
+  {
+   "from": "R47",
+   "to": "R52",
+   "type": "leads_to",
+   "why": "功能堆满但交付形态仍是手动的，掩盖了交付物不可自动化的根本缺陷"
+  },
+  {
+   "from": "R49",
+   "to": "R47",
+   "type": "leads_to",
+   "why": "凭记忆推荐未实测工具导致功能缩水，误以为\"够用\""
+  },
+  {
+   "from": "R50",
+   "to": "R51",
+   "type": "leads_to",
+   "why": "不愿优先最小免费档就升级付费，往往伴随过度读取来合理化成本"
+  },
+  {
+   "from": "R52",
+   "to": "R47",
+   "type": "leads_to",
+   "why": "交付形态偏差使得功能看起来多但实际不可用，掩盖交付不达标"
+  },
+  {
+   "from": "R48",
+   "to": "R46",
+   "type": "leads_to",
+   "why": "首段不直接回答问题而塞复盘，用冗余信息掩盖候选过多导致决策瘫痪"
+  }
+ ]
+}

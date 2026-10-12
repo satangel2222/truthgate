@@ -1,0 +1,6 @@
+{
+  "no_fault_max": 21,
+  "silent_max": 49,
+  "note": "故障注入欠债上限 + 静默闸上限;都只准降不准升。还清一道就 --accept 压一格。",
+  "quoting_exempt_max": 9
+}

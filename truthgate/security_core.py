@@ -78,11 +78,46 @@ def check_malicious_command(cmd: str) -> Optional[str]:
     return None
 
 
+# 备份 / 快照 / 临时目的地：写入这些位置不销毁源数据，属防损毁的正确做法。
+# 判定只看命令里是否出现备份类动词 + 备份类目的地，避免被无关路径误伤。
+_BACKUP_DEST_TOKENS = (
+    "backup", "bak", "snapshot", "archive", "restore", "rollback",
+    "tg-fix", "temp", "tmp", ".trash", "quarantine",
+)
+_BACKUP_CMD_NAMES = (
+    "copy-item", "cp", "robocopy", "xcopy", "copy",
+)
+_TIMESTAMP_DIR_RE = re.compile(r"(?:19|20)\d{6}|(?:19|20)\d{2}-\d{2}-\d{2}|\b1[6-9]\d{8}\b")
+
+
+def _is_backup_destination(cmd: str) -> bool:
+    r"""命令是否在往「备份/临时」位置写。
+
+    保守到底（宁可漏报，绝不误报）：必须【同时】满足
+      ① 出现备份类动词（copy-item / cp / robocopy / xcopy / copy）；
+      ② 出现备份类目的地 token，或带时间戳的目录名。
+    只出现其一不豁免 —— 例如 `Copy-Item -Force C:\data\x D:\data\x` 仍会被拦。
+    """
+    if not cmd:
+        return False
+    low = cmd.lower()
+    if not any(name in low for name in _BACKUP_CMD_NAMES):
+        return False
+    if any(tok in low for tok in _BACKUP_DEST_TOKENS):
+        return True
+    if _TIMESTAMP_DIR_RE.search(cmd):
+        return True
+    return False
+
 def check_destructive_overwrite(cmd: str, recent_history_text: str) -> Optional[str]:
     if not cmd:
         return None
     for pat in _DESTRUCTIVE_OVERWRITE_PATTERNS:
         if pat.search(cmd):
+            # 豁免：往备份/临时位置写不销毁源数据（防损毁的正确做法）。
+            # 修复 2026-10-11 实测误杀：Copy-Item -Force 到 backup 目录被判成破坏性覆写。
+            if _is_backup_destination(cmd):
+                return None
             # 如果是 git reset --hard，必须检查工作区是否有未暂存修改
             if "git" in cmd.lower() and "reset" in cmd.lower() and "--hard" in cmd.lower():
                 return (

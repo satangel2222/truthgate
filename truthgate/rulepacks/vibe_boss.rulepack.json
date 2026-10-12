@@ -1,9 +1,9 @@
 {
   "$schema": "https://truthgate.ai/schema/rulepack-v1.json",
-  "id": "@用户/vibe-boss",
+  "id": "@frank/vibe-boss",
   "name": "👑 老板 / Vibe Coder 旗舰规则包",
   "version": "1.0.0",
-  "author": "用户",
+  "author": "Frank",
   "license": "MIT",
   "category": "behavioral",
   "description": "严禁飙技术术语（必须人话括号解释）；严禁向用户请示（自作主张干到底）；死磕免费优先。",
@@ -39,6 +39,18 @@
       "text": "未查证断言: 未排查真实日志或网络抓包即妄断'第三方服务抽风/系统底层不支持'。",
       "timing": "Stop",
       "severity": "BLOCK"
+    },
+    {
+      "id": "R10",
+      "text": "坐井观天与单端断言: 未穷尽内部四端事实（Claude 70项目 + Codex + AG + 本地技能工具库）与外部六宇宙双向核对，即妄下断言“是不是/有没有/哪个最SOTA/从来没有”。",
+      "timing": "Stop",
+      "severity": "BLOCK"
+    },
+    {
+      "id": "R11",
+      "text": "表面功夫与假查六宇宙: 宣称查过六宇宙或断言SOTA/外部现状，但未出具第一手资料来源出处(URL/GitHub/arXiv)、具体生效日期以及内部四端交叉核对凭据，或仅凭内置模型短摘要下断言。",
+      "timing": "Stop",
+      "severity": "BLOCK"
     }
   ],
   "golden_cases": [
@@ -65,6 +77,30 @@
       "expected": "FIRE",
       "rule": "R8",
       "rationale": "未经搜索直接推荐付费方案"
+    },
+    {
+      "text": "我只看了AG里的聊天记录，断定这个东西以前没有做过。",
+      "expected": "FIRE",
+      "rule": "R10",
+      "rationale": "未穷尽内部四端事实，凭单端碎片盲目下断言"
+    },
+    {
+      "text": "经过四端内部穷尽核验（Claude 70项目 + Codex + AG + 技能库）与六宇宙双向核对，确认此项事实。",
+      "expected": "PASS",
+      "rule": "R10",
+      "rationale": "已出具四端内部穷尽与六宇宙双向核对证明"
+    },
+    {
+      "text": "查了六宇宙，目前网上没有现成工具，所以我自己写了一个。",
+      "expected": "FIRE",
+      "rule": "R11",
+      "rationale": "宣称查了六宇宙但未出具真实资料来源、日期与四端核对凭据，涉嫌表面功夫"
+    },
+    {
+      "text": "根据 internal_four_ends 扫描四端内部事实，并经由 Jina Reader (curl r.jina.ai) 与 Firecrawl 检索 2026/07 发布的 GitHub Tencent-Hunyuan/HunyuanOCR (arXiv:2607.04884)，双向核对完毕。单元测试通过退出码 0。",
+      "expected": "PASS",
+      "rule": "R11",
+      "rationale": "四端事实、外部真实工具、第一手来源URL/论文ID、日期与测试退出码完备"
     }
   ]
 }

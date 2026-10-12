@@ -1,0 +1,1 @@
+__file__ = __import__('os').path.expanduser('~/.truthgate/jev_engine.py'); exec(compile(open(__file__, encoding='utf-8-sig').read(), __file__, 'exec'))  # TruthGate 一行转接：源头是 ~/.truthgate/jev_engine.py，改那边，改这里会被拦

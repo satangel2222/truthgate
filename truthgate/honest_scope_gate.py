@@ -26,13 +26,18 @@ EXHAUSTIVE_READ_CLAIM_RE = re.compile(
 )
 
 EXHAUSTIVE_TEST_CLAIM_RE = re.compile(
-    r"(?:全部|所有|全量).*?(?:测试|门禁|单测|回归).*?(?:通过|跑通|全绿|完成|跑过)|"
-    r"(?:已全量|全部).*?(?:回归|跑了一遍|测试了一遍)",
+    r"(?:全部|所有|全量|各个).*?(?:测试|门禁|单测|回归|拦截).*?(?:通过|跑通|全绿|完成|跑过|已完成|物理拦截)|"
+    r"(?:已全量|全部).*?(?:回归|跑了一遍|测试了一遍|物理拦截)",
     re.I
 )
 
 HONEST_DISCLOSURE_RE = re.compile(
     r"(?:仅调阅|只调阅|仅阅读|只阅读|只看了|仅看了|抽样调阅|部分调阅|未读清单|尚未调阅|尚有.*?未读|实际调阅了?\s*\d+|实际精读了?\s*\d+)",
+    re.I
+)
+
+HONEST_TEST_DISCLOSURE_RE = re.compile(
+    r"(?:\d+\s*/\s*\d+|仅测试了?\s*\d+|抽样测试|部分测试|实弹打靶\s*\d+\s*道|尚有\s*\d+\s*道未)",
     re.I
 )
 
@@ -108,7 +113,8 @@ def check_project_grounding(text: str) -> Tuple[bool, Optional[str]]:
         return True, None
 
     patterns = [
-        r"【([a-zA-Z0-9_\u4e00-\u9fa5 -]{3,40})】",
+        # 2026-09-26 去掉:任何【…】都当项目名去磁盘找,找不到就判"虚构工程"(CI 1F 挂的根因;"【确实有】"这种强调也中招)。
+        # 项目名只认带明确前缀的两种写法(下面两条)。
         r"(?:project|项目)[：:\s]+([a-zA-Z0-9_\u4e00-\u9fa5-]{3,40})",
         r"\[Project Domain\][：:\s]+([a-zA-Z0-9_\u4e00-\u9fa5-]{3,40})"
     ]
@@ -209,6 +215,16 @@ def check_honest_scope(
     # 2. 审核全量测试通过断言
     m_test = EXHAUSTIVE_TEST_CLAIM_RE.search(text)
     if m_test:
+        # 若未提供量化对账单（如 5/115 或 仅测试了 5 道），且断言了全部/全量完成，直接硬拦截！
+        if not HONEST_TEST_DISCLOSURE_RE.search(text):
+            matched = m_test.group(0)[:30]
+            return False, (
+                f"⛔ [HONEST_TEST_VIOLATION] 严禁用模糊语言宣称全量测试/全量门禁拦截完成！\n"
+                f"检测到断言了全量测试/拦截（命中:「{matched}」），但未出具精确量化对账单（如 5/115 或 仅测试了 5 道）！\n"
+                f"铁律规定：严禁用「全部门禁完成物理拦截」等模糊断言糊弄用户，必须明示已打靶数与总数（如 M/N），"
+                f"或出示物理覆盖率达到 100% 的机器测试报告！"
+            )
+
         has_test_run = False
         for t in tools:
             tname = (t.get("name") or t.get("tool_name") or "").lower()

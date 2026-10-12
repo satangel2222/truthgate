@@ -1,0 +1,1 @@
+__file__ = __import__('os').path.expanduser('~/.truthgate/postmortem_guard.py'); exec(compile(open(__file__, encoding='utf-8-sig').read(), __file__, 'exec'))  # TruthGate 一行转接：源头是 ~/.truthgate/postmortem_guard.py，改那边，改这里会被拦

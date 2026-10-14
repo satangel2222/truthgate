@@ -155,7 +155,7 @@
   ag-gate-timeouts             行数 7447   开火 66    scripts:31  config:21  superego-plugin:13  .truthgate:1
   ag-gate-timeouts.lost.27720  行数 7      开火 1     config:1
   ag-gate-timeouts.lost.44908  行数 16     开火 0     -
-  ag-gate-timeouts.test        行数 609    开火 6     Casp:6
+  ag-gate-timeouts.test        行数 609    开火 6     user:6
   akg                          行数 10     开火 1     (旧格式·无项目):1
   akg2                         行数 19     开火 4     (旧格式·无项目):4
   akg3                         行数 21     开火 3     (旧格式·无项目):3
@@ -228,7 +228,7 @@
   evidence-in-log              行数 10808  开火 0     -
   evidence-in-log.test         行数 1094   开火 300   hooks:300
   evidence-table-gate          行数 1150   开火 0     -
-  evidence-table-gate.test     行数 311    开火 272   hooks:106  tempchat for claude:64  airbnb ai manager:54  Casp:30
+  evidence-table-gate.test     行数 311    开火 272   hooks:106  tempchat for claude:64  airbnb ai manager:54  user:30
   excuse-gate                  行数 5      开火 5     tempchat for claude:2  duckduckweb:1  airbnb ai manager:1  oldgame remix:1
   exhaust-before-giveup        行数 1328   开火 2     config:2
   false-done-gate              行数 3742   开火 32    tempchat for claude:12  .truthgate:7  scripts:4  oldgame remix:3
@@ -478,7 +478,7 @@
   lbg_fault                    行数 10     开火 0     -
   lbg_struct                   行数 31     开火 0     -
   lbg_test                     行数 25     开火 0     -
-  ledger-claim-gate            行数 1      开火 1     Casp:1
+  ledger-claim-gate            行数 1      开火 1     user:1
   ledger-claim-gate.test       行数 8      开火 8     hooks:8
   lesson-anchor                行数 272    开火 0     -
   lesson-anchor.test           行数 287    开火 179   hooks:179
@@ -503,7 +503,7 @@
   negative-claim-gate.test     行数 349    开火 349   airbnb ai manager:269  hooks:63  .truthgate:17
   no-nagging-guard             行数 5897   开火 951   airbnb ai manager:194  (旧格式·无项目):159  manju:111  social_media_to_tg:88
   no-nagging-guard.test        行数 1      开火 0     -
-  no-repeat-reply-gate         行数 5      开火 5     Casp:4  airbnb ai manager:1
+  no-repeat-reply-gate         行数 5      开火 5     user:4  airbnb ai manager:1
   no-repeat-reply-gate.test    行数 6      开火 6     hooks:6
   no-search-no-claim-gate      行数 3511   开火 18    airbnb ai manager:4  social_media_to_tg:3  duckduckweb:3  herme agent:2
   no-search-no-claim-gate.test 行数 2      开火 1     hooks:1
@@ -511,7 +511,7 @@
   no-user-data-gate.test       行数 46     开火 12    hooks:12
   not-mine-gate                行数 1      开火 1     airbnb ai manager:1
   nudge-escalation-gate        行数 6562   开火 4497  config:1205  scripts:977  airbnb ai manager:590  social_media_to_tg:274
-  nudge-escalation-gate.test   行数 36     开火 35    Casp:28  oldgame remix:7
+  nudge-escalation-gate.test   行数 36     开火 35    user:28  oldgame remix:7
   ob                           行数 7      开火 1     (旧格式·无项目):1
   orig                         行数 11     开火 0     -
   orig2                        行数 31     开火 4     (旧格式·无项目):4

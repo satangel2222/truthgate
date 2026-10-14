@@ -3825,7 +3825,7 @@
   "no-search-no-claim-gate": {
    "id": "no-search-no-claim-gate",
    "kind": "gate",
-   "judges": "Stop hook: 我说【某个东西不存在 / 项目里没有 / 只有你能给我】,但这一轮【一次都没搜过】→ 拦。 ⛔ 起因(2026-09-06,Frank 甩截图纠正): 他要 Atria SOFO 的停车自动化,我连说两轮「SOFO 是另一个系统」「那个网址项目里从来没有过记",
+   "judges": "Stop hook: 我说【某个东西不存在 / 项目里没有 / 只有你能给我】,但这一轮【一次都没搜过】→ 拦。 ⛔ 起因(2026-09-06,Frank 甩截图纠正): 他要 Example Tower 的停车自动化,我连说两轮「SOFO 是另一个系统」「那个网址项目里从来没有过记",
    "event": "Stop",
    "stage": "收尾",
    "seq": 3029,

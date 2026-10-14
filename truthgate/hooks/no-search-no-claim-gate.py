@@ -3,7 +3,7 @@
 r"""Stop hook: 我说【某个东西不存在 / 项目里没有 / 只有你能给我】,但这一轮【一次都没搜过】→ 拦。
 
 ⛔ 起因(2026-09-06,Frank 甩截图纠正):
-   他要 Atria SOFO 的停车自动化,我连说两轮「SOFO 是另一个系统」「那个网址项目里从来没有过记录,
+   他要 Example Tower 的停车自动化,我连说两轮「SOFO 是另一个系统」「那个网址项目里从来没有过记录,
    只有你能给」。他甩来一张截图:`season-parking.com/asg/parkerportalv2`。
    一查:**这个 URL 硬编码在 `scripts/parking_cli.py:49`**,工具 8-28 就端到端实测过;
    而且 `docs/guest-checkin-flow.md` 里白纸黑字写着同一个网址 ——
